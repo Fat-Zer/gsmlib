@@ -10,7 +10,11 @@
 // * Created: 17.5.1999
 // *************************************************************************
 
+#ifdef HAVE_CONFIG_H
+#include <gsm_config.h>
+#endif
 #include <gsmlib/gsm_sms.h>
+#include <iostream>
 
 using namespace std;
 using namespace gsmlib;
@@ -64,4 +68,5 @@ int main(int argc, char *argv[])
   pdu = sms->encode();
   sms = SMSMessage::decode(pdu);
   cout << sms->toString() << endl;
+  return 0;
 }

@@ -27,12 +27,13 @@ namespace gsmlib
   private:
     unsigned int _i;            // index into _s, next character
     string _s;                  // string to parse
+    bool _eos;                  // true if end-of-string reached in nextChar()
 
     // return next character or -1 if end of string
     int nextChar(bool skipWhiteSpace = true);
     
     // "puts back" a character
-    void putBackChar() {--_i;}
+    void putBackChar() {if (! _eos) --_i;}
 
     // check for empty parameter (ie. "," or end of string)
     // skips white space

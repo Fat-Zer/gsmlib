@@ -52,6 +52,9 @@ namespace gsmlib
     string text() const throw(GsmException);
     string telephone() const throw(GsmException);
 
+    // return true if entry is cached (and caching is enabled)
+    bool cached() const;
+
     PhonebookEntry(const PhonebookEntry &e) throw(GsmException);
     PhonebookEntry &operator=(const PhonebookEntry &e) throw(GsmException);
 
@@ -84,6 +87,7 @@ namespace gsmlib
     Ref<GsmAt> _at;             // my GsmAt class
     vector<int> _positionMap;   // maps in-memory index to ME index
     MeTa &_myMeTa;              // the MeTa object that created this Phonebook
+    bool _useCache;             // true if entries should be cached
 
     // helper function, parse phonebook response returned by ME/TA
     // returns index of entry
@@ -117,6 +121,9 @@ namespace gsmlib
               MeTa &myMeTa, bool preload = false) throw(GsmException);
 
   public:
+    // set cache mode on or off
+    void setCaching(bool useCache) {_useCache = useCache;}
+
     // return name of this phonebook (2-character string)
     string name() const {return _phonebookName;}
 

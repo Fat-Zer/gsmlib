@@ -116,37 +116,37 @@ TESTS = runspb.sh runspb2.sh runssms.sh runsms.sh 			runparser.sh runspbi.sh
 EXTRA_DIST = spb.pb runspb.sh runspb2.sh runssms.sh runsms.sh 			runparser.sh 			spb.pb spb2.pb 			testparser-output.txt testspb-output.txt 			testssms-output.txt testsms-output.txt 			testspb2-output.txt 			runspbi.sh spbi2-orig.pb spbi1.pb testspbi-output.txt
 
 
-# build testsms from testsms.cc and libgsm.la
+# build testsms from testsms.cc and libgsmme.la
 testsms_SOURCES = testsms.cc
-testsms_LDADD = ../gsmlib/libgsm.la $(INTLLIBS)
+testsms_LDADD = ../gsmlib/libgsmme.la $(INTLLIBS)
 
-# build testsms2 from testsms2.cc and libgsm.la
+# build testsms2 from testsms2.cc and libgsmme.la
 testsms2_SOURCES = testsms2.cc
-testsms2_LDADD = ../gsmlib/libgsm.la $(INTLLIBS)
+testsms2_LDADD = ../gsmlib/libgsmme.la $(INTLLIBS)
 
-# build testparser from testparser.cc and libgsm.la
+# build testparser from testparser.cc and libgsmme.la
 testparser_SOURCES = testparser.cc
-testparser_LDADD = ../gsmlib/libgsm.la $(INTLLIBS)
+testparser_LDADD = ../gsmlib/libgsmme.la $(INTLLIBS)
 
-# build testgsmlib from testgsmlib.cc and libgsm.la
+# build testgsmlib from testgsmlib.cc and libgsmme.la
 testgsmlib_SOURCES = testgsmlib.cc
-testgsmlib_LDADD = ../gsmlib/libgsm.la $(INTLLIBS)
+testgsmlib_LDADD = ../gsmlib/libgsmme.la $(INTLLIBS)
 
-# build testpb from testpb.cc and libgsm.la
+# build testpb from testpb.cc and libgsmme.la
 testpb_SOURCES = testpb.cc
-testpb_LDADD = ../gsmlib/libgsm.la $(INTLLIBS)
+testpb_LDADD = ../gsmlib/libgsmme.la $(INTLLIBS)
 
-# build testpb2 from testpb2.cc and libgsm.la
+# build testpb2 from testpb2.cc and libgsmme.la
 testpb2_SOURCES = testpb2.cc
-testpb2_LDADD = ../gsmlib/libgsm.la $(INTLLIBS)
+testpb2_LDADD = ../gsmlib/libgsmme.la $(INTLLIBS)
 
-# build testspb from testspb.cc and libgsm.la
+# build testspb from testspb.cc and libgsmme.la
 testspb_SOURCES = testspb.cc
-testspb_LDADD = ../gsmlib/libgsm.la $(INTLLIBS)
+testspb_LDADD = ../gsmlib/libgsmme.la $(INTLLIBS)
 
-# build testssms from testssms.cc and libgsm.la
+# build testssms from testssms.cc and libgsmme.la
 testssms_SOURCES = testssms.cc
-testssms_LDADD = ../gsmlib/libgsm.la $(INTLLIBS)
+testssms_LDADD = ../gsmlib/libgsmme.la $(INTLLIBS)
 mkinstalldirs = $(SHELL) $(top_srcdir)/scripts/mkinstalldirs
 CONFIG_HEADER = ../gsm_config.h
 CONFIG_CLEAN_FILES = 
@@ -158,28 +158,28 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 testsms_OBJECTS =  testsms.o
-testsms_DEPENDENCIES =  ../gsmlib/libgsm.la
+testsms_DEPENDENCIES =  ../gsmlib/libgsmme.la
 testsms_LDFLAGS = 
 testsms2_OBJECTS =  testsms2.o
-testsms2_DEPENDENCIES =  ../gsmlib/libgsm.la
+testsms2_DEPENDENCIES =  ../gsmlib/libgsmme.la
 testsms2_LDFLAGS = 
 testparser_OBJECTS =  testparser.o
-testparser_DEPENDENCIES =  ../gsmlib/libgsm.la
+testparser_DEPENDENCIES =  ../gsmlib/libgsmme.la
 testparser_LDFLAGS = 
 testgsmlib_OBJECTS =  testgsmlib.o
-testgsmlib_DEPENDENCIES =  ../gsmlib/libgsm.la
+testgsmlib_DEPENDENCIES =  ../gsmlib/libgsmme.la
 testgsmlib_LDFLAGS = 
 testpb_OBJECTS =  testpb.o
-testpb_DEPENDENCIES =  ../gsmlib/libgsm.la
+testpb_DEPENDENCIES =  ../gsmlib/libgsmme.la
 testpb_LDFLAGS = 
 testpb2_OBJECTS =  testpb2.o
-testpb2_DEPENDENCIES =  ../gsmlib/libgsm.la
+testpb2_DEPENDENCIES =  ../gsmlib/libgsmme.la
 testpb2_LDFLAGS = 
 testspb_OBJECTS =  testspb.o
-testspb_DEPENDENCIES =  ../gsmlib/libgsm.la
+testspb_DEPENDENCIES =  ../gsmlib/libgsmme.la
 testspb_LDFLAGS = 
 testssms_OBJECTS =  testssms.o
-testssms_DEPENDENCIES =  ../gsmlib/libgsm.la
+testssms_DEPENDENCIES =  ../gsmlib/libgsmme.la
 testssms_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -327,14 +327,14 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$/$$file $(distdir)/$$file; \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
-testgsmlib.o: testgsmlib.cc ../gsmlib/gsm_unix_serial.h \
+testgsmlib.o: testgsmlib.cc ../gsm_config.h ../gsmlib/gsm_unix_serial.h \
 	../gsmlib/gsm_error.h ../gsmlib/gsm_port.h ../gsmlib/gsm_util.h \
 	../gsmlib/gsm_me_ta.h ../gsmlib/gsm_event.h ../gsmlib/gsm_sms.h \
 	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_at.h \
@@ -342,27 +342,27 @@ testgsmlib.o: testgsmlib.cc ../gsmlib/gsm_unix_serial.h \
 	../gsmlib/gsm_map_key.h ../gsmlib/gsm_sms_store.h
 testparser.o: testparser.cc ../gsmlib/gsm_parser.h ../gsmlib/gsm_util.h \
 	../gsmlib/gsm_error.h
-testpb2.o: testpb2.cc ../gsmlib/gsm_unix_serial.h ../gsmlib/gsm_error.h \
-	../gsmlib/gsm_port.h ../gsmlib/gsm_util.h ../gsmlib/gsm_me_ta.h \
-	../gsmlib/gsm_event.h ../gsmlib/gsm_sms.h \
-	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_at.h \
-	../gsmlib/gsm_phonebook.h ../gsmlib/gsm_sorted_phonebook_base.h \
-	../gsmlib/gsm_map_key.h ../gsmlib/gsm_sms_store.h
 testpb.o: testpb.cc ../gsmlib/gsm_unix_serial.h ../gsmlib/gsm_error.h \
 	../gsmlib/gsm_port.h ../gsmlib/gsm_util.h ../gsmlib/gsm_me_ta.h \
 	../gsmlib/gsm_event.h ../gsmlib/gsm_sms.h \
 	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_at.h \
 	../gsmlib/gsm_phonebook.h ../gsmlib/gsm_sorted_phonebook_base.h \
 	../gsmlib/gsm_map_key.h ../gsmlib/gsm_sms_store.h
-testsms2.o: testsms2.cc ../gsmlib/gsm_unix_serial.h \
+testpb2.o: testpb2.cc ../gsmlib/gsm_unix_serial.h ../gsmlib/gsm_error.h \
+	../gsmlib/gsm_port.h ../gsmlib/gsm_util.h ../gsmlib/gsm_me_ta.h \
+	../gsmlib/gsm_event.h ../gsmlib/gsm_sms.h \
+	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_at.h \
+	../gsmlib/gsm_phonebook.h ../gsmlib/gsm_sorted_phonebook_base.h \
+	../gsmlib/gsm_map_key.h ../gsmlib/gsm_sms_store.h
+testsms.o: testsms.cc ../gsm_config.h ../gsmlib/gsm_sms.h \
+	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_error.h \
+	../gsmlib/gsm_util.h ../gsmlib/gsm_at.h ../gsmlib/gsm_port.h
+testsms2.o: testsms2.cc ../gsm_config.h ../gsmlib/gsm_unix_serial.h \
 	../gsmlib/gsm_error.h ../gsmlib/gsm_port.h ../gsmlib/gsm_util.h \
 	../gsmlib/gsm_me_ta.h ../gsmlib/gsm_event.h ../gsmlib/gsm_sms.h \
 	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_at.h \
 	../gsmlib/gsm_phonebook.h ../gsmlib/gsm_sorted_phonebook_base.h \
 	../gsmlib/gsm_map_key.h ../gsmlib/gsm_sms_store.h
-testsms.o: testsms.cc ../gsmlib/gsm_sms.h ../gsmlib/gsm_sms_codec.h \
-	../gsmlib/gsm_error.h ../gsmlib/gsm_util.h ../gsmlib/gsm_at.h \
-	../gsmlib/gsm_port.h
 testspb.o: testspb.cc ../gsmlib/gsm_unix_serial.h ../gsmlib/gsm_error.h \
 	../gsmlib/gsm_port.h ../gsmlib/gsm_util.h \
 	../gsmlib/gsm_sorted_phonebook.h \

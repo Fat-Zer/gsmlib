@@ -8,6 +8,11 @@ errorexit() {
 rm -f sms.sms || errorexit "could not delete sms.sms"
 touch sms.sms || errorexit "could not create sms.sms"
 
+# prepare locales to make date format reproducible
+export LC_ALL=en_US
+export LANG=en
+export LINGUAS=en
+
 # run the test
 ./testssms > testssms.log
 

@@ -108,25 +108,25 @@ INCLUDES = -I..
 
 bin_PROGRAMS = gsmsmsstore gsmctl gsmsmsd gsmpb gsmsendsms
 
-# build gsmsmsd from gsmsmsd.cc and libgsm.la
+# build gsmsmsd from gsmsmsd.cc and libgsmme.la
 gsmsmsd_SOURCES = gsmsmsd.cc
-gsmsmsd_LDADD = ../gsmlib/libgsm.la $(INTLLIBS)
+gsmsmsd_LDADD = ../gsmlib/libgsmme.la $(INTLLIBS)
 
-# build gsmpb from gsmpb.cc and libgsm.la
+# build gsmpb from gsmpb.cc and libgsmme.la
 gsmpb_SOURCES = gsmpb.cc
-gsmpb_LDADD = ../gsmlib/libgsm.la $(INTLLIBS)
+gsmpb_LDADD = ../gsmlib/libgsmme.la $(INTLLIBS)
 
-# build gsmctl from gsmctl.cc and libgsm.la
+# build gsmctl from gsmctl.cc and libgsmme.la
 gsmctl_SOURCES = gsmctl.cc
-gsmctl_LDADD = ../gsmlib/libgsm.la $(INTLLIBS)
+gsmctl_LDADD = ../gsmlib/libgsmme.la $(INTLLIBS)
 
-# build gsmsendsms from gsmsendsms.cc and libgsm.la
+# build gsmsendsms from gsmsendsms.cc and libgsmme.la
 gsmsendsms_SOURCES = gsmsendsms.cc
-gsmsendsms_LDADD = ../gsmlib/libgsm.la $(INTLLIBS)
+gsmsendsms_LDADD = ../gsmlib/libgsmme.la $(INTLLIBS)
 
-# build gsmsmsstore from gsmsmsstore.cc and libgsm.la
+# build gsmsmsstore from gsmsmsstore.cc and libgsmme.la
 gsmsmsstore_SOURCES = gsmsmsstore.cc
-gsmsmsstore_LDADD = ../gsmlib/libgsm.la $(INTLLIBS)
+gsmsmsstore_LDADD = ../gsmlib/libgsmme.la $(INTLLIBS)
 mkinstalldirs = $(SHELL) $(top_srcdir)/scripts/mkinstalldirs
 CONFIG_HEADER = ../gsm_config.h
 CONFIG_CLEAN_FILES = 
@@ -138,19 +138,19 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 gsmsmsstore_OBJECTS =  gsmsmsstore.o
-gsmsmsstore_DEPENDENCIES =  ../gsmlib/libgsm.la
+gsmsmsstore_DEPENDENCIES =  ../gsmlib/libgsmme.la
 gsmsmsstore_LDFLAGS = 
 gsmctl_OBJECTS =  gsmctl.o
-gsmctl_DEPENDENCIES =  ../gsmlib/libgsm.la
+gsmctl_DEPENDENCIES =  ../gsmlib/libgsmme.la
 gsmctl_LDFLAGS = 
 gsmsmsd_OBJECTS =  gsmsmsd.o
-gsmsmsd_DEPENDENCIES =  ../gsmlib/libgsm.la
+gsmsmsd_DEPENDENCIES =  ../gsmlib/libgsmme.la
 gsmsmsd_LDFLAGS = 
 gsmpb_OBJECTS =  gsmpb.o
-gsmpb_DEPENDENCIES =  ../gsmlib/libgsm.la
+gsmpb_DEPENDENCIES =  ../gsmlib/libgsmme.la
 gsmpb_LDFLAGS = 
 gsmsendsms_OBJECTS =  gsmsendsms.o
-gsmsendsms_DEPENDENCIES =  ../gsmlib/libgsm.la
+gsmsendsms_DEPENDENCIES =  ../gsmlib/libgsmme.la
 gsmsendsms_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -302,7 +302,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$/$$file $(distdir)/$$file; \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
@@ -316,23 +316,22 @@ gsmctl.o: gsmctl.cc ../gsm_config.h ../gsmlib/gsm_nls.h \
 	../gsmlib/gsm_at.h ../gsmlib/gsm_port.h \
 	../gsmlib/gsm_phonebook.h ../gsmlib/gsm_sorted_phonebook_base.h \
 	../gsmlib/gsm_map_key.h ../gsmlib/gsm_sms_store.h \
-	../gsmlib/gsm_unix_serial.h
+	../gsmlib/gsm_sysdep.h ../gsmlib/gsm_unix_serial.h
 gsmpb.o: gsmpb.cc ../gsm_config.h ../gsmlib/gsm_nls.h \
-	../gsmlib/gsm_me_ta.h ../gsmlib/gsm_error.h \
+	../gsmlib/gsm_unix_serial.h ../gsmlib/gsm_error.h \
+	../gsmlib/gsm_port.h ../gsmlib/gsm_util.h ../gsmlib/gsm_me_ta.h \
 	../gsmlib/gsm_event.h ../gsmlib/gsm_sms.h \
-	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_util.h \
-	../gsmlib/gsm_at.h ../gsmlib/gsm_port.h \
+	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_at.h \
 	../gsmlib/gsm_phonebook.h ../gsmlib/gsm_sorted_phonebook_base.h \
 	../gsmlib/gsm_map_key.h ../gsmlib/gsm_sms_store.h \
-	../gsmlib/gsm_sorted_phonebook.h ../gsmlib/gsm_unix_serial.h
+	../gsmlib/gsm_sorted_phonebook.h
 gsmsendsms.o: gsmsendsms.cc ../gsm_config.h ../gsmlib/gsm_nls.h \
-	../gsmlib/gsm_me_ta.h ../gsmlib/gsm_error.h \
+	../gsmlib/gsm_unix_serial.h ../gsmlib/gsm_error.h \
+	../gsmlib/gsm_port.h ../gsmlib/gsm_util.h ../gsmlib/gsm_me_ta.h \
 	../gsmlib/gsm_event.h ../gsmlib/gsm_sms.h \
-	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_util.h \
-	../gsmlib/gsm_at.h ../gsmlib/gsm_port.h \
+	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_at.h \
 	../gsmlib/gsm_phonebook.h ../gsmlib/gsm_sorted_phonebook_base.h \
-	../gsmlib/gsm_map_key.h ../gsmlib/gsm_sms_store.h \
-	../gsmlib/gsm_unix_serial.h
+	../gsmlib/gsm_map_key.h ../gsmlib/gsm_sms_store.h
 gsmsmsd.o: gsmsmsd.cc ../gsm_config.h ../gsmlib/gsm_nls.h \
 	../gsmlib/gsm_me_ta.h ../gsmlib/gsm_error.h \
 	../gsmlib/gsm_event.h ../gsmlib/gsm_sms.h \
@@ -342,13 +341,13 @@ gsmsmsd.o: gsmsmsd.cc ../gsm_config.h ../gsmlib/gsm_nls.h \
 	../gsmlib/gsm_map_key.h ../gsmlib/gsm_sms_store.h \
 	../gsmlib/gsm_unix_serial.h
 gsmsmsstore.o: gsmsmsstore.cc ../gsm_config.h ../gsmlib/gsm_nls.h \
-	../gsmlib/gsm_me_ta.h ../gsmlib/gsm_error.h \
+	../gsmlib/gsm_unix_serial.h ../gsmlib/gsm_error.h \
+	../gsmlib/gsm_port.h ../gsmlib/gsm_util.h ../gsmlib/gsm_me_ta.h \
 	../gsmlib/gsm_event.h ../gsmlib/gsm_sms.h \
-	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_util.h \
-	../gsmlib/gsm_at.h ../gsmlib/gsm_port.h \
+	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_at.h \
 	../gsmlib/gsm_phonebook.h ../gsmlib/gsm_sorted_phonebook_base.h \
 	../gsmlib/gsm_map_key.h ../gsmlib/gsm_sms_store.h \
-	../gsmlib/gsm_sorted_sms_store.h ../gsmlib/gsm_unix_serial.h
+	../gsmlib/gsm_sorted_sms_store.h
 
 info-am:
 info: info-am

@@ -15,8 +15,7 @@
 #endif
 #include <gsmlib/gsm_nls.h>
 #include <string>
-#include <unistd.h>
-#ifdef HAVE_GETOPT_LONG
+#if defined(HAVE_GETOPT_LONG) || defined(WIN32)
 #include <getopt.h>
 #endif
 #include <strstream>
@@ -25,7 +24,14 @@
 #include <errno.h>
 #include <gsmlib/gsm_me_ta.h>
 #include <gsmlib/gsm_util.h>
+#include <gsmlib/gsm_sysdep.h>
+#ifdef WIN32
+#include <gsmlib/gsm_win32_serial.h>
+#else
 #include <gsmlib/gsm_unix_serial.h>
+#include <unistd.h>
+#endif
+#include <iostream>
 
 using namespace std;
 using namespace gsmlib;
@@ -48,6 +54,7 @@ enum InfoParameter {AllInfo, // print all info
                     BatteryInfo,
                     BitErrorInfo,
                     SCAInfo,
+                    CharSetInfo,
                     SignalInfo}; // SignalInfo must be last!
 
 // operation parameters
@@ -254,6 +261,16 @@ static void printInfo(InfoParameter ip)
     cout << "<SCA0>  " << m->getServiceCentreAddress() << endl;
     break;
   }
+  case CharSetInfo:
+  {
+    cout << "<CSET0>  ";
+    vector<string> cs = m->getSupportedCharSets();
+    for (vector<string>::iterator i = cs.begin(); i != cs.end(); ++i)
+      cout << "'" << *i << "' ";
+    cout << endl;
+    cout << "<CSET1>  '" << m->getCurrentCharSet() << "'" << endl;
+    break;
+  }
   case SignalInfo:
   {
     cout << "<SIG0>  " << m->getSignalStrength() << endl;
@@ -381,12 +398,18 @@ int main(int argc, char *argv[])
       }
 
     // open the port and ME/TA
-    m = new MeTa(new UnixSerialPort(device,
-                                    baudrate == "" ?
-                                    DEFAULT_BAUD_RATE :
-                                    baudRateStrToSpeed(baudrate),
-                                    initString, swHandshake));
-
+    m = new MeTa(new
+#ifdef WIN32
+                 Win32SerialPort
+#else
+                 UnixSerialPort
+#endif
+                 (device,
+                  baudrate == "" ?
+                  DEFAULT_BAUD_RATE :
+                  baudRateStrToSpeed(baudrate),
+                  initString, swHandshake));
+    
     if (operation == "")
     {                           // process info parameters
       for (int i = optind; i < argc; ++i)
@@ -419,6 +442,8 @@ int main(int argc, char *argv[])
           printInfo(SignalInfo);
         else if (param == "sca")
           printInfo(SCAInfo);
+        else if (param == "cset")
+          printInfo(CharSetInfo);
         else
           throw GsmException(
             stringPrintf(_("unknown information parameter '%s'"),
@@ -552,6 +577,12 @@ int main(int argc, char *argv[])
         // set sca: number
         checkParamCount(optind, argc, 1, 1);
         m->setServiceCentreAddress(argv[optind]);
+      }
+      else if (operation == "cset")
+      {
+        // set charset: string
+        checkParamCount(optind, argc, 1, 1);
+        m->setCharSet(argv[optind]);
       }
       else
          throw GsmException(stringPrintf(_("unknown operation '%s'"),

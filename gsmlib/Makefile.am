@@ -13,9 +13,9 @@
 
 INCLUDES =		-I..
 
-lib_LTLIBRARIES =	libgsm.la
+lib_LTLIBRARIES =	libgsmme.la
 
-libgsm_la_SOURCES =	gsm_phonebook.cc gsm_util.cc gsm_unix_serial.cc \
+libgsmme_la_SOURCES =	gsm_phonebook.cc gsm_util.cc gsm_unix_serial.cc \
 			gsm_me_ta.cc gsm_at.cc gsm_error.cc gsm_parser.cc \
 			gsm_sms.cc gsm_sms_codec.cc gsm_sms_store.cc \
 			gsm_event.cc gsm_sorted_phonebook.cc \
@@ -33,4 +33,6 @@ gsminclude_HEADERS =	gsm_at.h gsm_parser.h gsm_sms.h gsm_unix_serial.h \
 
 noinst_HEADERS =	gsm_nls.h gsm_sysdep.h
 
-libgsm_la_LDFLAGS =	-version-info $(GSM_VERSION)
+libgsmme_la_LDFLAGS =	-version-info $(GSM_VERSION)
+
+EXTRA_DIST =		gsm_win32_serial.h gsm_win32_serial.cc

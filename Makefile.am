@@ -11,7 +11,7 @@
 # * Created: 21.5.1999
 # *************************************************************************
 
-SUBDIRS_ =	po gsmlib apps tests doc scripts
+SUBDIRS_ =	po gsmlib apps tests doc scripts win32
 
 EXTRA_DIST =	gsmlib.spec
 

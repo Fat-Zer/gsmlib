@@ -36,6 +36,7 @@ namespace gsmlib
     int _cpmsParamCount;        // number of SMS store parameters to
                                 // CPMS command
     bool _omitsColon;           // omits trailing ':' in AT responses
+    bool _veryShortCOPSanswer;  // Falcom A2-1
     Capabilities();             // constructor, set default behaviours
   };
   
@@ -122,6 +123,7 @@ namespace gsmlib
     Capabilities _capabilities; // ME/TA quirks
     GsmEvent _defaultEventHandler; // default event handler
                                 // see comments in MeTa::init()
+    string _lastCharSet;        // remember last character set
 
     // init ME/TA to sensible defaults
     void init() throw(GsmException);
@@ -163,7 +165,15 @@ namespace gsmlib
     // return ME information
     MEInfo getMEInfo() throw(GsmException);
 
+    // return available character sets
+    vector<string> getSupportedCharSets() throw(GsmException);// (+CSCS=?)
+    
+    // return current character set (default: GSM)
+    string getCurrentCharSet() throw(GsmException);// (+CSCS?)
 
+    // set character set to use
+    void setCharSet(string charSetName) throw(GsmException);// (+CSCS=)
+    
     // *** ETSI GSM 07.07 Section 6: "Call control commands and methods"
     
     // get extended error report

@@ -46,10 +46,18 @@ namespace gsmlib
       _myStore(myStore), _strKey(key) {}
 
     friend
-    bool operator< <>(const MapKey<SortedStore> &x,
+    bool operator< 
+#ifndef WIN32
+	<>
+#endif
+	                 (const MapKey<SortedStore> &x,
                       const MapKey<SortedStore> &y);
     friend
-    bool operator== <>(const MapKey<SortedStore> &x,
+    bool operator==
+#ifndef WIN32
+	<>
+#endif
+	                  (const MapKey<SortedStore> &x,
                        const MapKey<SortedStore> &y);
   };
 

@@ -73,7 +73,7 @@ void PhonebookEntry::set(string telephone, string text, int index,
 
 string PhonebookEntry::text() const throw(GsmException)
 {
-  if (!_cached)
+  if (! cached())
   {
     assert(_myPhonebook != NULL);
     // these operations are at least "logically const"
@@ -86,7 +86,7 @@ string PhonebookEntry::text() const throw(GsmException)
 
 string PhonebookEntry::telephone() const throw(GsmException)
 {
-  if (!_cached)
+  if (! cached())
   {
     assert(_myPhonebook != NULL);
     // these operations are at least "logically const"
@@ -95,6 +95,14 @@ string PhonebookEntry::telephone() const throw(GsmException)
     thisEntry->_cached = true;
   }
   return _telephone;
+}
+
+bool PhonebookEntry::cached() const
+{
+  if (_myPhonebook == NULL)
+    return _cached;
+  else
+    return _cached && _myPhonebook->_useCache;
 }
 
 PhonebookEntry::PhonebookEntry(const PhonebookEntry &e) throw(GsmException)
@@ -139,7 +147,9 @@ int Phonebook::parsePhonebookEntry(string response,
     cerr << "*** GSMLIB WARNING: Unexpected number format when reading from "
          << "phonebook: " << numberFormat << " ***" << endl;
   p.parseComma();
-  text = gsmToLatin1(p.parseString(false, true));
+  text = p.parseString(false, true);
+  if (lowercase(_myMeTa.getCurrentCharSet()) == "gsm")
+    text = gsmToLatin1(text);
   if (numberFormat == InternationalNumberFormat)
   {
     // skip leading "+" signs that may already exist
@@ -190,9 +200,16 @@ void Phonebook::writeEntry(int index, string telephone, string text)
   _myMeTa.setPhonebook(_phonebookName);
 
   // write entry
-  ostrstream os;
+  string s;
   if (telephone == "" && text == "")
+  {
+    ostrstream os;
     os << "+CPBW=" << index;
+    os << ends;
+    char *ss = os.str();
+    s = string(ss);
+    delete[] ss;
+  }
   else
   {
     int type;
@@ -200,13 +217,20 @@ void Phonebook::writeEntry(int index, string telephone, string text)
       type = UnknownNumberFormat;
     else
       type = InternationalNumberFormat;
+    string gsmText = text;
+    if (lowercase(_myMeTa.getCurrentCharSet()) == "gsm")
+      gsmText = latin1ToGsm(gsmText);
+    ostrstream os;
     os << "+CPBW=" << index << ",\"" << telephone << "\"," << type
-       << ",\"" << latin1ToGsm(text) << "\"";
+       << ",\"";
+    os << ends;
+    char *ss = os.str();
+    s = string(ss);
+    delete[] ss;
+    // this cannot be added with ostrstream because the gsmText can
+    // contain a zero (GSM default alphabet for '@')
+    s +=  gsmText + "\"";
   }
-  os << ends;
-  char *ss = os.str();
-  string s(ss);
-  delete[] ss;
   _at->chat(s);
 }
 
@@ -238,11 +262,12 @@ Phonebook::iterator Phonebook::insert(const string telephone,
       else
         throw GsmException(_("attempt to overwrite phonebook entry"),
                            OtherError);
+  return end();
 }
 
 Phonebook::Phonebook(string phonebookName, Ref<GsmAt> at, MeTa &myMeTa,
                      bool preload) throw(GsmException) :
-  _phonebookName(phonebookName), _at(at), _myMeTa(myMeTa)
+  _phonebookName(phonebookName), _at(at), _myMeTa(myMeTa), _useCache(true)
 {
   // select phonebook
   _myMeTa.setPhonebook(_phonebookName);
@@ -462,21 +487,21 @@ Phonebook::iterator Phonebook::erase(iterator position)
     position->set("", "");
     adjustSize(-1);
   }
-  return position;
+  return position + 1;
 }
 
 Phonebook::iterator Phonebook::erase(iterator first, iterator last)
   throw(GsmException)
 {
   iterator i;
-  for (i = first; i != last; i++)
+  for (i = first; i != last; ++i)
     erase(i);
   return i;
 }
 
 void Phonebook::clear() throw(GsmException)
 {
-  for (iterator i = begin(); i != end(); i++)
+  for (iterator i = begin(); i != end(); ++i)
     erase(i);
 }
 

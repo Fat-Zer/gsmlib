@@ -26,7 +26,7 @@ using namespace gsmlib;
 
 SMSMessageRef SMSStoreEntry::message() const throw(GsmException)
 {
-  if (!_cached)
+  if (! cached())
   {
     assert(_mySMSStore != NULL);
     // these operations are at least "logically const"
@@ -40,7 +40,7 @@ SMSMessageRef SMSStoreEntry::message() const throw(GsmException)
 SMSStoreEntry::SMSMemoryStatus SMSStoreEntry::status() const
   throw(GsmException)
 {
-  if (!_cached)
+  if (! cached())
   {
     assert(_mySMSStore != NULL);
     // these operations are at least "logically const"
@@ -68,6 +68,14 @@ unsigned char SMSStoreEntry::send() throw(GsmException)
   return send(mref);
 }
 
+bool SMSStoreEntry::cached() const
+{
+  if (_mySMSStore == NULL)
+    return _cached;
+  else
+    return _cached && _mySMSStore->_useCache;
+}
+
 bool SMSStoreEntry::operator==(const SMSStoreEntry &e) const
 {
   if (_message.isnull() || e._message.isnull())
@@ -91,8 +99,9 @@ void SMSStore::readEntry(int index, SMSMessageRef &message,
 #endif NDEBUG
 
   string pdu;
-  Parser p(_at->chat("+CMGR=" + intToStr(index + 1), "+CMGR:", pdu, true));
- 
+  Parser p(_at->chat("+CMGR=" + intToStr(index + 1), "+CMGR:", pdu, false,
+                     true, true));
+
   if (pdu.length() == 0)
   {
     message = SMSMessageRef();
@@ -100,6 +109,10 @@ void SMSStore::readEntry(int index, SMSMessageRef &message,
   }
   else
   {
+    // add missing service centre address if required by ME
+    if (! _at->getMeTa().getCapabilities()._hasSMSSCAprefix)
+      pdu = "00" + pdu;
+
     status = (SMSStoreEntry::SMSMemoryStatus)p.parseInt();
     // ignore the rest of the line
     message = SMSMessageRef(
@@ -182,7 +195,7 @@ int SMSStore::doInsert(SMSMessageRef message)
 
 SMSStore::SMSStore(string storeName, Ref<GsmAt> at, MeTa &meTa)
   throw(GsmException) :
-  _storeName(storeName), _at(at), _meTa(meTa)
+  _storeName(storeName), _at(at), _meTa(meTa), _useCache(true)
 {
   // select SMS store
   Parser p(_meTa.setSMSStore(_storeName, true));
@@ -286,21 +299,21 @@ SMSStore::iterator SMSStore::erase(iterator position)
 {
   eraseEntry(position->_index);
   position->_cached = false;
-  return position;
+  return position + 1;
 }
 
 SMSStore::iterator SMSStore::erase(iterator first, iterator last)
   throw(GsmException)
 {
   iterator i;
-  for (i = first; i != last; i++)
+  for (i = first; i != last; ++i)
     erase(i);
   return i;
 }
 
 void SMSStore::clear() throw(GsmException)
 {
-  for (iterator i = begin(); i != end(); i++)
+  for (iterator i = begin(); i != end(); ++i)
     erase(i);
 }
 

@@ -100,12 +100,13 @@ namespace gsmlib
 
   // iterator for SortedPhonebook that hides the "second" member of the map
   
-  class SortedPhonebookIterator : public PhonebookMap::iterator
+  typedef PhonebookMap::iterator PhonebookMapIterator;
+  class SortedPhonebookIterator : public PhonebookMapIterator
   {
   public:
     SortedPhonebookIterator() {}
     SortedPhonebookIterator(PhonebookMap::iterator i) :
-      PhonebookMap::iterator(i) {}
+      PhonebookMapIterator(i) {}
 
     PhonebookEntryBase &operator*()
       {return *((PhonebookMap::iterator)*this)->second;}

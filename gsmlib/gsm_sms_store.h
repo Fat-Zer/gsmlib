@@ -30,7 +30,7 @@ namespace gsmlib
 
   // a single entry in the SMS store
 
-  class SMSStoreEntry
+  class SMSStoreEntry : public RefBase
   {
   public:
     // status in ME memory
@@ -80,6 +80,9 @@ namespace gsmlib
     // can be used for identification in store)
     int index() const {return _index;}
 
+    // return true if entry is cached (and caching is enabled)
+    bool cached() const;
+
     // equality operator
     bool operator==(const SMSStoreEntry &e) const;
 
@@ -99,6 +102,7 @@ namespace gsmlib
     string _storeName;          // name of the store, 2-byte like "SM"
     Ref<GsmAt> _at;             // my GsmAt class
     MeTa &_meTa;                // my MeTa class
+    bool _useCache;             // true if entries should be cached
 
     // internal access functions
     // read/write entry from/to ME
@@ -126,6 +130,9 @@ namespace gsmlib
     typedef const SMSStoreEntry *const_iterator;
     typedef SMSStoreEntry &reference;
     typedef const SMSStoreEntry &const_reference;
+
+    // set cache mode on or off
+    void setCaching(bool useCache) {_useCache = useCache;}
 
     // return name of this store (2-character string)
     string name() const {return _storeName;}

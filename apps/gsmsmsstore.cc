@@ -16,8 +16,13 @@
 #include <gsmlib/gsm_nls.h>
 #include <string>
 #include <ctype.h>
+#ifdef WIN32
+#include <gsmlib/gsm_win32_serial.h>
+#else
+#include <gsmlib/gsm_unix_serial.h>
 #include <unistd.h>
-#ifdef HAVE_GETOPT_LONG
+#endif
+#if defined(HAVE_GETOPT_LONG) || defined(WIN32)
 #include <getopt.h>
 #endif
 #include <stdio.h>
@@ -26,7 +31,7 @@
 #include <gsmlib/gsm_me_ta.h>
 #include <gsmlib/gsm_util.h>
 #include <gsmlib/gsm_sorted_sms_store.h>
-#include <gsmlib/gsm_unix_serial.h>
+#include <iostream>
 
 using namespace std;
 using namespace gsmlib;
@@ -117,6 +122,7 @@ int main(int argc, char *argv[])
     bool swHandshake = false;
     // service centre address (set on command line)
     string serviceCentreAddress;
+    Ref<MeTa> sourceMeTa, destMeTa;
 
     int opt;
     int dummy;
@@ -273,13 +279,28 @@ int main(int argc, char *argv[])
         if (storeName == "")
           throw GsmException(_("store name must be given"), ParameterError);
         
-        MeTa m(new UnixSerialPort(source,
-                                  baudrate == "" ? DEFAULT_BAUD_RATE :
-                                  baudRateStrToSpeed(baudrate), initString,
-                                  swHandshake));
-        sourceStore = new SortedSMSStore(m.getSMSStore(storeName));      
+        sourceMeTa = new MeTa(new
+#ifdef WIN32
+                              Win32SerialPort
+#else
+                              UnixSerialPort
+#endif
+                              (source,
+                               baudrate == "" ? DEFAULT_BAUD_RATE :
+                               baudRateStrToSpeed(baudrate), initString,
+                               swHandshake));
+        sourceStore = new SortedSMSStore(sourceMeTa->getSMSStore(storeName));
       }
       
+    // make sure destination file exists
+    try
+    {
+      ofstream f(destination.c_str(), ios::out | ios::app | ios::binary);
+    }
+    catch (exception)
+    {
+    }
+
     // start accessing destination destination store or file
     if (operation == CopyOp || operation == BackupOp || operation == AddOp ||
         operation == DeleteOp)
@@ -292,11 +313,17 @@ int main(int argc, char *argv[])
         if (storeName == "")
           throw GsmException(_("store name must be given"), ParameterError);
         
-        MeTa m(new UnixSerialPort(destination,
-                                  baudrate == "" ? DEFAULT_BAUD_RATE :
-                                  baudRateStrToSpeed(baudrate), initString,
-                                  swHandshake));
-        destStore = new SortedSMSStore(m.getSMSStore(storeName));      
+        destMeTa = new MeTa(new
+#ifdef WIN32
+                            Win32SerialPort
+#else
+                            UnixSerialPort
+#endif
+                            (destination,
+                             baudrate == "" ? DEFAULT_BAUD_RATE :
+                             baudRateStrToSpeed(baudrate), initString,
+                             swHandshake));
+        destStore = new SortedSMSStore(destMeTa->getSMSStore(storeName));      
       }
 
     // now do the actual work

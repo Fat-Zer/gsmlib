@@ -16,6 +16,7 @@
 #include <gsmlib/gsm_nls.h>
 #include <gsmlib/gsm_sysdep.h>
 #include <gsmlib/gsm_sorted_sms_store.h>
+#include <iostream>
 #include <fstream>
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
@@ -155,7 +156,7 @@ void SortedSMSStore::sync(bool fromDestructor) throw(GsmException)
       if (_filename == "")
         pbs = &cout;
       else
-        pbs = new ofstream(_filename.c_str());
+		pbs = new ofstream(_filename.c_str(), ios::out | ios::binary);
       
       if (pbs->bad())
         throw GsmException(
@@ -213,7 +214,7 @@ SortedSMSStore::SortedSMSStore(string filename) throw(GsmException) :
   _sortOrder(ByDate), _readonly(false), _filename(filename), _nextIndex(0)
 {
   // open the file
-  ifstream pbs(filename.c_str());
+	  ifstream pbs(filename.c_str(), ios::in | ios::binary);
   if (pbs.bad())
     throw GsmException(stringPrintf(_("cannot open file '%s'"),
                                     filename.c_str()), OSError);

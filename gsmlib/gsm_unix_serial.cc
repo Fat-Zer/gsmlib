@@ -107,7 +107,7 @@ int UnixSerialPort::readByte() throw(GsmException)
     return result;
   }
 
-  char c;
+  unsigned char c;
   int timeElapsed = 0;
   struct timeval oneSecond;
   bool readDone = false;

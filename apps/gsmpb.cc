@@ -15,8 +15,13 @@
 #endif
 #include <gsmlib/gsm_nls.h>
 #include <string>
+#ifdef WIN32
+#include <gsmlib/gsm_win32_serial.h>
+#else
+#include <gsmlib/gsm_unix_serial.h>
 #include <unistd.h>
-#ifdef HAVE_GETOPT_LONG
+#endif
+#if defined(HAVE_GETOPT_LONG) || defined(WIN32)
 #include <getopt.h>
 #endif
 #include <stdio.h>
@@ -25,7 +30,7 @@
 #include <gsmlib/gsm_me_ta.h>
 #include <gsmlib/gsm_util.h>
 #include <gsmlib/gsm_sorted_phonebook.h>
-#include <gsmlib/gsm_unix_serial.h>
+#include <iostream>
 
 using namespace std;
 using namespace gsmlib;
@@ -41,6 +46,7 @@ static struct option longOpts[] =
   {"destination-backend", required_argument, (int*)NULL, 'D'},
   {"source-backend", required_argument, (int*)NULL, 'S'},
   {"baudrate", required_argument, (int*)NULL, 'b'},
+  {"charset", required_argument, (int*)NULL, 't'},
   {"copy", no_argument, (int*)NULL, 'c'},
   {"synchronize", no_argument, (int*)NULL, 'y'},
   {"help", no_argument, (int*)NULL, 'h'},
@@ -132,7 +138,7 @@ void updateEntries(SortedPhonebookRef sourcePhonebook,
       SortedPhonebookBase::iterator first = range.first;
       if (first != destPhonebook->end() && range.second == ++first)
       {                         // just one text in the destPhonebook
-        if (*range.first != *i) // overwrite if different in destination
+        if (! (*range.first == *i)) // overwrite if different in destination
         {
           if (verbose)
             cout << stringPrintf(_("updating '%s' tel# %s to new tel# %s"),
@@ -165,7 +171,7 @@ void updateEntriesIndexed(SortedPhonebookRef sourcePhonebook,
     
     if (j != destPhonebook->end())
     {                           // index present in the destPhonebook
-      if (*j != *i)             // overwrite if different in destination
+      if (! (*j == *i))         // overwrite if different in destination
       {
         if (verbose)
           cout << stringPrintf(_("updating '%s' tel# %s to new tel# %s"
@@ -225,6 +231,10 @@ void deleteNotPresent(SortedPhonebookRef sourcePhonebook,
         cout << endl;
       }
       destPhonebook->erase(i);
+#ifdef BUGGY_MAP_ERASE
+	  deleteNotPresent(sourcePhonebook, destPhonebook, indexed, verbose);
+	  return;
+#endif
     }
   }
 }
@@ -248,6 +258,8 @@ int main(int argc, char *argv[])
     bool indexed = false;
     string initString = DEFAULT_INIT_STRING;
     bool swHandshake = false;
+    string charSet;
+    Ref<MeTa> sourceMeTa, destMeTa;
 
     int opt;
     int dummy;
@@ -283,6 +295,9 @@ int main(int argc, char *argv[])
       case 'b':
         baudrate = optarg;
         break;
+      case 't':
+        charSet = optarg;
+        break;
       case 'c':
         doSynchronize = false;
         break;
@@ -300,7 +315,8 @@ int main(int argc, char *argv[])
       case 'h':
         cerr << argv[0] << _(": [-b baudrate][-c][-d device or file][-h]"
                              "[-I init string]\n"
-                             "  [-p phonebook name][-s device or file][-v]"
+                             "  [-p phonebook name][-s device or file]"
+                             "[-t charset][-v]"
                              "[-V][-y][-X]") << endl
              << endl
              << _("  -b, --baudrate    baudrate to use for device "
@@ -320,6 +336,8 @@ int main(int argc, char *argv[])
              << _("  -p, --phonebook   name of phonebook to use") << endl
              << _("  -s, --source      sets the source device to connect to,\n"
                   "                    or the file to read") << endl
+             << _("  -t, --charset     sets the character set to use for\n"
+                  "                    phonebook entries") << endl
              << _("  -S, --source-backend sets the source backend")
              << endl
              << _("  -v, --version     prints version and exits") << endl
@@ -355,11 +373,29 @@ int main(int argc, char *argv[])
       if (phonebook == "")
         throw GsmException(_("phonebook name must be given"), ParameterError);
 
-      MeTa m(new UnixSerialPort(source,
-                                baudrate == "" ? DEFAULT_BAUD_RATE :
-                                baudRateStrToSpeed(baudrate), initString,
-                                swHandshake));
-      sourcePhonebook = new SortedPhonebook(m.getPhonebook(phonebook));      
+      sourceMeTa = new MeTa(new
+#ifdef WIN32
+                            Win32SerialPort
+#else
+                            UnixSerialPort
+#endif
+                            (source,
+                             baudrate == "" ? DEFAULT_BAUD_RATE :
+                             baudRateStrToSpeed(baudrate), initString,
+                             swHandshake));
+      if (charSet != "")
+        sourceMeTa->setCharSet(charSet);
+      sourcePhonebook =
+        new SortedPhonebook(sourceMeTa->getPhonebook(phonebook));
+    }
+
+    // make sure destination.c_str file exists
+    try
+    {
+      ofstream f(destination.c_str(), ios::out | ios::app);
+    }
+    catch (exception)
+    {
     }
 
     // start accessing destination mobile phone or file
@@ -376,11 +412,19 @@ int main(int argc, char *argv[])
       if (phonebook == "")
         throw GsmException(_("phonebook name must be given"), ParameterError);
 
-      MeTa m(new UnixSerialPort(destination,
-                                baudrate == "" ? DEFAULT_BAUD_RATE :
-                                baudRateStrToSpeed(baudrate), initString,
-                                swHandshake));
-      PhonebookRef destPb = m.getPhonebook(phonebook);
+      destMeTa = new MeTa(new 
+#ifdef WIN32
+                          Win32SerialPort
+#else
+                          UnixSerialPort
+#endif
+                          (destination,
+                           baudrate == "" ? DEFAULT_BAUD_RATE :
+                           baudRateStrToSpeed(baudrate), initString,
+                           swHandshake));
+      if (charSet != "")
+        destMeTa->setCharSet(charSet);
+      PhonebookRef destPb = destMeTa->getPhonebook(phonebook);
 
       // check maximum lengths of source text and phonenumber when writing to
       // mobile phone

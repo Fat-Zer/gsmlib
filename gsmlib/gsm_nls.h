@@ -47,7 +47,7 @@ namespace gsmlib
       {
         if (! initialized)      // do only once
         {
-          setlocale(LC_MESSAGES, "");
+          setlocale(LC_ALL, "");
 #ifdef LOCAL_TRANSLATIONS
           bindtextdomain(PACKAGE, "../po");
 #else

@@ -47,3 +47,8 @@ are three ways to correct this:
 3. Use the option "--sca 1234567" for the gsmsmsd, gsmsmsstore, and
 gsmsendsms programs. This tries to set the SCA in the SMS itself (does
 not change default SCA) and might not work with all phones.
+
+*** 5. gsmlib works unreliably with my phone.
+
+Try another baudrate, even higher baudrates sometimes work better then
+lower ones.

@@ -60,6 +60,7 @@ HARDWARE
      - Nokia 6150/Xircom REM56G.100
      - Nokia 6150/Options "GSM-Ready(R) Cellular-Only" modem
        from Option International
+     - Nokia 6210/- (Linux IrDA serial device)
      - Nokia 8810/- (Linux IrDA serial device)
      - Siemens S10D/Dr Neuhaus Gipsy Card GSM
      - Siemens S25/- (Linux IrDA serial device)

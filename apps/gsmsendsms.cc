@@ -15,8 +15,13 @@
 #endif
 #include <gsmlib/gsm_nls.h>
 #include <string>
+#ifdef WIN32
+#include <gsmlib/gsm_win32_serial.h>
+#else
+#include <gsmlib/gsm_unix_serial.h>
 #include <unistd.h>
-#ifdef HAVE_GETOPT_LONG
+#endif
+#if defined(HAVE_GETOPT_LONG) || defined(WIN32)
 #include <getopt.h>
 #endif
 #include <stdio.h>
@@ -24,7 +29,7 @@
 #include <errno.h>
 #include <gsmlib/gsm_me_ta.h>
 #include <gsmlib/gsm_util.h>
-#include <gsmlib/gsm_unix_serial.h>
+#include <iostream>
 
 using namespace std;
 using namespace gsmlib;
@@ -162,10 +167,16 @@ int main(int argc, char *argv[])
     if (! test)
     {
       // open the port and ME/TA
-      Ref<Port> port = new UnixSerialPort(device,
-                                          baudrate == "" ? DEFAULT_BAUD_RATE :
-                                          baudRateStrToSpeed(baudrate),
-                                          initString, swHandshake);
+      Ref<Port> port = new
+#ifdef WIN32
+             Win32SerialPort
+#else
+             UnixSerialPort
+#endif
+        (device,
+         baudrate == "" ? DEFAULT_BAUD_RATE :
+         baudRateStrToSpeed(baudrate),
+         initString, swHandshake);
       // switch message service level to 1
       // this enables acknowledgement PDUs
       MeTa m(port);

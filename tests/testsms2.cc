@@ -1,8 +1,16 @@
+#ifdef HAVE_CONFIG_H
+#include <gsm_config.h>
+#endif
+#ifdef WIN32
+#include <gsmlib/gsm_win32_serial.h>
+#else
 #include <gsmlib/gsm_unix_serial.h>
+#endif
 #include <gsmlib/gsm_me_ta.h>
 #include <gsmlib/gsm_phonebook.h>
 #include <algorithm>
 #include <strstream>
+#include <iostream>
 
 using namespace std;
 using namespace gsmlib;
@@ -12,7 +20,11 @@ int main(int argc, char *argv[])
   try
   {
     cout << (string)"Opening device " + argv[1] << endl;
-    Ref<Port> port = new UnixSerialPort((string)argv[1], B38400);
+#ifdef WIN32
+    Ref<Port> port = new Win32SerialPort((string)argv[1], 38400);
+#else
+	Ref<Port> port = new UnixSerialPort((string)argv[1], B38400);
+#endif
 
     cout << "Creating MeTa object" << endl;
     MeTa m(port);

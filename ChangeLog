@@ -1,3 +1,48 @@
+gsmlib-1.6
+     - more fixes for the COPS=? return format
+
+     - fixed putBack() behaviour in gsm_parser (don't put back if end-of-
+       stream is reached)
+
+     - added toString() function to gsm_sms_codec's Address class
+
+     - SMS dates and times are now output in a locale-specific manner
+
+     - fixed bug in Parser::getEol() (_eos was accidentally set to true)
+
+     - added gsm_win32_serial module, Win32 project (VC++),  and
+       Option FirstFone changes contributed by Frediano Ziglio
+       <freddy77@angelfire.com>
+
+     - fix in COM port recognition for Win32 (gsm_util)
+
+     - renamed library files libgsm.* to libgsmme.* (now starting with
+       version 1.0) because of conflict with another Debian package
+
+     - in gsm_phonebook and gsm_store the caching of entries can now
+       be disabled
+
+     - added facilities to use other character sets for phonebooks
+
+     - fixed workaround for Ericcson SH888 (missing service centre address)
+
+     - fixed bug in gsm_phonebook that prevented texts with the
+       character '@' to be written to to the phonebook
+
+     - fixed nasty memory allocation bug in gsmpb/gsmsmsstore
+       (automatic MeTa variable went out of scope even though used
+       later)
+
+     - fixed Y2K problem in timestamp printing
+
+     - fixed "make dist" to include win32 files
+
+     - added workarounds for Falcom A2-1 (autodetection and enabling by
+       "export GSMLIB_FALCOM_A2_1_FIX=1", zero after PDU)
+
+     - fixed bug that caused gsmlib to abort with an assert if a malformed
+       PDU was read
+
 gsmlib-1.5
      - adapted MeTa::getCurrentOPInfo() and MeTa::getAvailableOPInfo()
        to handle Nokia 8290 quirks

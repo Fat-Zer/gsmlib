@@ -17,6 +17,7 @@
 #include <gsmlib/gsm_sysdep.h>
 #include <gsmlib/gsm_sms_codec.h>
 #include <gsmlib/gsm_util.h>
+#include <time.h>
 #include <strstream>
 #include <iomanip>
 #ifdef HAVE_STRING_H
@@ -41,6 +42,14 @@ Address::Address(string number) : _plan(ISDN_Telephone)
     _type = Unknown;
     _number = number;
   }
+}
+
+string Address::toString() const
+{
+  if (_type == International)
+    return "+" + _number;
+  else
+    return _number;
 }
 
 bool gsmlib::operator<(const Address &x, const Address &y)
@@ -88,13 +97,31 @@ string Timestamp::toString() const
   short timeZoneMinutes = _timeZoneMinutes;
   short timeZoneHours = timeZoneMinutes / 60;
   timeZoneMinutes %= 60;
+
+  // format date and time in a locale-specific way
+  struct tm t;
+  t.tm_sec = _seconds;
+  t.tm_min = _minute;
+  t.tm_hour = _hour;
+  t.tm_mon = _month - 1;
+  // year 2000 heuristics, SMSs cannot be older than start of GSM network
+  t.tm_year = _year < 80 ? _year + 100 : _year;
+  t.tm_mday = _day;
+  t.tm_isdst = -1;
+  t.tm_yday = 0;
+  t.tm_wday = 0;
+  
+#ifdef BROKEN_STRFTIME
+  char formattedTime[1024];
+  strftime(formattedTime, 1024, "%x %X", &t);
+#else
+  int formattedTimeSize = strftime(NULL, INT_MAX, "%x %X", &t) + 1;
+  char *formattedTime = (char*)alloca(sizeof(char) * formattedTimeSize);
+  strftime(formattedTime, formattedTimeSize, "%x %X", &t);
+#endif
   ostrstream os;
-  os << setfill('0') << setw(2) << _day << '.' 
-     << setw(2) << _month << '.' << setw(2) << _year << ' '
-     << setw(2) << _hour << ':'
-     << setw(2) << _minute << ':' << setw(2) << _seconds
-     << '(' << (_negativeTimeZone ? '-' : '+')
-     << setw(2) << timeZoneHours 
+  os << formattedTime << " (" << (_negativeTimeZone ? '-' : '+')
+     << setfill('0') << setw(2) << timeZoneHours 
      << setw(2) << timeZoneMinutes << ')' << ends;
   char *ss = os.str();
   string result(ss);
@@ -221,10 +248,9 @@ SMSDecoder::SMSDecoder(string pdu) : _bi(0), _septetStart(NULL)
 {
   _p = new unsigned char[pdu.length() / 2];
   _op = _p;
-  hexToBuf(pdu, _p);
-#ifndef NDEBUG
+  if (! hexToBuf(pdu, _p))
+    throw GsmException(_("bad hexadecimal PDU format"), SMSFormatError);
   _maxop = _op + pdu.length() / 2;
-#endif
 }
 
 void SMSDecoder::alignOctet()
@@ -393,7 +419,7 @@ Address SMSDecoder::getAddress(bool scAddressFormat)
 
   // parse Type-of-Address
   result._plan = (Address::NumberingPlan)getInteger(4);
-  result._type = (Address::Type)getInteger(3);;
+  result._type = (Address::Type)getInteger(3);
 
   // get address
   result._number = getSemiOctets(scAddressFormat ?

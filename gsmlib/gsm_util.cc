@@ -15,12 +15,20 @@
 #endif
 #include <gsmlib/gsm_nls.h>
 #include <gsmlib/gsm_util.h>
+#include <gsmlib/gsm_sysdep.h>
 #include <sys/stat.h>
+#include <assert.h>
 #include <string.h>
+#include <iostream>
 #include <strstream>
 #include <ctype.h>
 #include <errno.h>
+#if !defined(HAVE_CONFIG_H) || defined(HAVE_UNISTD_H)
 #include <unistd.h>
+#endif
+#if !defined(HAVE_CONFIG_H) || defined(HAVE_MALLOC_H)
+#include <malloc.h>
+#endif
 #include <stdarg.h>
 #ifdef HAVE_VSNPRINTF
 // switch on vsnprintf() prototype in stdio.h
@@ -28,6 +36,7 @@
 #define _GNU_SOURCE
 #endif
 #include <stdio.h>
+#include <sys/stat.h>
 
 using namespace std;
 using namespace gsmlib;
@@ -124,19 +133,26 @@ string gsmlib::bufToHex(const unsigned char *buf, unsigned long length)
   return result;
 }
 
-void gsmlib::hexToBuf(const string &hexString, unsigned char *buf)
+bool gsmlib::hexToBuf(const string &hexString, unsigned char *buf)
 {
-  assert(hexString.length() % 2 == 0);
+  if (hexString.length() % 2 != 0)
+    return false;
+
   unsigned char *bb = buf;
   for (unsigned int i = 0; i < hexString.length(); i += 2)
   {
     unsigned char c = hexString[i];
+    if (! isdigit(c) && ! ('a' <= c && c <= 'f') && ! ('A' <= c && c <= 'F'))
+      return false;
     *bb = (isdigit(c) ? c - '0' :
            ((('a' <= c && c <= 'f') ? c - 'a' : c - 'A')) + 10) << 4;
     c = hexString[i + 1];
+    if (! isdigit(c) && ! ('a' <= c && c <= 'f') && ! ('A' <= c && c <= 'F'))
+      return false;
     *bb++ |= isdigit(c) ? c - '0' :
       ((('a' <= c && c <= 'f') ? c - 'a' : c - 'A') + 10);
   }
+  return true;
 }
 
 string gsmlib::intToStr(int i)
@@ -158,8 +174,27 @@ string gsmlib::removeWhiteSpace(string s)
   return result;
 }
 
+#ifdef WIN32
+
+// helper routine, find out whether filename starts with "COM"
+static bool isCom(string filename)
+{
+  filename = removeWhiteSpace(lowercase(filename));
+  // remove UNC begin
+  if ( filename.compare(0,4,"\\\\.\\") == 0 )
+    filename.erase(0,4);
+  return filename.length() < 3 || filename.substr(0, 3) == "com";
+}
+#endif
+
 bool gsmlib::isFile(string filename)
 {
+#ifdef WIN32
+  // stat does not work reliably under Win32 to indicate devices
+  if (isCom(filename))
+    return false;
+#endif
+
   struct stat statBuf;
   int retries = 0;
 
@@ -171,6 +206,7 @@ bool gsmlib::isFile(string filename)
                      filename.c_str(), errno, strerror(errno)),
         OSError);
     
+#ifndef WIN32
     if (S_ISLNK(statBuf.st_mode))
     {
       int size = 100;
@@ -189,9 +225,11 @@ bool gsmlib::isFile(string filename)
       }
       ++retries;
     }
-    if (S_ISCHR(statBuf.st_mode))
+    else if (S_ISCHR(statBuf.st_mode))
       return false;
-    else if (S_ISREG(statBuf.st_mode))
+    else 
+#endif
+    if (S_ISREG(statBuf.st_mode))
       return true;
     else
       throw GsmException(
@@ -206,6 +244,7 @@ bool gsmlib::isFile(string filename)
 void gsmlib::renameToBackupFile(string filename) throw(GsmException)
 {
   string backupFilename = filename + "~";
+  unlink(backupFilename.c_str());
   if (rename(filename.c_str(), backupFilename.c_str()) < 0)
     throw GsmException(
       stringPrintf(_("error renaming '%s' to '%s'"),
@@ -256,7 +295,7 @@ string gsmlib::stringPrintf(const char *format, ...)
 {
   va_list args;
   va_start(args, format);
-  int size = 1000;
+  int size = 1024;
   while (1)
   {
     char *buf = (char*)alloca(sizeof(char) * size);

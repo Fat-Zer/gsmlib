@@ -30,7 +30,7 @@ AC_CONFIG_AUX_DIR(scripts)
 AC_PROG_INSTALL
 
 dnl use automake
-AM_INIT_AUTOMAKE(gsmlib, 1.5)
+AM_INIT_AUTOMAKE(gsmlib, 1.6)
 
 dnl change to no if you want no shared libraries for debugging purposes
 AM_ENABLE_SHARED(yes)
@@ -108,7 +108,7 @@ AC_CHECK_SIZEOF(unsigned long int, 4)
 AC_CHECK_SIZEOF(unsigned int, 4)
 
 dnl Project-specific settings
-GSM_VERSION="2:4:0"
+GSM_VERSION="1:0:0"
 AC_SUBST(GSM_VERSION)
 
 dnl set locale dir (FIXME there must be a better way)
@@ -123,7 +123,9 @@ fi
 dnl whether to compile the intl directory
 AM_CONDITIONAL(COMPILE_INTL, test x$USE_INCLUDED_LIBINTL = xyes)
 
-AC_OUTPUT(Makefile gsmlib/Makefile tests/Makefile apps/Makefile doc/Makefile scripts/Makefile intl/Makefile po/Makefile.in, echo timestamp > stamp-h)
+AC_OUTPUT(Makefile gsmlib/Makefile tests/Makefile apps/Makefile win32/Makefile
+          doc/Makefile scripts/Makefile intl/Makefile po/Makefile.in,
+          echo timestamp > stamp-h)
 
 dnl repair Makefile in po subdir
 sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile

@@ -35,12 +35,13 @@ namespace gsmlib
 
   // iterator for SortedSMSStore that hides the "second" member of the map
   
-  class SortedSMSStoreIterator : public SMSStoreMap::iterator
+  typedef SMSStoreMap::iterator SMSStoreMapIterator;
+  class SortedSMSStoreIterator : public SMSStoreMapIterator
   {
   public:
     SortedSMSStoreIterator() {}
     SortedSMSStoreIterator(SMSStoreMap::iterator i) :
-      SMSStoreMap::iterator(i) {}
+      SMSStoreMapIterator(i) {}
 
     SMSStoreEntry &operator*()
       {return *((SMSStoreMap::iterator)*this)->second;}

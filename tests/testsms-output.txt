@@ -8,7 +8,7 @@ Status report indication: 0
 Originating address: '171'
 Protocol identifier: 0x39
 Data coding scheme: default alphabet
-SC timestamp: 16.04.99 08:09:44(+0200)
+SC timestamp: 04/16/1999 08:09:44 AM (+0200)
 User data length: 160
 User data header: 0x
 User data: 'T-D1 News bis 31.05.99 kostenlos testen! Über 90 Programme aus Politik, Wirtschaft, Börse, Sport direkt per SMS aufs Handy. Mehr darüber unter der Kurzwahl 2323'
@@ -25,7 +25,7 @@ Status report indication: 0
 Originating address: '01805000102'
 Protocol identifier: 0x39
 Data coding scheme: default alphabet
-SC timestamp: 17.12.98 14:10:55(+0100)
+SC timestamp: 12/17/1998 02:10:55 PM (+0100)
 User data length: 159
 User data header: 0x
 User data: 'Nicht vergessen! Die XtraWeihnachtsverlosung läuft noch bis zum 24.12. Nutzen Sie jetzt Ihre Gewinnchance und faxen Sie Ihren Teiln.-Gutschein an 0180/5000 056'
@@ -42,7 +42,7 @@ Status report indication: 0
 Originating address: ''
 Protocol identifier: 0x0
 Data coding scheme: default alphabet
-SC timestamp: 00.00.00 00:00:00(+0000)
+SC timestamp: 00/00/2000 12:00:00 AM (+0000)
 User data length: 0
 User data header: 0x
 User data: ''
@@ -59,7 +59,7 @@ Status report indication: 0
 Originating address: ''
 Protocol identifier: 0x0
 Data coding scheme: default alphabet
-SC timestamp: 00.00.00 00:00:00(+0000)
+SC timestamp: 00/00/2000 12:00:00 AM (+0000)
 User data length: 0
 User data header: 0x
 User data: ''
@@ -82,8 +82,8 @@ More messages to send: 0
 Status report qualifier: 0
 Message reference: 0
 Recipient address: ''
-SC timestamp: 00.00.00 00:00:00(+0000)
-Discharge time: 00.00.00 00:00:00(+0000)
+SC timestamp: 00/00/2000 12:00:00 AM (+0000)
+Discharge time: 00/00/2000 12:00:00 AM (+0000)
 Status: 0x0 'Short message received by the SME'
 ---------------------------------------------------------------------------
 
@@ -124,7 +124,7 @@ User data: 'This is a submit message, isn't it?'
 ---------------------------------------------------------------------------
 Message type: SMS-SUBMIT-REPORT
 SC address: ''
-SC timestamp: 00.00.00 00:00:00(+0000)
+SC timestamp: 00/00/2000 12:00:00 AM (+0000)
 Protocol identifier present: 0
 Data coding scheme present: 0
 User data length present: 0

@@ -30,4 +30,4 @@ EXTRA_DIST =	gsmsmsd.man gsmctl.man gsmpb.man gsmsendsms.man \
 		$< > $@
 
 clean-local:
-		rm -f *.1 *.8
+		rm -f *.1 *.7 *.8

@@ -35,7 +35,7 @@ extern "C" {
 #  else
 #   ifdef WIN32
 #     include <malloc.h>
-#     #define alloca _alloca
+#     define alloca _alloca
 #   else
 #     ifndef alloca /* predefined by HP cc +Olibcalls */
 char *alloca ();
@@ -50,6 +50,12 @@ char *alloca ();
 // Windows-specific stuff
 #if defined(WIN32) && ! defined(__GNUC__)
 #include <winsock.h>
+#include <io.h>
+
+#define S_ISREG(mode) (((mode) & _S_IFREG) == _S_IFREG)
+#define S_ISCHR(mode) (((mode) & _S_IFCHR) == _S_IFCHR)
+
+#define read _read
 #endif
 
 // define common data types with fixed sizes

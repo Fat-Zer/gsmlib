@@ -43,6 +43,9 @@ namespace gsmlib
     // number must be of the form "+123456" or "123456"
     Address(string number);
 
+    // return string representation
+    string toString() const;
+
     friend bool operator<(const Address &x, const Address &y);
     friend bool operator==(const Address &x, const Address &y);
   };
@@ -147,9 +150,7 @@ namespace gsmlib
     unsigned char *_op;         // current octet pointer
     unsigned char *_septetStart; // start of septet string
 
-#ifndef NDEBUG
     unsigned char *_maxop;      // pointer to last byte after _p
-#endif
 
   public:
     // initialize with a hexadecimal octet string containing SMS TPDU

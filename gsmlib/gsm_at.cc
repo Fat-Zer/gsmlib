@@ -96,9 +96,6 @@ string GsmAt::chat(string atCommand, string response, string &pdu,
                    bool ignoreErrors, bool expectPdu,
                    bool acceptEmptyResponse) throw(GsmException)
 {
-  assert(! acceptEmptyResponse ||
-         (acceptEmptyResponse && ! expectPdu)); // not tested
-
   string s;
   bool gotOk = false;           // special handling for empty SMS entries
 
@@ -141,7 +138,12 @@ string GsmAt::chat(string atCommand, string response, string &pdu,
     if (ps == "OK")
       gotOk = true;
     else
+    {
       pdu = ps;
+      // remove trailing zero added by some devices (e.g. Falcom A2-1)
+      if (pdu.length() > 0 && pdu[pdu.length() - 1] == 0)
+        pdu = pdu.erase(pdu.end() - 1);
+    }
   }
 
   // handle expected response
@@ -210,33 +212,30 @@ vector<string> GsmAt::chatv(string atCommand, string response,
       throw GsmException(_("ME/TA error '<unspecified>' (code not known)"), 
                          ChatError, -1);
 
-  // handle expected response
-  if (response.length() == 0)   // no response other than "OK" expected
+  // push all lines that are not empty
+  // cut response prefix if it is there
+  // stop when an OK line is read
+  while (1)
   {
-    if (s == "OK") return result;
-  }
-  else
-    while (1)
+    if (s == "OK")
+      return result;
+    // some TA/TEs don't prefix their response with the response string
+    // as proscribed by the standard: just handle either case
+    if (response.length() != 0 && matchResponse(s, response))
+      result.push_back(cutResponse(s, response));
+    else
+      result.push_back(s);
+    // get next line
+    do
     {
-      if (s == "OK")
-        return result;
-      if (matchResponse(s, response))
-        result.push_back(cutResponse(s, response));
-      else
-        if (ignoreErrors)
-          return result;
-        else
-          throw GsmException(
-            stringPrintf(_("unexpected response '%s' when sending 'AT%s'"),
-                         s.c_str(), atCommand.c_str()),
-            ChatError);
-      // get next line
-      do
-      {
-        s = normalize(getLine());
-      }
-      while (s.length() == 0);
-     }
+      s = normalize(getLine());
+    }
+    while (s.length() == 0);
+  }
+
+  // never reached
+  assert(0);
+  return result;
 }
 
 string GsmAt::normalize(string s)

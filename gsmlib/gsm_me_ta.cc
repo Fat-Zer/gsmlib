@@ -27,7 +27,8 @@ Capabilities::Capabilities() :
   _hasSMSSCAprefix(true),
   _cpmsParamCount(-1),          // initialize to -1, must be set later by
                                 // setSMSStore() function
-  _omitsColon(true)             // FIXME
+  _omitsColon(true),            // FIXME
+  _veryShortCOPSanswer(false)   // Falcom A2-1
 {
 }
 
@@ -46,15 +47,33 @@ void MeTa::init() throw(GsmException)
   MEInfo info = getMEInfo();
   
   // Ericsson model 6050102
-  if (info._manufacturer == "ERICSSON" &&
+  if ((info._manufacturer == "ERICSSON" &&
       (info._model == "1100801" ||
-       info._model == "1140801") ||
+       info._model == "1140801")) ||
       getenv("GSMLIB_SH888_FIX") != NULL)
   {
     // the Ericsson leaves out the service centre address
     _capabilities._hasSMSSCAprefix = false;
   }
-  
+
+  // handle Falcom strangeness
+  if ((info._manufacturer == "Funkanlagen Leipoldt OHG" &&
+      info._revision == "01.95.F2") ||
+      getenv("GSMLIB_FALCOM_A2_1_FIX") != NULL)
+  {
+    _capabilities._veryShortCOPSanswer = true;
+  }
+
+  // set GSM default character set
+  try
+  {
+    setCharSet("GSM");
+  }
+  catch (GsmException)
+  {
+    // ignore errors, some devices don't support this
+  }
+
   // set default event handler
   // necessary to handle at least RING indications that might
   // otherwise confuse gsmlib
@@ -122,16 +141,63 @@ void MeTa::waitEvent(GsmTime timeout) throw(GsmException)
     _at->chat();                // send AT, wait for OK, handle events
 }
 
+// aux function for MeTa::getMEInfo()
+
+static string stringVectorToString(const vector<string>& v,
+                                   char separator = '\n')
+{
+  if (v.empty())
+    return "";
+
+  // concatenate string in vector as rows
+  string result;
+  for (vector<string>::const_iterator i = v.begin();;)
+  {
+    result += *i;
+    // don't add end line to last
+    if ( ++i == v.end() || !separator)
+      break;
+    result += separator;
+  }
+  return result;
+}
+
 MEInfo MeTa::getMEInfo() throw(GsmException)
 {
   MEInfo result;
   // some TAs just return OK and no info line
   // leave the info empty in this case
-  result._manufacturer = _at->chat("+CGMI", "+CGMI:", false, true);
-  result._model = _at->chat("+CGMM", "+CGMM:", false, true);
-  result._revision = _at->chat("+CGMR", "+CGMR:", false, true);
-  result._serialNumber = _at->chat("+CGSN", "+CGSN:", false, true);
+  // some TAs return multirows with info like address, firmware version
+  result._manufacturer =
+    stringVectorToString(_at->chatv("+CGMI", "+CGMI:", false));
+  result._model = stringVectorToString(_at->chatv("+CGMM", "+CGMM:", false));
+  result._revision =
+    stringVectorToString(_at->chatv("+CGMR", "+CGMR:", false));
+  result._serialNumber =
+    stringVectorToString(_at->chatv("+CGSN", "+CGSN:", false),0);
   return result;
+}
+
+vector<string> MeTa::getSupportedCharSets() throw(GsmException)
+{
+  Parser p(_at->chat("+CSCS=?", "+CSCS:"));
+  return p.parseStringList();
+}
+    
+string MeTa::getCurrentCharSet() throw(GsmException)
+{
+  if (_lastCharSet == "")
+  {
+    Parser p(_at->chat("+CSCS?", "+CSCS:"));
+    _lastCharSet = p.parseString();
+  }
+  return _lastCharSet;
+}
+
+void MeTa::setCharSet(string charSetName) throw(GsmException)
+{
+  _at->chat("+CSCS=\"" + charSetName + "\"");
+  _lastCharSet = "";
 }
 
 string MeTa::getExtendedErrorReport() throw(GsmException)
@@ -148,50 +214,80 @@ vector<OPInfo> MeTa::getAvailableOPInfo() throw(GsmException)
 {
   vector<OPInfo> result;
   vector<string> responses = _at->chatv("+COPS=?", "+COPS:");
-  // GSM modems might return
-  // 1. quadruplets of info enclosed in brackets separated by comma
-  // 2. several lines of quadruplets of info enclosed in brackets
-  // 3. several lines of quadruplets without brackets and additional
-  //    info at EOL (e.g. Nokia 8290)
-  for (vector<string>::iterator i = responses.begin();
-       i != responses.end(); ++i)
+
+  // special treatment for Falcom A2-1, answer looks like
+  //   responses.push_back("(1,29341),(3,29340)");
+  if (_capabilities._veryShortCOPSanswer)
   {
-    bool expectClosingBracket = false;
-    Parser p(*i);
-    while (1)
+    if (responses.size() == 1)
     {
-      OPInfo opi;
-      if (p.parseComma(true)) break;
-      expectClosingBracket = p.parseChar('(', true);
-      int status = p.parseInt(true);
-      opi._status = (status == NOT_SET ? UnknownOPStatus : (OPStatus)status);
-      p.parseComma();
-      opi._longName = p.parseString(true);
-      p.parseComma();
-      opi._shortName = p.parseString(true);
-      p.parseComma();
-      try
+      Parser p(responses[0]);
+      while (p.parseChar('(', true))
       {
-        opi._numericName = p.parseInt(true);
+        OPInfo opi;
+        opi._status = (OPStatus)p.parseInt();
+        p.parseComma();
+        opi._numericName = p.parseInt();
+        p.parseChar(')');
+        p.parseComma(true);
+        result.push_back(opi);
       }
-      catch (GsmException &e)
-      {
-        if (e.getErrorClass() == ParserError)
-        {
-          // the Ericsson GM12 GSM modem returns the numeric ID as string
-          string s = p.parseString();
-          opi._numericName = checkNumber(s);
-        }
-        else
-          throw e;
-      }
-      if (expectClosingBracket) p.parseChar(')');
-      p.parseComma(true);
-      result.push_back(opi);
     }
-    // without brackets, the ME/TA must use format 3.
-    if (! expectClosingBracket) break;
   }
+  else
+    // some formats I have encountered...
+    //responses.push_back("2,,,31017,,(0,1),(2)");
+    //responses.push_back("(3,\"UK CELLNET\",\"CLNET\",\"23410\")," 
+    //                    "(3,\"ONE2 ONE\",\"ONE2ONE\",\"23430\"),"
+    //                    "(3,\"ORANGE\",\"ORANGE\",\"23433\")");
+    //responses.push_back("(2,\"D1-TELEKOM\",,26201),"
+    //                    "(3,\"D2  PRIVAT\",,26202),,(0,1,3,4),(0,2)");
+    
+    // GSM modems might return
+    // 1. quadruplets of info enclosed in brackets separated by comma
+    // 2. several lines of quadruplets of info enclosed in brackets
+    // 3. several lines of quadruplets without brackets and additional
+    //    info at EOL (e.g. Nokia 8290)
+    for (vector<string>::iterator i = responses.begin();
+         i != responses.end(); ++i)
+    {
+      bool expectClosingBracket = false;
+      Parser p(*i);
+      while (1)
+      {
+        OPInfo opi;
+        expectClosingBracket = p.parseChar('(', true);
+        int status = p.parseInt(true);
+        opi._status = (status == NOT_SET ? UnknownOPStatus : (OPStatus)status);
+        p.parseComma();
+        opi._longName = p.parseString(true);
+        p.parseComma();
+        opi._shortName = p.parseString(true);
+        p.parseComma();
+        try
+        {
+          opi._numericName = p.parseInt(true);
+        }
+        catch (GsmException &e)
+        {
+          if (e.getErrorClass() == ParserError)
+          {
+            // the Ericsson GM12 GSM modem returns the numeric ID as string
+            string s = p.parseString();
+            opi._numericName = checkNumber(s);
+          }
+          else
+            throw e;
+        }
+        if (expectClosingBracket) p.parseChar(')');
+        result.push_back(opi);
+        if (! p.parseComma(true)) break;
+        // two commas ",," mean the list is finished
+        if (p.parseComma(true)) break;
+      }
+      // without brackets, the ME/TA must use format 3.
+      if (! expectClosingBracket) break;
+    }
   return result;
 }
 
@@ -350,16 +446,50 @@ void MeTa::setCurrentOPInfo(OPModes mode,
 
 vector<string> MeTa::getFacilityLockCapabilities() throw(GsmException)
 {
-  Parser p(_at->chat("+CLCK=?", "+CLCK:"));
+  string locks = _at->chat("+CLCK=?", "+CLCK:");
+  // some TA don't add '(' and ')' (Option FirstFone)
+  if (locks.length() && locks[0] != '(')
+  {
+    locks.insert(locks.begin(),'(');
+    locks += ')';
+  }
+  Parser p(locks);
   return p.parseStringList();
 }
 
 bool MeTa::getFacilityLockStatus(string facility, FacilityClass cl)
   throw(GsmException)
 {
-  Parser p(_at->chat("+CLCK=\"" + facility + "\",2,," + intToStr((int)cl),
-                     "+CLCK:"));
-  return p.parseInt() == 1;
+  // some TA return always multiline response with all classes
+  // (Option FirstFone)
+  // !!! errors handling is correct (responses.empty() true) ?
+  vector<string> responses = 
+    _at->chatv("+CLCK=\"" + facility + "\",2,," + intToStr((int)cl),"+CLCK:",true);
+  for (vector<string>::iterator i = responses.begin();
+       i != responses.end(); ++i)
+  {
+    Parser p(*i);
+    int enabled = p.parseInt();
+
+    // if the first time and there is no comma this 
+    // return direct state of classes
+    // else return all classes
+    if (i == responses.begin())
+    {
+      if (!p.parseComma(true))
+        return enabled == 1;
+    }
+    else
+      p.parseComma();
+
+    if ( p.parseInt() == (int)cl )
+      return enabled == 1;
+  }
+  return false;
+
+//  Parser p(_at->chat("+CLCK=\"" + facility + "\",2,," + intToStr((int)cl),
+//                     "+CLCK:"));
+//  return p.parseInt() == 1;
 }
 
 void MeTa::lockFacility(string facility, FacilityClass cl, string passwd)

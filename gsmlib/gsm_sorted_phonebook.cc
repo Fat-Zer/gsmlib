@@ -17,6 +17,7 @@
 #include <gsmlib/gsm_util.h>
 #include <gsmlib/gsm_sorted_phonebook.h>
 #include <gsmlib/gsm_nls.h>
+#include <iostream>
 #include <fstream>
 #include <limits.h>
 

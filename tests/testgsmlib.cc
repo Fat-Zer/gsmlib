@@ -9,7 +9,14 @@
 // *
 // * Created: 17.5.1999
 // *************************************************************************
+#ifdef HAVE_CONFIG_H
+#include <gsm_config.h>
+#endif
+#ifdef WIN32
+#include <gsmlib/gsm_win32_serial.h>
+#else
 #include <gsmlib/gsm_unix_serial.h>
+#endif
 #include <gsmlib/gsm_me_ta.h>
 #include <iostream>
 
@@ -34,7 +41,11 @@ int main(int argc, char *argv[])
   try
   {
     cout << (string)"Opening device " + argv[1] << endl;
-    Ref<Port> port = new UnixSerialPort((string)argv[1], B38400);
+#ifdef WIN32
+    Ref<Port> port = new Win32SerialPort((string)argv[1], 38400);
+#else
+	Ref<Port> port = new UnixSerialPort((string)argv[1], B38400);
+#endif
 
     cout << "Creating MeTa object" << endl;
     MeTa m(port);
@@ -100,23 +111,23 @@ int main(int argc, char *argv[])
     cout << endl << endl;
 
     cout << "Facility lock states" << endl;
-    for (vector<string>::iterator i = fclc.begin(); i != fclc.end(); ++i)
-      if (*i != "AB" && *i != "AG" && *i != "AC")
+    for (vector<string>::iterator k = fclc.begin(); k != fclc.end(); ++k)
+      if (*k != "AB" && *k != "AG" && *k != "AC")
       {
-        cout << "  " << *i;
-        if (m.getFacilityLockStatus(*i, VoiceFacility))
+        cout << "  " << *k;
+        if (m.getFacilityLockStatus(*k, VoiceFacility))
           cout << "  Voice";
-        if (m.getFacilityLockStatus(*i, DataFacility))
+        if (m.getFacilityLockStatus(*k, DataFacility))
           cout << "  Data";
-        if (m.getFacilityLockStatus(*i, FaxFacility))
+        if (m.getFacilityLockStatus(*k, FaxFacility))
           cout << "  Fax";
       }
     cout << endl;
     
     cout << "Facilities with password" << endl;
     vector<PWInfo> pwi = m.getPasswords();
-    for (vector<PWInfo>::iterator i = pwi.begin(); i != pwi.end(); ++i)
-      cout << "  " << i->_facility << " len " << i->_maxPasswdLen << endl;
+    for (vector<PWInfo>::iterator j = pwi.begin(); j != pwi.end(); ++j)
+      cout << "  " << j->_facility << " len " << j->_maxPasswdLen << endl;
     cout << endl;
 
     cout << "Network caller line identification identification: "

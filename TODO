@@ -3,6 +3,20 @@ necessarily in order of importance):
 
 ("+" = DONE)
 
+- switch caching off in gsmsmsd and test it
+
+- recheck Solaris port
+
++ cache character set settings in MeTa
+
+- add documentation for new gsmctl and gsmpb charset parameters
+
++ support characters sets other than GSM default alphabet for phone books
+
++ create non-existent files (gsmpb and gsmsmsstore)
+
++ rename libgsm to libgsmme, new major version 1
+
 + document sca/setsca operations/parameters in gsmctl
 
 + document option to set SCA in SMS-related apps

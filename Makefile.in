@@ -104,7 +104,7 @@ USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 l = @l@
 
-SUBDIRS_ = po gsmlib apps tests doc scripts
+SUBDIRS_ = po gsmlib apps tests doc scripts win32
 
 EXTRA_DIST = gsmlib.spec
 @COMPILE_INTL_TRUE@SUBDIRS = intl $(SUBDIRS_) # po - make automake happy
@@ -122,8 +122,8 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = gtar
 GZIP_ENV = --best
-DIST_SUBDIRS =  intl po gsmlib apps tests doc scripts po gsmlib apps \
-tests doc scripts
+DIST_SUBDIRS =  intl po gsmlib apps tests doc scripts win32 po gsmlib \
+apps tests doc scripts win32
 all: all-redirect
 .SUFFIXES:
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
@@ -299,7 +299,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$/$$file $(distdir)/$$file; \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \

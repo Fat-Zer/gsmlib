@@ -16,6 +16,7 @@
 #include <gsmlib/gsm_parser.h>
 #include <gsmlib/gsm_nls.h>
 #include <ctype.h>
+#include <assert.h>
 #include <strstream>
 
 using namespace std;
@@ -28,7 +29,11 @@ int Parser::nextChar(bool skipWhiteSpace)
   if (skipWhiteSpace)
     while (_i < _s.length() && isspace(_s[_i])) ++_i;
 
-  if (_i == _s.length()) return -1;
+  if (_i == _s.length())
+  {
+    _eos = true;
+    return -1;
+  }
 
   return _s[_i++];
 }
@@ -120,7 +125,7 @@ void Parser::throwParseException(string message) throw(GsmException)
                                     _s.c_str()), ParserError);
 }
 
-Parser::Parser(string s) : _i(0), _s(s)
+Parser::Parser(string s) : _i(0), _s(s), _eos(false)
 {
 }
 
@@ -335,7 +340,9 @@ string Parser::getEol()
   string result;
   int c;
   unsigned int saveI = _i;
+  bool saveEos = _eos;
   while ((c = nextChar()) != -1) result += c;
   _i = saveI;
+  _eos = saveEos;
   return result;
 }

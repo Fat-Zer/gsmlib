@@ -15,6 +15,7 @@
 #include <gsm_config.h>
 #endif
 #include <gsmlib/gsm_nls.h>
+#include <string>
 
 using namespace std;
 

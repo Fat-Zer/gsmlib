@@ -28,34 +28,34 @@ EXTRA_DIST =		spb.pb runspb.sh runspb2.sh runssms.sh runsms.sh \
 			testspb2-output.txt \
 			runspbi.sh spbi2-orig.pb spbi1.pb testspbi-output.txt
 
-# build testsms from testsms.cc and libgsm.la
+# build testsms from testsms.cc and libgsmme.la
 testsms_SOURCES =	testsms.cc
-testsms_LDADD =		../gsmlib/libgsm.la $(INTLLIBS)
+testsms_LDADD =		../gsmlib/libgsmme.la $(INTLLIBS)
 
-# build testsms2 from testsms2.cc and libgsm.la
+# build testsms2 from testsms2.cc and libgsmme.la
 testsms2_SOURCES =	testsms2.cc
-testsms2_LDADD =	../gsmlib/libgsm.la $(INTLLIBS)
+testsms2_LDADD =	../gsmlib/libgsmme.la $(INTLLIBS)
 
-# build testparser from testparser.cc and libgsm.la
+# build testparser from testparser.cc and libgsmme.la
 testparser_SOURCES =	testparser.cc
-testparser_LDADD =	../gsmlib/libgsm.la $(INTLLIBS)
+testparser_LDADD =	../gsmlib/libgsmme.la $(INTLLIBS)
 
-# build testgsmlib from testgsmlib.cc and libgsm.la
+# build testgsmlib from testgsmlib.cc and libgsmme.la
 testgsmlib_SOURCES =	testgsmlib.cc
-testgsmlib_LDADD =	../gsmlib/libgsm.la $(INTLLIBS)
+testgsmlib_LDADD =	../gsmlib/libgsmme.la $(INTLLIBS)
 
-# build testpb from testpb.cc and libgsm.la
+# build testpb from testpb.cc and libgsmme.la
 testpb_SOURCES =	testpb.cc
-testpb_LDADD =	../gsmlib/libgsm.la $(INTLLIBS)
+testpb_LDADD =	../gsmlib/libgsmme.la $(INTLLIBS)
 
-# build testpb2 from testpb2.cc and libgsm.la
+# build testpb2 from testpb2.cc and libgsmme.la
 testpb2_SOURCES =	testpb2.cc
-testpb2_LDADD =	../gsmlib/libgsm.la $(INTLLIBS)
+testpb2_LDADD =	../gsmlib/libgsmme.la $(INTLLIBS)
 
-# build testspb from testspb.cc and libgsm.la
+# build testspb from testspb.cc and libgsmme.la
 testspb_SOURCES =	testspb.cc
-testspb_LDADD =	../gsmlib/libgsm.la $(INTLLIBS)
+testspb_LDADD =	../gsmlib/libgsmme.la $(INTLLIBS)
 
-# build testssms from testssms.cc and libgsm.la
+# build testssms from testssms.cc and libgsmme.la
 testssms_SOURCES = testssms.cc
-testssms_LDADD = ../gsmlib/libgsm.la $(INTLLIBS)
+testssms_LDADD = ../gsmlib/libgsmme.la $(INTLLIBS)

@@ -16,7 +16,9 @@
 #include <string>
 #include <vector>
 #include <gsmlib/gsm_error.h>
+#ifndef WIN32
 #include <sys/time.h>
+#endif
 #include <stdio.h>
 
 using namespace std;
@@ -47,8 +49,8 @@ namespace gsmlib
   // convert byte buffer of length to hexadecimal string
   string bufToHex(const unsigned char *buf, unsigned long length);
 
-  // convert hexString to byte buffer
-  void hexToBuf(const string &hexString, unsigned char *buf);
+  // convert hexString to byte buffer, return false if no hexString
+  bool hexToBuf(const string &hexString, unsigned char *buf);
 
   // indicate that a value is not set
   const int NOT_SET = -1;

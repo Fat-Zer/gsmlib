@@ -543,7 +543,8 @@ SMSCommandMessage::SMSCommandMessage(string pdu) throw(GsmException)
   _messageNumber = d.getOctet();
   _destinationAddress = d.getAddress();
   _commandDataLength = d.getOctet();
-  unsigned char s[_commandDataLength];
+  unsigned char *s = 
+      (unsigned char*)alloca(sizeof(unsigned char) * _commandDataLength);
   d.getOctets(s, _commandDataLength);
 }
 
