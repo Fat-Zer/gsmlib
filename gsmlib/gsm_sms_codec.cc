@@ -190,7 +190,7 @@ string TimePeriod::toString() const
       os << 12 * 60 + ((int)_relativeTime - 143) * 30 << _(" minutes");
     else if (_relativeTime <= 196)
       os << (int)_relativeTime - 166 << _(" days");
-    else if (_relativeTime <= 143)
+    else
       os << (int)_relativeTime - 192 << _(" weeks");
     os << ends;
     char *ss = os.str();

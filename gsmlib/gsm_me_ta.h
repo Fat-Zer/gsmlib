@@ -33,6 +33,8 @@ namespace gsmlib
   struct Capabilities
   {
     bool _hasSMSSCAprefix;      // SMS have service centre address prefix
+    bool _hasSMSPDUmode;        // implements SMS PDU mode
+    bool _noCPBxParentheses;    // missing() around CPBS/CPBR responses
     int _cpmsParamCount;        // number of SMS store parameters to
                                 // CPMS command
     bool _omitsColon;           // omits trailing ':' in AT responses
@@ -40,6 +42,7 @@ namespace gsmlib
     bool _wrongSMSStatusCode;   // Motorola Timeport 260
     bool _CDSmeansCDSI;         // Nokia Cellular Card Phone RPE-1 GSM900
     bool _sendAck;              // send ack for directly routed SMS
+    bool _MotorolaModeCmd;      // send "+MODE=" to Motorola 60t
     Capabilities();             // constructor, set default behaviours
   };
   
@@ -396,6 +399,8 @@ namespace gsmlib
 
     friend class Phonebook;
     friend class SMSStore;
+
+    virtual ~MeTa();
   };
 };
 

@@ -141,11 +141,11 @@ bin_PROGRAMS = gsmsiectl gsmsiexfer
 
 # build gsmsiectl from gsmsiectl.cc and libgsmme.la
 gsmsiectl_SOURCES = gsmsiectl.cc
-gsmsiectl_LDADD = ../gsmlib/libgsmme.la libgsmext.la $(INTLLIBS)
+gsmsiectl_LDADD = libgsmext.la ../gsmlib/libgsmme.la $(INTLLIBS)
 
 # build gsmsiexfer from gsmsiexfer.cc and libgsmme.la
 gsmsiexfer_SOURCES = gsmsiexfer.cc
-gsmsiexfer_LDADD = ../gsmlib/libgsmme.la libgsmext.la $(INTLLIBS)
+gsmsiexfer_LDADD = libgsmext.la ../gsmlib/libgsmme.la $(INTLLIBS)
 subdir = ext
 mkinstalldirs = $(SHELL) $(top_srcdir)/scripts/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/gsm_config.h
@@ -160,11 +160,11 @@ PROGRAMS = $(bin_PROGRAMS)
 
 am_gsmsiectl_OBJECTS = gsmsiectl.$(OBJEXT)
 gsmsiectl_OBJECTS = $(am_gsmsiectl_OBJECTS)
-gsmsiectl_DEPENDENCIES = ../gsmlib/libgsmme.la libgsmext.la
+gsmsiectl_DEPENDENCIES = libgsmext.la ../gsmlib/libgsmme.la
 gsmsiectl_LDFLAGS =
 am_gsmsiexfer_OBJECTS = gsmsiexfer.$(OBJEXT)
 gsmsiexfer_OBJECTS = $(am_gsmsiexfer_OBJECTS)
-gsmsiexfer_DEPENDENCIES = ../gsmlib/libgsmme.la libgsmext.la
+gsmsiexfer_DEPENDENCIES = libgsmext.la ../gsmlib/libgsmme.la
 gsmsiexfer_LDFLAGS =
 
 DEFS = @DEFS@

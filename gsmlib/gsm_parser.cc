@@ -82,15 +82,15 @@ string Parser::parseString2(bool stringWithQuotationMarks)
         else
           result += c;
     }
-  else                          // string ends with "," or EOL
+  else // string ends with "," or ")" or EOL
   {
     c = nextChar(false);
-    while (c != ',' && c != -1)
+    while ((c != ',') && (c != ')') && (c != -1))
     {
       result += c;
       c = nextChar(false);
     }
-    if (c == ',') putBackChar();
+    if ((c == ',') || (c == ')')) putBackChar();
   }
     
   return result;
@@ -173,15 +173,21 @@ vector<string> Parser::parseStringList(bool allowNoList,
   return result;
 }
 
-vector<bool> Parser::parseIntList(bool allowNoList)
+vector<bool> Parser::parseIntList(bool allowNoList, bool allowNoParentheses)
   throw(GsmException)
 {
-  // handle case of empty parameter
   bool isRange = false;
   vector<bool> result;
   int resultCapacity = 0;
   unsigned int saveI = _i;
 
+  enum                 // parse in two passes
+  {
+    FIND_CAPACITY=0,   // find capacity needed for result
+    FILL_VECTOR        // resize result and fill it in
+  };
+
+  // handle case of empty parameter
   if (checkEmptyParameter(allowNoList)) return result;
 
   // check for the case of a integer list consisting of only one parameter
@@ -199,16 +205,19 @@ vector<bool> Parser::parseIntList(bool allowNoList)
   // run in two passes
   // pass 0: find capacity needed for result
   // pass 1: resize result and fill it in
-  for (int pass = 0; pass < 2; ++pass)
+  for (int pass = FIND_CAPACITY; pass <= FILL_VECTOR; ++pass)
   {
-    if (pass == 1)
+    if (pass == FILL_VECTOR)
     {
       _i = saveI;
       result.resize(resultCapacity + 1, false);
     }
 
-    parseChar('(');
-    if (nextChar() != ')')
+    bool expectClosingParen = parseChar('(', allowNoParentheses);
+
+    int nc = nextChar();
+    if ((expectClosingParen && nc != ')') ||
+        (! expectClosingParen && nc != -1))
     {
       putBackChar();
       int lastInt = -1;
@@ -245,7 +254,9 @@ vector<bool> Parser::parseIntList(bool allowNoList)
         lastInt = thisInt;
       
         int c = nextChar();
-        if (c == ')')
+        
+        if ((expectClosingParen && c == ')') ||
+            (! expectClosingParen && c == -1))
           break;
 
         if (c == -1)
@@ -301,19 +312,29 @@ ParameterRange Parser::parseParameterRange(bool allowNoParameterRange)
   return result;
 }
 
-IntRange Parser::parseRange(bool allowNoRange, bool allowNonRange)
+IntRange Parser::parseRange(bool allowNoRange, bool allowNonRange,
+                            bool allowNoParentheses)
   throw(GsmException)
 {
   // handle case of empty parameter
   IntRange result;
   if (checkEmptyParameter(allowNoRange)) return result;
 
-  parseChar('(');
+  bool expectClosingParen = parseChar('(', allowNoParentheses);
   result._low = parseInt();
   // allow non-ranges is allowNonRange == true
   if (parseChar('-', allowNonRange))
     result._high = parseInt();
-  parseChar(')');
+  if (expectClosingParen)
+    parseChar(')');
+
+  // turn silly ranges like "5-3" into "3-5"
+  if (result._low > result._high)
+  {
+    int temp = result._low;
+    result._low = result._high;
+    result._high = temp;
+  }
 
   return result;
 }

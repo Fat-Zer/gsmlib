@@ -31,10 +31,10 @@ bin_PROGRAMS =		gsmsiectl gsmsiexfer
 
 # build gsmsiectl from gsmsiectl.cc and libgsmme.la
 gsmsiectl_SOURCES =	gsmsiectl.cc
-gsmsiectl_LDADD =	../gsmlib/libgsmme.la libgsmext.la $(INTLLIBS)
+gsmsiectl_LDADD =	libgsmext.la ../gsmlib/libgsmme.la $(INTLLIBS)
 
 # build gsmsiexfer from gsmsiexfer.cc and libgsmme.la
 gsmsiexfer_SOURCES =	gsmsiexfer.cc
-gsmsiexfer_LDADD =	../gsmlib/libgsmme.la libgsmext.la $(INTLLIBS)
+gsmsiexfer_LDADD =	libgsmext.la ../gsmlib/libgsmme.la $(INTLLIBS)
 
 

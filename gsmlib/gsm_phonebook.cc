@@ -316,7 +316,8 @@ Phonebook::Phonebook(string phonebookName, Ref<GsmAt> at, MeTa &myMeTa,
   Parser p(_at->chat("+CPBR=?", "+CPBR:"));
 
   // get index of actually available entries in the phonebook
-  vector<bool> availablePositions = p.parseIntList();
+  vector<bool> availablePositions =
+    p.parseIntList(false, myMeTa.getCapabilities()._noCPBxParentheses);
   p.parseComma();
   _maxNumberLength = p.parseInt();
   p.parseComma();

@@ -20,6 +20,12 @@ gsmlib-1.11
 
      - More standards-conformant spec file (thanks to Matthias Brill)
 
+     - Added features to gsmsmsd to better organize large-scale SMS
+       sending (failed/sent SMS directories, priorities, syslog facility)
+       thanks to Matthias Goebl
+
+     - Added support for the Motorola 60t phone thanks to Dan Eble
+
 gsmlib-1.10
      - reactivated code in gsm_at to retry sending PDU after
        unsolicited result code 

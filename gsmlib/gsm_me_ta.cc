@@ -26,6 +26,8 @@ using namespace gsmlib;
 
 Capabilities::Capabilities() :
   _hasSMSSCAprefix(true),
+  _hasSMSPDUmode(true),
+  _noCPBxParentheses(false),
   _cpmsParamCount(-1),          // initialize to -1, must be set later by
                                 // setSMSStore() function
   _omitsColon(true),            // FIXME
@@ -33,7 +35,8 @@ Capabilities::Capabilities() :
   _wrongSMSStatusCode(false),   // Motorola Timeport 260
   _CDSmeansCDSI(false),         // Nokia Cellular Card Phone RPE-1 GSM900 and
                                 // Nokia Card Phone RPM-1 GSM900/1800
-  _sendAck(false)               // send ack for directly routed SMS
+  _sendAck(false),              // send ack for directly routed SMS
+  _MotorolaModeCmd(false)       // send "+MODE=" to Motorola phone
 {
 }
 
@@ -41,12 +44,42 @@ Capabilities::Capabilities() :
 
 void MeTa::init() throw(GsmException)
 {
+  // Motorola 60t needs "+MODE=2" before it will respond to GSM commands;
+  // however it will identify itself with the mandatory ITU-T V.25ter
+  // generic TA control command "+GMM".
+  try
+  {
+    if (_at->chat("+GMM", "+GMM:") == "Motorola  60t Phone")
+    {
+      _capabilities._MotorolaModeCmd = true;
+      _capabilities._noCPBxParentheses = true;
+      
+      // Put the phone in GSM command mode.  The expected response is
+      //     <CR><LF>OK<CR><LF>
+      //     <CR><LF>+MBAN: Copyright 2000 Motorola, Inc.<CR><LF>
+      _at->chat("+MODE=2", "", false, true);
+      _at->getLine();             // consume <CR><LF>
+      _at->getLine();             // consume +MBAN: ... <CR><LF>
+    }
+  }
+  catch (GsmException)
+  {
+    // ignore, may not work on all phones
+  }
+
   // switch on extended error codes
   // caution: may be ignored by some TAs, so allow it to fail
   _at->chat("+CMEE=1", "", true, true);
   
   // select SMS pdu mode
-  _at->chat("+CMGF=0");
+  try
+  {
+    _at->chat("+CMGF=0");
+  }
+  catch (GsmException)
+  {
+    _capabilities._hasSMSPDUmode = false;
+  }
 
   // now fill in capability object
   MEInfo info = getMEInfo();
@@ -852,7 +885,7 @@ int MeTa::getBitErrorRate() throw(GsmException)
 vector<string> MeTa::getPhoneBookStrings() throw(GsmException)
 {
   Parser p(_at->chat("+CPBS=?", "+CPBS:"));
-  return p.parseStringList();
+  return p.parseStringList(false, _capabilities._noCPBxParentheses);
 }
 
 PhonebookRef MeTa::getPhonebook(string phonebookString,
@@ -1251,3 +1284,11 @@ int MeTa::getCLIRPresentation() throw(GsmException)
   return p.parseInt();
 }
 
+MeTa::~MeTa()
+{
+  // Take Motorola 60t out of GSM command mode.
+  if (_capabilities._MotorolaModeCmd)
+  {
+    _at->chat("+MODE=0", "", true, true); // allow to fail
+  }
+}
