@@ -66,14 +66,19 @@ HARDWARE
      - Siemens S25/- (Linux IrDA serial device)
      - Siemens S35i/- (Linux IrDA serial device)
      - Siemens S45
+     - Siemens S55
      - Siemens TC35T and MC35T 
+     - Siemens C60
      - Ericcson SH888/- (Linux IrDA serial device)
      - Ericsson 6050102/GM 12 GSM module
      - Ericsson T28s (firmware 000809 1106)
      - Ericsson T20e (firmware R3A007)
+     - Ericsson a2618s/-
+     - Ericsson R520m
      - -/Siemens M20T (stand-alone GSM module)
      - -/Wavecom WM02 GSM (stand-alone GSM module)
-     - Nokia 7110 (firware rev 4.80)/- (Linux IrDA serial device)
+     - Nokia 7110 (firmware rev 4.80)/- (Linux IrDA serial device)
+     - NOKIA 7210
      - Nokia 8290 (USA GSM 1900MHz)/- (Linux IrDA serial device)
      - Falcom A2-1/- (stand-alone GSM module)
      - Ericsson R320s/- (Linux IrDA serial device)
@@ -91,6 +96,7 @@ HARDWARE
      - Option International GlobeTrotter PCMCIA
      - Samsung A300e/- (Linux IrDA)
      - Sony Ericsson T300/- (Linux IrDA)
+     - Sony Ericsson T610/- (Linux IrDA)
      - "Vierling ECOTEL" GSM Gateway
      - Nokia 30/- (stand-alone GSM module)
 

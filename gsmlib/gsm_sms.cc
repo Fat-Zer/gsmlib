@@ -298,8 +298,12 @@ string SMSDeliverMessage::toString() const
      << bufToHex((unsigned char*)
                  ((string)_userDataHeader).data(),
                  ((string)_userDataHeader).length())
-     << endl
-     << _("User data: '") << _userData << "'" << endl
+     << endl;
+     if(_dataCodingScheme.getAlphabet() != DCS_SIXTEEN_BIT_ALPHABET)
+       os << _("User data: '") << _userData << "'" << endl;
+     else
+       os << _("User data: '") << "0x" << bufToHex((unsigned char *)_userData.data(), _userData.length()) << "'" << endl;
+     os
      << dashes << endl << endl
      << ends;
   char *ss = os.str();
@@ -457,8 +461,12 @@ string SMSSubmitMessage::toString() const
      << _("User data header: 0x") << bufToHex((unsigned char*)
                                               ((string)_userDataHeader).data(),
                                               _userDataHeader.length())
-     << endl
-     << _("User data: '") << _userData << "'" << endl
+     << endl;
+     if(_dataCodingScheme.getAlphabet() != DCS_SIXTEEN_BIT_ALPHABET)
+       os << _("User data: '") << _userData << "'" << endl;
+     else
+       os << _("User data: '") << "0x" << bufToHex((unsigned char *)_userData.data(), _userData.length()) << "'" << endl;
+     os
      << dashes << endl << endl
      << ends;
   char *ss = os.str();
@@ -732,8 +740,13 @@ string SMSDeliverReportMessage::toString() const
   if (_dataCodingSchemePresent)
     os << _("Data coding scheme: ") << _dataCodingScheme.toString() << endl;
   if (_userDataLengthPresent)
-    os << _("User data length: ") << (int)userDataLength() << endl
-       << _("User data: '") << _userData << "'" << endl;
+  {
+    os << _("User data length: ") << (int)userDataLength() << endl;
+    if(_dataCodingScheme.getAlphabet() != DCS_SIXTEEN_BIT_ALPHABET)
+      os << _("User data: '") << _userData << "'" << endl;
+    else
+      os << _("User data: '") << "0x" << bufToHex((unsigned char *)_userData.data(), _userData.length()) << "'" << endl;
+  }
   os << dashes << endl << endl
      << ends;
   char *ss = os.str();
@@ -839,8 +852,13 @@ string SMSSubmitReportMessage::toString() const
   if (_dataCodingSchemePresent)
     os << _("Data coding scheme: ") << _dataCodingScheme.toString() << endl;
   if (_userDataLengthPresent)
-    os << _("User data length: ") << (int)userDataLength() << endl
-       << _("User data: '") << _userData << "'" << endl;
+  {
+    os << _("User data length: ") << (int)userDataLength() << endl;
+    if(_dataCodingScheme.getAlphabet() != DCS_SIXTEEN_BIT_ALPHABET)
+      os << _("User data: '") << _userData << "'" << endl;
+    else
+      os << _("User data: '") << "0x" << bufToHex((unsigned char *)_userData.data(), _userData.length()) << "'" << endl;
+  }
   os << dashes << endl << endl
      << ends;
   char *ss = os.str();

@@ -30,6 +30,12 @@ gsmlib-1.11
        scripts to make use of the command line apps easiers (thanks to
        Matthias Goebl)
 
+     - Added Siemens-specific SIM toolkit functions to gsmlib extension
+       library (thanks to Christian W. Zuckschwerdt)
+
+     - Added to code SMS*Message::toString() functions to print 16 bit
+       user data in hexadecimal
+
 gsmlib-1.10
      - reactivated code in gsm_at to retry sending PDU after
        unsolicited result code 

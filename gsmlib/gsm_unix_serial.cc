@@ -27,6 +27,7 @@
 #include <signal.h>
 #include <pthread.h>
 #include <cassert>
+#include <assert.h>
 
 using namespace std;
 using namespace gsmlib;
@@ -201,14 +202,14 @@ UnixSerialPort::UnixSerialPort(string device, speed_t lineSpeed,
 
     // toggle DTR to reset modem
     int mctl = TIOCM_DTR;
-    if (ioctl(_fd, TIOCMBIC, &mctl) < 0)
+    if (ioctl(_fd, TIOCMBIC, &mctl) < 0 && errno != ENOTTY)
     {
       close(_fd);
       throwModemException(_("clearing DTR failed"));
     }
     // the waiting time for DTR toggling is increased with each loop
     usleep(holdoff[initTries]);
-    if (ioctl(_fd, TIOCMBIS, &mctl) < 0)
+    if (ioctl(_fd, TIOCMBIS, &mctl) < 0 && errno != ENOTTY)
     {
       close(_fd);
       throwModemException(_("setting DTR failed"));

@@ -3,6 +3,10 @@ necessarily in order of importance):
 
 ("+" = DONE)
 
+- test with Linux 2.6.x
+
+- make package for contrib scripts (or install as doc?)
+
 - fix compiler warnings
 
 + SPEC file of M. Brill

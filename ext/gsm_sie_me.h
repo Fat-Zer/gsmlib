@@ -93,6 +93,10 @@ namespace gsmlib
     // Siemens Binary Write
     void setBinary(string type, int subtype, BinaryObject obj)
       throw(GsmException);
+
+    // Siemens Sim Toolkit
+    void setSSTK(string pdu)
+      throw(GsmException);
   };
 };
 
