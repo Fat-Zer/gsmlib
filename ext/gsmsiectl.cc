@@ -18,7 +18,6 @@
 #if defined(HAVE_GETOPT_LONG) || defined(WIN32)
 #include <getopt.h>
 #endif
-#include <strstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>

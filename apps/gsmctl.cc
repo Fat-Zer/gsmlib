@@ -18,7 +18,6 @@
 #if defined(HAVE_GETOPT_LONG) || defined(WIN32)
 #include <getopt.h>
 #endif
-#include <strstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -121,22 +120,26 @@ static void printInfo(InfoParameter ip)
   }
   case OperatorInfo:
   {
-    int count = 0;
-    vector<OPInfo> opis = m->getAvailableOPInfo();
-    for (vector<OPInfo>::iterator i = opis.begin(); i != opis.end(); ++i)
-    {
-      cout << "<OP" << count << _(">  Status: ");
-      switch (i->_status)
+    try {
+      int count = 0;
+      vector<OPInfo> opis = m->getAvailableOPInfo();
+      for (vector<OPInfo>::iterator i = opis.begin(); i != opis.end(); ++i)
       {
-      case UnknownOPStatus: cout << _("unknown"); break;
-      case CurrentOPStatus: cout << _("current"); break;
-      case AvailableOPStatus: cout << _("available"); break;
-      case ForbiddenOPStatus: cout << _("forbidden"); break;
+        cout << "<OP" << count << _(">  Status: ");
+        switch (i->_status)
+        {
+        case UnknownOPStatus: cout << _("unknown"); break;
+        case CurrentOPStatus: cout << _("current"); break;
+        case AvailableOPStatus: cout << _("available"); break;
+        case ForbiddenOPStatus: cout << _("forbidden"); break;
+        }
+        cout << _("  Long name: '") << i->_longName << "' "
+             << _("  Short name: '") << i->_shortName << "' "
+             << _("  Numeric name: ") << i->_numericName << endl;
+        ++count;
       }
-      cout << _("  Long name: '") << i->_longName << "' "
-           << _("  Short name: '") << i->_shortName << "' "
-           << _("  Numeric name: ") << i->_numericName << endl;
-      ++count;
+    } catch (GsmException &x) {
+      cout << _("<OP> Operator Selection: ") << _("unsupported") << endl;
     }
     break;
   }
@@ -160,62 +163,74 @@ static void printInfo(InfoParameter ip)
   }
   case FacilityLockStateInfo:
   {
-    int count = 0;
-    vector<string> fclc = m->getFacilityLockCapabilities();
-    for (vector<string>::iterator i = fclc.begin(); i != fclc.end(); ++i)
-      if (*i != "AB" && *i != "AG" && *i != "AC")
-      {
-        cout << "<FLSTAT" << count <<  ">  '" << *i << "'";
-        try
+    try {
+      int count = 0;
+      vector<string> fclc = m->getFacilityLockCapabilities();
+      for (vector<string>::iterator i = fclc.begin(); i != fclc.end(); ++i)
+        if (*i != "AB" && *i != "AG" && *i != "AC")
         {
-          if (m->getFacilityLockStatus(*i, VoiceFacility))
-            cout << _("  Voice");
+          cout << "<FLSTAT" << count <<  ">  '" << *i << "'";
+          try
+          {
+            if (m->getFacilityLockStatus(*i, VoiceFacility))
+              cout << _("  Voice");
+          }
+          catch (GsmException &e)
+          {
+            cout << _("  unknown");
+          }
+          try
+          {
+          if (m->getFacilityLockStatus(*i, DataFacility))
+            cout << _("  Data");
+          }
+          catch (GsmException &e)
+          {
+            cout << _("  unknown");
+          }
+          try
+          {
+            if (m->getFacilityLockStatus(*i, FaxFacility))
+            cout << _("  Fax");
+          }
+          catch (GsmException &e)
+          {
+            cout << _("  unknown");
+          }
+          cout << endl;
+          ++count;
         }
-        catch (GsmException &e)
-        {
-          cout << _("  unknown");
-        }
-        try
-        {
-        if (m->getFacilityLockStatus(*i, DataFacility))
-          cout << _("  Data");
-        }
-        catch (GsmException &e)
-        {
-          cout << _("  unknown");
-        }
-        try
-        {
-        if (m->getFacilityLockStatus(*i, FaxFacility))
-          cout << _("  Fax");
-        }
-        catch (GsmException &e)
-        {
-          cout << _("  unknown");
-        }
-        cout << endl;
-        ++count;
-      }
+    } catch (GsmException &x) {
+      cout << _("<FLSTAT> Facility Lock State Info: ") << _("unsupported") << endl;
+    }
     break;
   }
   case FacilityLockCapabilityInfo:
   {
-    cout << "<FLCAP0>  ";
-    vector<string> fclc = m->getFacilityLockCapabilities();
-    for (vector<string>::iterator i = fclc.begin(); i != fclc.end(); ++i)
-      cout << "'" << *i << "' ";
-    cout << endl;
+    try {
+      cout << "<FLCAP0>  ";
+      vector<string> fclc = m->getFacilityLockCapabilities();
+      for (vector<string>::iterator i = fclc.begin(); i != fclc.end(); ++i)
+        cout << "'" << *i << "' ";
+      cout << endl;
+    } catch (GsmException &x) {
+      cout << _("Facility Lock Capability Info: ") << _("unsupported") << endl;
+    }
     break;
   }
   case PasswordInfo:
   {
-    vector<PWInfo> pwi = m->getPasswords();
-    int count = 0;
-    for (vector<PWInfo>::iterator i = pwi.begin(); i != pwi.end(); ++i)
-    {
-      cout << "<PW" << count <<  ">  '"
-           << i->_facility << "' " << i->_maxPasswdLen << endl;
-      ++count;
+    try {
+      vector<PWInfo> pwi = m->getPasswords();
+      int count = 0;
+      for (vector<PWInfo>::iterator i = pwi.begin(); i != pwi.end(); ++i)
+      {
+        cout << "<PW" << count <<  ">  '"
+             << i->_facility << "' " << i->_maxPasswdLen << endl;
+        ++count;
+      }
+    } catch (GsmException &x) {
+      cout << _("<PW> Change Password: ") << _("unsupported") << endl;
     }
     break;
   }
@@ -226,29 +241,37 @@ static void printInfo(InfoParameter ip)
   }
   case CLIPInfo:
   {
-    cout << "<CLIP0>  " << (m->getNetworkCLIP() ? _("on") : _("off")) << endl;
+    try {
+      cout << "<CLIP0>  " << (m->getNetworkCLIP() ? _("on") : _("off")) << endl;
+    } catch (GsmException &x) {
+      cout << _("<CLIP0> Calling Line Identification Presentation: ") << _("unsupported") << endl;
+    }
     break;
   }
   case CallForwardingInfo:
   {
-    for (int r = 0; r < 4; ++r)
-    {
-      string text;
-      switch (r)
+    try {
+      for (int r = 0; r < 4; ++r)
       {
-      case 0: text = _("UnconditionalReason"); break;
-      case 1: text = _("MobileBusyReason"); break;
-      case 2: text = _("NoReplyReason"); break;
-      case 3: text = _("NotReachableReason"); break;
+        string text;
+        switch (r)
+        {
+        case 0: text = _("UnconditionalReason"); break;
+        case 1: text = _("MobileBusyReason"); break;
+        case 2: text = _("NoReplyReason"); break;
+        case 3: text = _("NotReachableReason"); break;
+        }
+        ForwardInfo voice, fax, data;
+        m->getCallForwardInfo((ForwardReason)r, voice, fax, data);
+        cout << "<FORW" << r << ".";
+        printForwardReason("0>  " + text + _("  Voice"), voice);
+        cout << "<FORW" << r << ".";
+        printForwardReason("1>  " + text + _("  Data"), data);
+        cout << "<FORW" << r << ".";
+        printForwardReason("2>  " + text + _("  Fax"), fax);
       }
-      ForwardInfo voice, fax, data;
-      m->getCallForwardInfo((ForwardReason)r, voice, fax, data);
-      cout << "<FORW" << r << ".";
-      printForwardReason("0>  " + text + _("  Voice"), voice);
-      cout << "<FORW" << r << ".";
-      printForwardReason("1>  " + text + _("  Data"), data);
-      cout << "<FORW" << r << ".";
-      printForwardReason("2>  " + text + _("  Fax"), fax);
+    } catch (GsmException &x) {
+      cout << _("<FORW> Call Forwarding number and Conditions: ") << _("unsupported") << endl;
     }
     break;
   }

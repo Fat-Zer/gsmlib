@@ -17,7 +17,7 @@
 #include <gsmlib/gsm_nls.h>
 #include <ctype.h>
 #include <assert.h>
-#include <strstream>
+#include <sstream>
 
 using namespace std;
 using namespace gsmlib;
@@ -108,14 +108,13 @@ int Parser::parseInt2() throw(GsmException)
   if (s.length() == 0)
     throwParseException(_("expected number"));
 
-  istrstream is(s.c_str());
+	istringstream is(s);
   is >> result;
   return result;
 }
 
 void Parser::throwParseException(string message) throw(GsmException)
 {
-  ostrstream os;
   if (message.length() == 0)
     throw GsmException(stringPrintf(_("unexpected end of string '%s'"),
                                     _s.c_str()), ParserError);

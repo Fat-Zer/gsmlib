@@ -67,8 +67,7 @@ BOOL CancelIoHook(HANDLE file)
 void Win32SerialPort::throwModemException(string message) throw(GsmException)
 {
   ostrstream os;
-  os << message << " (errno: " << errno << "/" << strerror(errno) << ")"
-     << ends;
+  os << message << " (errno: " << errno << "/" << strerror(errno) << ")";
   char *ss = os.str();
   string s(ss);
   delete[] ss;

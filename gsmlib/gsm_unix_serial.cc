@@ -19,7 +19,7 @@
 #include <termios.h>
 #include <fcntl.h>
 #include <iostream>
-#include <strstream>
+#include <sstream>
 #include <errno.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -40,6 +40,8 @@ static const int holdoffArraySize = sizeof(holdoff)/sizeof(int);
 // timer indepently of each other
 
 static pthread_mutex_t timerMtx = PTHREAD_MUTEX_INITIALIZER;
+#define pthread_mutex_lock(x) 
+#define pthread_mutex_unlock(x) 
 
 // for non-GNU systems, define alarm()
 #ifndef HAVE_ALARM
@@ -86,13 +88,9 @@ static void stopTimer()
 
 void UnixSerialPort::throwModemException(string message) throw(GsmException)
 {
-  ostrstream os;
-  os << message << " (errno: " << errno << "/" << strerror(errno) << ")"
-     << ends;
-  char *ss = os.str();
-  string s(ss);
-  delete[] ss;
-  throw GsmException(s, OSError, errno);
+  ostringstream os;
+  os << message << " (errno: " << errno << "/" << strerror(errno) << ")";
+  throw GsmException(os.str(), OSError, errno);
 }
 
 void UnixSerialPort::putBack(unsigned char c)

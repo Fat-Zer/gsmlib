@@ -16,7 +16,7 @@
 #include <gsmlib/gsm_sysdep.h>
 #include <gsmlib/gsm_cb.h>
 #include <gsmlib/gsm_nls.h>
-#include <strstream>
+#include <sstream>
 
 using namespace std;
 using namespace gsmlib;
@@ -135,7 +135,7 @@ CBMessage::CBMessage(string pdu) throw(GsmException)
 
 string CBMessage::toString() const
 {
-  ostrstream os;
+	ostringstream os;
   os << dashes << endl
      << _("Message type: CB") << endl
      << _("Geographical scope: ");
@@ -168,9 +168,6 @@ string CBMessage::toString() const
      << _("Total page number: ") << _totalPageNumber << endl
      << _("Current page number: ") << _currentPageNumber << endl
      << _("Data: '") << data << "'" << endl
-     << dashes << endl << endl << ends;
-  char *ss = os.str();
-  string result(ss);
-  delete[] ss;
-  return result;
+     << dashes << endl << endl;
+	return os.str();
 }

@@ -20,7 +20,7 @@
 #include <assert.h>
 #include <string.h>
 #include <iostream>
-#include <strstream>
+#include <sstream>
 #include <ctype.h>
 #include <errno.h>
 #if !defined(HAVE_CONFIG_H) || defined(HAVE_UNISTD_H)
@@ -157,12 +157,9 @@ bool gsmlib::hexToBuf(const string &hexString, unsigned char *buf)
 
 string gsmlib::intToStr(int i)
 {
-  ostrstream os;
-  os << i << ends;
-  char *ss = os.str();
-  string s(ss);
-  delete[] ss;
-  return s;
+  ostringstream os;
+  os << i;
+  return os.str();
 }
 
 string gsmlib::removeWhiteSpace(string s)
@@ -285,7 +282,7 @@ int gsmlib::checkNumber(string s) throw(GsmException)
       throw GsmException(stringPrintf(_("expected number, got '%s'"),
                                       s.c_str()), ParameterError);
   int result;
-  istrstream is(s.c_str());
+	istringstream is(s);
   is >> result;
   return result;
 }
@@ -349,12 +346,14 @@ void gsmlib::checkTextAndTelephone(string text, string telephone)
                    text.c_str()),
       ParameterError);
 
-  for (unsigned int i = 0; i < telephone.length(); ++i)
-    if (! isdigit(telephone[i]) && ! (telephone[i] == '+') &&
-        ! (telephone[i] == '*') && ! (telephone[i] == '#') &&
-        ! (telephone[i] == 'p') && ! (telephone[i] == 'w') &&
-        ! (telephone[i] == 'P') && ! (telephone[i] == 'W'))
-      throw GsmException(
+  // The following check apparently can cause problems...
+  //   for (unsigned int i = 0; i < telephone.length(); ++i)
+  //     if (! isdigit(telephone[i]) && ! (telephone[i] == '+') &&
+  //         ! (telephone[i] == '*') && ! (telephone[i] == '#') &&
+  //         ! (telephone[i] == 'p') && ! (telephone[i] == 'w') &&
+  //         ! (telephone[i] == 'P') && ! (telephone[i] == 'W'))
+  if (telephone.find('"') != string::npos)
+    throw GsmException(
         stringPrintf(_("illegal character in telephone number '%s'"),
                      telephone.c_str()), ParameterError);
 }

@@ -36,6 +36,11 @@ gsmlib-1.11
      - Added to code SMS*Message::toString() functions to print 16 bit
        user data in hexadecimal
 
+     - Converted from strstream sstream (thanks to Tyler Retzlaff)
+
+     - 
+
+	
 gsmlib-1.10
      - reactivated code in gsm_at to retry sending PDU after
        unsolicited result code 
