@@ -1,0 +1,124 @@
+gsmlib (1.10-5) unstable; urgency=low
+
+  * Change Section: libdevel
+  * gsm_unix_serial.cc patch from Daniel Schepler to fix g++-3.3
+    compliation. Thanks. (Closes: Bug#195151)
+
+ -- Mark Purcell <msp@debian.org>  Sat, 19 Jul 2003 15:57:28 +1000
+
+gsmlib (1.10-4) unstable; urgency=low
+
+  * Include file descriptor leak patch from Edd Dumbill (Closes:
+    Bug#168475)
+  * lintian cleanup: description-synopsis-might-not-be-phrased-properly
+  * lintian cleanup: configure-generated-file-in-source
+
+ -- Mark Purcell <msp@debian.org>  Sun,  9 Feb 2003 14:04:54 +1100
+
+gsmlib (1.10-3) unstable; urgency=low
+
+  * New Maintainer (Closes: Bug#180061). Thanks Mikael for your work.
+
+ -- Mark Purcell <msp@debian.org>  Sat,  8 Feb 2003 16:55:26 +1100
+
+gsmlib (1.10-2) unstable; urgency=low
+
+  * Rebuild to use the new c++ ABI (GCC 3.2)
+
+ -- Mikael Hedin <micce@debian.org>  Thu, 23 Jan 2003 20:57:50 +0100
+
+gsmlib (1.10-1) unstable; urgency=low
+
+  * New upstrem release.
+
+ -- Mikael Hedin <micce@debian.org>  Wed,  6 Nov 2002 17:44:17 +0100
+
+gsmlib (1.9-2) unstable; urgency=low
+
+  * Made new rules for the config.guess/sub update thing (closes: #146865,
+    #146867).
+
+ -- Mikael Hedin <micce@debian.org>  Tue, 14 May 2002 09:28:03 +0200
+
+gsmlib (1.9-1) unstable; urgency=low
+
+  * New upstream version.
+  * Use chrpath to get rid of rpaths.
+  * Add mini-manpage for gsmsiexfer.
+  * Remove b-d on auto-stuff, we don't use them.
+
+ -- Mikael Hedin <micce@debian.org>  Mon, 13 May 2002 22:10:28 +0200
+
+gsmlib (1.8-2) unstable; urgency=low
+
+  * Removed b-d on gcc 3.0, as they are no longer nessecary.
+
+ -- Mikael Hedin <micce@debian.org>  Thu, 24 Jan 2002 12:59:07 +0100
+
+gsmlib (1.8-1) unstable; urgency=low
+
+  * New upstream version.
+  * Revert the arch hack, now it should compile with either g++.
+  * Include the new lib in libgsmme1.  Run dh_makeshlibs -V because of this.
+  * Added info for gsmsiectl in gsmctl(1).
+
+ -- Mikael Hedin <micce@debian.org>  Wed,  9 Jan 2002 22:38:45 +0100
+
+gsmlib (1.7-2) unstable; urgency=low
+
+  * gsm-utils: Added shlibs:Depends (closes: #126127). 
+  * Spelling correction (closes: #124705, #124972)
+  * Rm libgsmme1.postins, and let dh_makeshlibs take care of ldconfig.
+  * Made explicit arch list without sparc and arm, they cannot use g++-3.0
+    right now.
+
+ -- Mikael Hedin <micce@debian.org>  Sat, 22 Dec 2001 20:27:54 +0100
+
+gsmlib (1.7-1) unstable; urgency=low
+
+  * New upstream
+  * Use gcc-3.0 and g++-3.0, 2.95 doesn't compile.
+
+ -- Mikael Hedin <micce@debian.org>  Thu,  1 Nov 2001 10:24:33 +0100
+
+gsmlib (1.6-5) unstable; urgency=low
+
+  * Updated manpage (closes: #110973)
+  * Corrected problem with OP status (closes: #110970)
+
+ -- Mikael Hedin <micce@debian.org>  Sat,  8 Sep 2001 18:12:17 +0200
+
+gsmlib (1.6-4) unstable; urgency=low
+
+  * Support DEB_BUILD_OPTIONS
+  * Changed libgsmme-dev to section devel.
+  * Reran libtoolize.
+  * Lots of small patches to compile with g++-3.0. (Closes: #104411) 
+  * Removed dh_testversion.
+
+ -- Mikael Hedin <micce@debian.org>  Thu, 12 Jul 2001 16:06:23 +0200
+
+gsmlib (1.6-3) unstable; urgency=low
+
+  * Various minor corrections.
+
+ -- Mikael Hedin <mikael.hedin@irf.se>  Thu,  8 Mar 2001 16:24:07 +0100
+
+gsmlib (1.6-2) unstable; urgency=low
+
+  * Dont install INSTALL.  Correct indentation for libgsmme1 description.
+
+ -- Mikael Hedin <mikael.hedin@irf.se>  Tue,  6 Mar 2001 14:55:05 +0100
+
+gsmlib (1.6-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Mikael Hedin <mikael.hedin@irf.se>  Mon, 29 Jan 2001 17:57:21 +0100
+
+gsmlib (1.5-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Mikael Hedin <mikael.hedin@irf.se>  Thu, 14 Dec 2000 01:06:40 +0100
+

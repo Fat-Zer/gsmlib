@@ -1,8 +1,32 @@
 .TH GSMCTL 8 "##DATE##" "gsmctl v##VERSION##"
 .SH NAME
-gsmctl \- GSM mobile phone control program
+gsmctl, gsmsiectl \- GSM mobile phone control program
 .SH SYNOPSIS
 .B gsmctl
+.RB [\| \-b
+.IR  baudrate \|]
+.RB [\| \-\-baudrate
+.IR baudrate\| ]
+.RB [ \|\-d
+.IR device\| ]
+.RB [ \|\-\-device
+.IR device\fP ]
+.RB [ \|\-h\| ]
+.RB [ \|\-\-help\| ]
+.RB [ \|\-I
+.IR "init string" \|]
+.RB [ \|\-\-init
+.IR "init string" \|]
+.RB [ \|\-v\| ]
+.RB [ \|\-\-version\| ]
+.RB [ \|\-X\| ]
+.RB [ \|\-\-xonxoff\| ]
+.BI \-o \ operation
+.RB  | \ \-\-operation
+.IR operation \ |
+.I parameters
+.PP
+.B gsmsiectl
 .RB [\| \-b
 .IR  baudrate \|]
 .RB [\| \-\-baudrate
@@ -60,6 +84,12 @@ is performed on the mobile using the
 See the section 
 .B OPERATIONS
 for more details.
+.PP
+.B gsmsiectl
+is the same program with some extension for Siemens mobile phones.
+Some extra 
+.B OPERATIONS
+are available in this case.
 .PP
 Error messages are printed to the standard error output.  If the
 program terminates on error the error code 1 is returned.
@@ -457,6 +487,33 @@ Sets the default SMS service centre address.
 .RS
 This is the reverse operation to \fBlock\fP. See above for a
 description of the parameters.
+.RE
+.PP
+.B Extra operators for gsmsiectl:
+.PP
+.B cset
+.RS 
+Charset info.
+.RE
+.PP
+.B pbook
+.RS 
+Phone book info.
+.RE
+.PP
+.B signal
+.RS 
+Signal tone info.
+.RE
+.PP
+.B ring
+.RS 
+Ringing tone info.
+.RE
+.PP
+.B binary
+.RS 
+Binary info.
 .RE
 .SH EXAMPLES
 The following invocation of 

@@ -7,7 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-10-22 22:48+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-07-19 16:07+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1465,68 +1466,67 @@ msgstr ""
 msgid "unknown time period format"
 msgstr ""
 
-#: gsmlib/gsm_unix_serial.cc:119
+#: gsmlib/gsm_unix_serial.cc:120
 msgid "interrupted when reading from TA"
 msgstr ""
 
-#: gsmlib/gsm_unix_serial.cc:144
+#: gsmlib/gsm_unix_serial.cc:145
 msgid "reading from TA"
 msgstr ""
 
-#: gsmlib/gsm_unix_serial.cc:149
+#: gsmlib/gsm_unix_serial.cc:150
 msgid "timeout when reading from TA"
 msgstr ""
 
-#: gsmlib/gsm_unix_serial.cc:176
+#: gsmlib/gsm_unix_serial.cc:177
 #, c-format
 msgid "opening device '%s'"
 msgstr ""
 
-#: gsmlib/gsm_unix_serial.cc:182
+#: gsmlib/gsm_unix_serial.cc:184
 msgid "getting file status flags failed"
 msgstr ""
 
-#: gsmlib/gsm_unix_serial.cc:185
+#: gsmlib/gsm_unix_serial.cc:189
 msgid "switching of non-blocking mode failed"
 msgstr ""
 
-#: gsmlib/gsm_unix_serial.cc:198
+#: gsmlib/gsm_unix_serial.cc:204
 msgid "clearing DTR failed"
 msgstr ""
 
-#: gsmlib/gsm_unix_serial.cc:202
+#: gsmlib/gsm_unix_serial.cc:210
 msgid "setting DTR failed"
 msgstr ""
 
-#: gsmlib/gsm_unix_serial.cc:206
+#: gsmlib/gsm_unix_serial.cc:215
 #, c-format
 msgid "tcgetattr device '%s'"
 msgstr ""
 
-#: gsmlib/gsm_unix_serial.cc:233
+#: gsmlib/gsm_unix_serial.cc:244
 #, c-format
 msgid "tcsetattr device '%s'"
 msgstr ""
 
-#. no response after 3 tries
-#: gsmlib/gsm_unix_serial.cc:287
+#: gsmlib/gsm_unix_serial.cc:302
 #, c-format
 msgid "reset modem failed '%s'"
 msgstr ""
 
-#: gsmlib/gsm_unix_serial.cc:332 gsmlib/gsm_unix_serial.cc:364
+#: gsmlib/gsm_unix_serial.cc:347 gsmlib/gsm_unix_serial.cc:379
 msgid "interrupted when writing to TA"
 msgstr ""
 
-#: gsmlib/gsm_unix_serial.cc:347 gsmlib/gsm_unix_serial.cc:356
+#: gsmlib/gsm_unix_serial.cc:362 gsmlib/gsm_unix_serial.cc:371
 msgid "writing to TA"
 msgstr ""
 
-#: gsmlib/gsm_unix_serial.cc:377
+#: gsmlib/gsm_unix_serial.cc:392
 msgid "timeout when writing to TA"
 msgstr ""
 
-#: gsmlib/gsm_unix_serial.cc:438
+#: gsmlib/gsm_unix_serial.cc:453
 #, c-format
 msgid "unknown baudrate '%s'"
 msgstr ""
