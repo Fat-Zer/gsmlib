@@ -2538,7 +2538,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=gsmlib
- VERSION=1.10
+ VERSION=1.11
 
 
 cat >>confdefs.h <<_ACEOF
@@ -10125,7 +10125,7 @@ _ACEOF
 
 
 
-GSM_VERSION="1:4:0"
+GSM_VERSION="1:5:0"
 
 
 LINGUAS="de"

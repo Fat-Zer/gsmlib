@@ -24,10 +24,10 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 namespace gsmlib
 {
+  using std::string;
+
   // *** phone capability description (you could also call it phone quirks)
 
   struct Capabilities

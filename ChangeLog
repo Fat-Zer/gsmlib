@@ -1,3 +1,8 @@
+gsmlib-1.11
+     - Removed "using namespace std" from header files, used std types
+       are now referenced explicitly inside gsmlib namespace to avoid
+       namespace pollution
+
 gsmlib-1.10
      - reactivated code in gsm_at to retry sending PDU after
        unsolicited result code 

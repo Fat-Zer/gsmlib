@@ -20,10 +20,12 @@
 #include <map>
 #include <assert.h>
 
-using namespace std;
-
 namespace gsmlib
 {
+  using std::string;
+  using std::multimap;
+  using std::pair;
+
   // MapKey for SortedSMSStore
   
   class SortedSMSStore;

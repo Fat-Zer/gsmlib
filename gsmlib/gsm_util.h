@@ -21,10 +21,11 @@
 #endif
 #include <stdio.h>
 
-using namespace std;
-
 namespace gsmlib
 {
+  using std::string;
+  using std::vector;
+
   // time type
   typedef struct timeval *GsmTime;
 

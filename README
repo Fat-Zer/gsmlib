@@ -87,6 +87,7 @@ HARDWARE
      - Ericcson T65
      - Ericcson T39m/Bluetooth
      - Option International GlobeTrotter PCMCIA
+     - Samsung A300e/- (Linux IrDA)
 
      Note 1: Some of the mobile phones have an integrated GSM modem
      that can be accessed via the Linux IrDA drivers.

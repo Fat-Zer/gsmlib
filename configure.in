@@ -24,7 +24,7 @@ dnl use config header
 AM_CONFIG_HEADER(gsm_config.h)
 
 dnl use automake
-AM_INIT_AUTOMAKE(gsmlib, 1.10)
+AM_INIT_AUTOMAKE(gsmlib, 1.11)
 
 dnl change to no if you want no shared libraries for debugging purposes
 AM_ENABLE_SHARED(yes)
@@ -102,7 +102,7 @@ AC_CHECK_SIZEOF(unsigned long int, 4)
 AC_CHECK_SIZEOF(unsigned int, 4)
 
 dnl Project-specific settings
-GSM_VERSION="1:4:0"
+GSM_VERSION="1:5:0"
 AC_SUBST(GSM_VERSION)
 
 dnl national language support (NLS)

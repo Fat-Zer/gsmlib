@@ -20,10 +20,10 @@
 #include <sys/types.h>
 #include <termios.h>
 
-using namespace std;
-
 namespace gsmlib
 {
+  using std::string;
+
   class UnixSerialPort : public Port
   {
   private:

@@ -231,6 +231,7 @@ void sendSMS(string spoolDir, Ref<GsmAt> at)
         {
           char c;
           ifs.get(c);
+          if (c == 0) break;    // workaround for libstdc++ bug
           text += c;
         }
         ifs.close();

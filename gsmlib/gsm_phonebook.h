@@ -20,10 +20,10 @@
 #include <iterator>
 #include <vector>
 
-using namespace std;
-
 namespace gsmlib
 {
+  using std::string;
+
   // forward declarations
   class Phonebook;
 

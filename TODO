@@ -3,6 +3,8 @@ necessarily in order of importance):
 
 ("+" = DONE)
 
+- create non-existing files in gsmpb and gsmsmsstore programs
+
 + handle:
   > --> AT+COPS=?
   > <-- 

@@ -21,10 +21,12 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 namespace gsmlib
 {
+  using std::string;
+  using std::istream;
+  using std::ostream;
+
   // forward declarations
   class SMSStore;
   class SMSMessage;

@@ -17,10 +17,10 @@
 #include <gsmlib/gsm_util.h>
 #include <string>
 
-using namespace std;
-
 namespace gsmlib
 {
+  using std::string;
+
   // representation of DataCodingScheme
   // The data coding scheme is described in detail in ETSI GSM 03.38, section 5
   // This class reuses the DCS_* constants from DataCodingScheme in 
