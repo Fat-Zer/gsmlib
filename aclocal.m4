@@ -687,7 +687,7 @@ if test "$ac_cv_prog_gcc" = yes; then
   case "$ac_prog" in
   # Accept absolute paths.
 changequote(,)dnl
-  /* | [A-Za-z]:\\*)
+  /* | [A-Za-z]:[\\/]*)
 changequote([,])dnl
     test -z "$LD" && LD="$ac_prog"
     ;;

@@ -14,6 +14,7 @@
 #define GSM_EVENT_H
 
 #include <gsmlib/gsm_sms.h>
+#include <gsmlib/gsm_cb.h>
 
 using namespace std;
 
@@ -44,6 +45,11 @@ namespace gsmlib
     virtual void SMSReception(SMSMessageRef newMessage,
                               SMSMessageType messageType);
 
+    // CB reception
+    // only called if setSMSReceptionEvent(...true...) is set
+    // storage of CBM in ME is not supported by the standard
+    virtual void CBReception(CBMessageRef newMessage);
+
     // SMS reception indication (called when SMS is not delivered to TE
     // but stored in ME memory)
     virtual void SMSReceptionIndication(string storeName, unsigned int index,
@@ -52,7 +58,7 @@ namespace gsmlib
     // RING indication
     virtual void ringIndication();
 
-    friend GsmAt;
+    friend class gsmlib::GsmAt;
   };
 };
 

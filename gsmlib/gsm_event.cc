@@ -99,26 +99,37 @@ void GsmEvent::dispatch(string s, GsmAt &at) throw(GsmException)
     SMSReceptionIndication(storeName, index - 1, messageType);
   }
   else
-  {
-    // handle SMS
-    string pdu = at.getLine();
+    if (messageType == CellBroadcastSMS)
+    {
+      // handle CB message
+      string pdu = at.getLine();
 
-    // add missing service centre address if required by ME
-    if (! at.getMeTa().getCapabilities()._hasSMSSCAprefix)
+      CBMessageRef cb = new CBMessage(pdu);
+
+      // call the event handler
+      CBReception(cb);
+    }
+    else
+    {
+      // handle SMS
+      string pdu = at.getLine();
+      
+      // add missing service centre address if required by ME
+      if (! at.getMeTa().getCapabilities()._hasSMSSCAprefix)
       pdu = "00" + pdu;
-
-    SMSMessageRef sms = SMSMessage::decode(pdu);
-  
-    // find out whether we are supposed to send an acknowledgment
-    Parser p(at.chat("+CSMS?", "+CSMS:"));
-    bool sendAck = p.parseInt() >= 1;
-  
-    if (sendAck)
-      at.chat("+CNMA");
-  
-    // call the event handler
-    SMSReception(sms, messageType);
-  }
+      
+      SMSMessageRef sms = SMSMessage::decode(pdu);
+      
+      // find out whether we are supposed to send an acknowledgment
+      Parser p(at.chat("+CSMS?", "+CSMS:"));
+      bool sendAck = p.parseInt() >= 1;
+      
+      if (sendAck)
+        at.chat("+CNMA");
+      
+      // call the event handler
+      SMSReception(sms, messageType);
+    }
 }
 
 void GsmEvent::callerLineID(string number, string subAddr, string alpha)
@@ -128,6 +139,11 @@ void GsmEvent::callerLineID(string number, string subAddr, string alpha)
 
 void GsmEvent::SMSReception(SMSMessageRef newMessage,
                             SMSMessageType messageType)
+{
+  // ignore event
+}
+
+void GsmEvent::CBReception(CBMessageRef newMessage)
 {
   // ignore event
 }

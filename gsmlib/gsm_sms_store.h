@@ -19,6 +19,7 @@
 #include <gsmlib/gsm_at.h>
 #include <gsmlib/gsm_util.h>
 #include <gsmlib/gsm_sms.h>
+#include <gsmlib/gsm_cb.h>
 
 using namespace std;
 
@@ -39,8 +40,6 @@ namespace gsmlib
                           All = 4, Unknown = 5};
 
   private:
-    // this constructor is only used by SMSStore
-    SMSStoreEntry() {}
     SMSMessageRef _message;
     SMSMemoryStatus _status;
     bool _cached;
@@ -48,6 +47,9 @@ namespace gsmlib
     int _index;
 
   public:
+    // this constructor is only used by SMSStore
+    SMSStoreEntry();
+
     // create new entry given a SMS message
     SMSStoreEntry(SMSMessageRef message) :
       _message(message), _status(Unknown), _cached(true), _mySMSStore(NULL),
@@ -61,6 +63,9 @@ namespace gsmlib
     
     // return SMS message stored in the entry
     SMSMessageRef message() const throw(GsmException);
+
+    // return CB message stored in the entry
+    CBMessageRef cbMessage() const throw(GsmException);
 
     // return message status in store
     SMSMemoryStatus status() const throw(GsmException);
@@ -83,8 +88,83 @@ namespace gsmlib
     // return true if entry is cached (and caching is enabled)
     bool cached() const;
 
+    // return deep copy of this entry
+    Ref<SMSStoreEntry> clone();
+
     // equality operator
     bool operator==(const SMSStoreEntry &e) const;
+
+    // return store reference
+    SMSStore *getStore() {return _mySMSStore;}
+
+    // copy constructor and assignment
+    SMSStoreEntry(const SMSStoreEntry &e);
+    SMSStoreEntry &operator=(const SMSStoreEntry &e);
+
+    friend class SMSStore;
+  };
+
+  // iterator for the SMSStore class
+
+  class SMSStoreIterator : public iterator<random_access_iterator_tag,
+                           SMSStoreEntry, int>
+  {
+    int _index;
+    SMSStore *_store;
+
+    SMSStoreIterator(int index, SMSStore *store) :
+      _index(index), _store(store) {}
+
+  public:
+    SMSStoreIterator(SMSStoreEntry *entry) :
+      _index(entry->index()), _store(entry->getStore()) {}
+
+    SMSStoreEntry &operator*();
+    SMSStoreEntry *operator->();
+    SMSStoreIterator &operator+(int i)
+      {_index += i; return *this;}
+    operator SMSStoreEntry*();
+    SMSStoreIterator &operator=(const SMSStoreIterator &i);
+    SMSStoreIterator &operator++()
+      {++_index; return *this;}
+    SMSStoreIterator &operator--()
+      {--_index; return *this;}
+    SMSStoreIterator &operator++(int i)
+      {_index += i; return *this;}
+    SMSStoreIterator &operator--(int i)
+      {_index -= i; return *this;}
+    bool operator<(SMSStoreIterator &i)
+      {return _index < i._index;}
+    bool operator==(const SMSStoreIterator &i) const
+      {return _index == i._index;}
+
+    friend class SMSStore;
+  };
+
+  class SMSStoreConstIterator : public iterator<random_access_iterator_tag,
+                                SMSStoreEntry, int>
+  {
+    int _index;
+    const SMSStore *_store;
+
+    SMSStoreConstIterator(int index, const SMSStore *store) :
+      _index(index), _store(store) {}
+
+  public:
+    const SMSStoreEntry &operator*();
+    const SMSStoreEntry *operator->();
+    SMSStoreConstIterator &operator++()
+      {++_index; return *this;}
+    SMSStoreConstIterator &operator--()
+      {--_index; return *this;}
+    SMSStoreConstIterator &operator++(int i)
+      {_index += i; return *this;}
+    SMSStoreConstIterator &operator--(int i)
+      {_index -= i; return *this;}
+    bool operator<(SMSStoreConstIterator &i)
+      {return _index < i._index;}
+    bool operator==(const SMSStoreConstIterator &i) const
+      {return _index == i._index;}
 
     friend class SMSStore;
   };
@@ -97,7 +177,7 @@ namespace gsmlib
   class SMSStore : public RefBase, public NoCopy
   {
   private:
-    SMSStoreEntry *_store;      // array of size _capacity of entries
+    vector<SMSStoreEntry*> _store; // vector of store entries
     int _capacity;              // maximum size of phonebook
     string _storeName;          // name of the store, 2-byte like "SM"
     Ref<GsmAt> _at;             // my GsmAt class
@@ -108,6 +188,7 @@ namespace gsmlib
     // read/write entry from/to ME
     void readEntry(int index, SMSMessageRef &message,
                    SMSStoreEntry::SMSMemoryStatus &status) throw(GsmException);
+    void readEntry(int index, CBMessageRef &message) throw(GsmException);
     void writeEntry(int &index, SMSMessageRef message)
       throw(GsmException);
     // erase entry
@@ -124,10 +205,13 @@ namespace gsmlib
     // used by class MeTa
     SMSStore(string storeName, Ref<GsmAt> at, MeTa &meTa) throw(GsmException);
 
+    // resize store entry vector if necessary
+    void resizeStore(int newSize);
+
   public:
     // iterator defs
-    typedef SMSStoreEntry *iterator;
-    typedef const SMSStoreEntry *const_iterator;
+    typedef SMSStoreIterator iterator;
+    typedef SMSStoreConstIterator const_iterator;
     typedef SMSStoreEntry &reference;
     typedef const SMSStoreEntry &const_reference;
 
@@ -154,7 +238,10 @@ namespace gsmlib
     reference operator[](int n);
     const_reference operator[](int n) const;
 
-    // the size macros return the number of used entries
+    // The size macros return the number of used entries
+    // Warning: indices may be _larger_ than size() because of this
+    // (perhaps this should be changed, because it is unexpected behavior)
+
     int size() const throw(GsmException);
     int max_size() const {return _capacity;}
     int capacity() const {return _capacity;}
@@ -167,6 +254,7 @@ namespace gsmlib
     // warning: insert fails silently if size() == max_size()
     iterator insert(iterator position, const SMSStoreEntry& x)
       throw(GsmException);
+    iterator insert(const SMSStoreEntry& x) throw(GsmException);
 
     // insert n times, same procedure as above
     void insert (iterator pos, int n, const SMSStoreEntry& x)
@@ -187,6 +275,7 @@ namespace gsmlib
   };
 
   typedef Ref<SMSStore> SMSStoreRef;
+
 };
 
 #endif // GSM_SMS_STORE_H

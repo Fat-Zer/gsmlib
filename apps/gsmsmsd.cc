@@ -25,6 +25,7 @@
 #include <dirent.h>
 #include <signal.h>
 #include <fstream>
+#include <iostream>
 #include <gsmlib/gsm_me_ta.h>
 #include <gsmlib/gsm_event.h>
 #include <gsmlib/gsm_unix_serial.h>
@@ -35,6 +36,8 @@ using namespace gsmlib;
 #ifdef HAVE_GETOPT_LONG
 static struct option longOpts[] =
 {
+  {"requeststat", no_argument, (int*)NULL, 'r'},
+  {"direct", no_argument, (int*)NULL, 'D'},
   {"xonxoff", no_argument, (int*)NULL, 'X'},
   {"init", required_argument, (int*)NULL, 'I'},
   {"store", required_argument, (int*)NULL, 't'},
@@ -77,8 +80,10 @@ struct IncomingMessage
   // used if new message is put into store
   int _index;                   // -1 means message want send directly
   string _storeName;
-  // used if message was sent directly to TA
-  SMSMessageRef _newMessage;
+  // used if SMS message was sent directly to TA
+  SMSMessageRef _newSMSMessage;
+  // used if CB message was sent directly to TA
+  CBMessageRef _newCBMessage;
   // used in both cases
   GsmEvent::SMSMessageType _messageType;
 
@@ -93,6 +98,7 @@ public:
   // inherited from GsmEvent
   void SMSReception(SMSMessageRef newMessage,
                     SMSMessageType messageType);
+  void CBReception(CBMessageRef newMessage);
   void SMSReceptionIndication(string storeName, unsigned int index,
                               SMSMessageType messageType);
 
@@ -104,7 +110,15 @@ void EventHandler::SMSReception(SMSMessageRef newMessage,
 {
   IncomingMessage m;
   m._messageType = messageType;
-  m._newMessage = newMessage;
+  m._newSMSMessage = newMessage;
+  newMessages.push_back(m);
+}
+
+void EventHandler::CBReception(CBMessageRef newMessage)
+{
+  IncomingMessage m;
+  m._messageType = GsmEvent::CellBroadcastSMS;
+  m._newCBMessage = newMessage;
   newMessages.push_back(m);
 }
 
@@ -141,11 +155,13 @@ void doAction(string action, string result)
 
 // send all SMS messages in spool dir
 
+bool requestStatusReport = false;
+
 void sendSMS(string spoolDir, Ref<GsmAt> at)
 {
   if (spoolDir != "")
   {
-    // look into spoolDir for any outoing SMS that should be sent
+    // look into spoolDir for any outgoing SMS that should be sent
     DIR *dir = opendir(spoolDir.c_str());
     if (dir == (DIR*)NULL)
       throw GsmException(
@@ -185,13 +201,15 @@ void sendSMS(string spoolDir, Ref<GsmAt> at)
 
         // send the message
         string phoneNumber(phoneBuf);
-        Ref<SMSMessage> submitSMS = new SMSSubmitMessage(text, phoneNumber);
+        Ref<SMSSubmitMessage> submitSMS =
+          new SMSSubmitMessage(text, phoneNumber);
         // set service centre address in new submit PDU if requested by user
         if (serviceCentreAddress != "")
         {
           Address sca(serviceCentreAddress);
           submitSMS->setServiceCentreAddress(sca);
         }
+        submitSMS->setStatusReportRequest(requestStatusReport);
         submitSMS->setAt(at);
         submitSMS->send();
         unlink(filename.c_str());
@@ -213,6 +231,7 @@ int main(int argc, char *argv[])
     bool enableCB = true;
     bool enableStat = true;
     bool flushSMS = false;
+    bool onlyReceptionIndication = true;
     string spoolDir;
     string storeName;
     string initString = DEFAULT_INIT_STRING;
@@ -220,10 +239,16 @@ int main(int argc, char *argv[])
 
     int opt;
     int dummy;
-    while((opt = getopt_long(argc, argv, "C:I:t:fd:a:b:hvs:X",
+    while((opt = getopt_long(argc, argv, "C:I:t:fd:a:b:hvs:XDr",
                              longOpts, &dummy)) != -1)
       switch (opt)
       {
+      case 'r':
+        requestStatusReport = true;
+        break;
+      case 'D':
+        onlyReceptionIndication = false;
+        break;
       case 'X':
         swHandshake = true;
         break;
@@ -270,9 +295,11 @@ int main(int argc, char *argv[])
              << endl
              << _("  -C, --sca         SMS service centre address") << endl
              << _("  -d, --device      sets the device to connect to") << endl
+             << _("  -D, --direct      enable direct routing of SMSs") << endl
              << _("  -f, --flush       flush SMS from store") << endl
              << _("  -h, --help        prints this message") << endl
              << _("  -I, --init        device AT init sequence") << endl
+             << _("  -r, --requeststat request SMS status report") << endl
              << _("  -s, --spool       spool directory for outgoing SMS")
              << endl
              << _("  -t, --store       name of SMS store to use for flush\n"
@@ -367,14 +394,15 @@ int main(int argc, char *argv[])
 
     // set default SMS store if -t option was given
     if (storeName != "")
-      m.setSMSStore(storeName);
+      m.setSMSStore(storeName, 3);
 
     // switch message service level to 1
     // this enables SMS routing to TA
     m.setMessageService(1);
 
     // switch on SMS routing
-    m.setSMSRoutingToTA(enableSMS, enableCB, enableStat);
+    m.setSMSRoutingToTA(enableSMS, enableCB, enableStat,
+                        onlyReceptionIndication);
 
     // register event handler
     m.setEventHandler(new EventHandler());
@@ -392,7 +420,8 @@ int main(int argc, char *argv[])
       while (newMessages.size() > 0)
       {
         // get first new message and remove it from the vector
-        SMSMessageRef newMessage = newMessages.begin()->_newMessage;
+        SMSMessageRef newSMSMessage = newMessages.begin()->_newSMSMessage;
+        CBMessageRef newCBMessage = newMessages.begin()->_newCBMessage;
         GsmEvent::SMSMessageType messageType =
           newMessages.begin()->_messageType;
         int index = newMessages.begin()->_index;
@@ -413,12 +442,19 @@ int main(int argc, char *argv[])
           result += _("status report message\n");
           break;
         }
-        if (! newMessage.isnull())
-          result += newMessage->toString();
+        if (! newSMSMessage.isnull())
+          result += newSMSMessage->toString();
+        else if (! newCBMessage.isnull())
+          result += newCBMessage->toString();
         else
         {
           SMSStoreRef store = me->getSMSStore(storeName);
-          result += (*store.getptr())[index].message()->toString();
+
+          if (messageType == GsmEvent::CellBroadcastSMS)
+            result += (*store.getptr())[index].cbMessage()->toString();
+          else
+            result += (*store.getptr())[index].message()->toString();
+            
           store->erase(store->begin() + index);
         }
         
@@ -435,7 +471,15 @@ int main(int argc, char *argv[])
       {
         exitScheduled = true;
         // switch off SMS routing
-        m.setSMSRoutingToTA(false, false, false);
+        try
+        {
+          m.setSMSRoutingToTA(false, false, false);
+        }
+        catch (GsmException &ge)
+        {
+          // some phones (e.g. Motorola Timeport 260) don't allow to switch
+          // off SMS routing which results in an error. Just ignore this.
+        }
         // the AT sequences involved in switching of SMS routing
         // may yield more SMS events, so go round the loop one more time
       }

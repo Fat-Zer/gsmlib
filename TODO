@@ -3,13 +3,53 @@ necessarily in order of importance):
 
 ("+" = DONE)
 
-- switch caching off in gsmsmsd and test it
++ update PO
+
++ add option to gsmsendsms/gsmsmsd to request delivery reports
+
++ Fix CBM reception in gsmsmsd, see testcb.cc program
+
++ fix gsmsmsd:
+  --> AT+CNMI=?
+  <-- 
+  <-- +CNMI: (1),(1),(0),(0),(0)
+  <-- 
+  <-- OK
+  --> AT+CNMI=1,0,0,0,0
+  <-- 
+  <-- +CME ERROR: 003
+  ./gsmsmsd[ERROR]: ME/TA error 'operation not allowed' (code 003)
+
++ Wenn ich den SMS-Speicher auslesen möchte, bricht gsmlib ab, weil der
+  Speicherplatz 1 auf der SIM-Karte nicht belegt ist. Das kann z.B.
+  passieren, wenn man Nachrichten im Handy löscht. Es kommt der Fehlercode
+  321 (Invalid memory index). Wie wäre es, in der Leseroutine alle
+  ungültigen Plätze zu ignorieren und solange zu lesen, bis die Anzahl der
+   vorhandenen Nachrichten im Speicher eingelesen ist?
+
++ document --charset option of gsmpb
+
++ Problems with PDUs with alphanumeric SCA, e.g.:
+  07911497941902F00414D0E474989D769F5DE4320839001040122151820000
+
++ > 2. Ich kann mit meinem Nokia 6210 nicht den Telefon-SMS-Speicher
+    auslesen. Dies liegt an der Speicherwahl, die vor dem Auslesen
+    an das Telefon übermittelt wird. Von der gsmlib wird anscheinend
+    immer die Anzahl der Speicher aus dem "CPMS=?"-Befehl genommen 
+    (z.B. "SM","SM","SM"). Notwendig ist es aber nur, die erste
+    Position (zum Lesen und Löschen) bzw. die ersten beiden 
+    Positionen (zum Schreiben) zu benutzen. 
+    Das Nokia 6210 unterstützt aber an der ritten Stelle nur "SM",
+    nicht "ME". So kann ich die SMS im Telefon leider nicht
+    auslesen :-(
+
+- add option to gsmpb/gsmssmstore deletion to delete ALL entries
 
 - recheck Solaris port
 
 + cache character set settings in MeTa
 
-- add documentation for new gsmctl and gsmpb charset parameters
++ add documentation for new gsmctl and gsmpb charset parameters
 
 + support characters sets other than GSM default alphabet for phone books
 
@@ -25,8 +65,6 @@ necessarily in order of importance):
 
 + convert NDEBUG test output from cout to cerr
 
-- make cut/makeResponse "colon behaviour" dependent on phone capabilities
-
 + test new gsm_unix_serial behaviour
 
 + apply checks for telephone number in gsm_sorted_phonebook
@@ -37,8 +75,6 @@ necessarily in order of importance):
 
 - document custom backend options of gsmpb (and gsmsmsstore)
 
-- implement custom backends for sorted SMS store
-
 - /var/lock/LCK..modem
 
 + make gsmctl all continue even if there are some failures
@@ -46,8 +82,6 @@ necessarily in order of importance):
 + CPIN thing
 
 + bring German translations up-to-date
-
-- implement SMS text mode
 
 + document -I parameter
 
@@ -193,6 +227,8 @@ statistics (gives a nicer feeling to users)
 
 TODO low priority:
 
+- implement SMS text mode
+
 - The action command of gsmsmsd would be easier to make, if the program
   sent the values in environment variables instead (except the user data
   which could be sent on stdin).
@@ -203,7 +239,7 @@ TODO low priority:
 
 - organize doc subdirectory for translated READMEs, manual pages
 
-- Win32 port
++ Win32 port
 
 - test: optimization when accessing phonebooks: use size information
 available via AT command to stop reading entries known to be empty (I
@@ -218,8 +254,3 @@ achieve special effects with white space)
 - support international character sets (8-bit, 16-bit) in phonebook
 operations (I'd like to have input from users who need this)
 
-TODO before beta release:
-
-- make NDEBUG default
-
-- make shared library default

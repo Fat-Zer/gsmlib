@@ -71,12 +71,20 @@ HARDWARE
      - -/Wavecom WM02 GSM (stand-alone GSM module)
      - Nokia 7110 (firware rev 4.80)/- (Linux IrDA serial device)
      - Nokia 8290 (USA GSM 1900MHz)/- (Linux IrDA serial device)
+     - Falcom A2-1/- (stand-alone GSM module)
+     - Ericsson R320s/- (Linux IrDA serial device)
+     - Motorola Timeport 260/- (Serial cable and Linux IrDA serial device)
+     - Motorola Timeport 250/- (Linux IrDA serial device)
 
      Note 1: Some of the mobile phones have an integrated GSM modem
      that can be accessed via the Linux IrDA drivers.
 
      Note 2: Some of the abovementioned phones have still some glitches
      with gsmlib (and I haven't tested them myself).
+
+     For the following phones I receive a lot of errors reports:
+
+     - Ericcson SH888: SMS function don't work with many firmware releases
 
      This list is not exhaustive, there are probably many other types of
      phone or GSM modem that work with gsmlib. Just try it and report back

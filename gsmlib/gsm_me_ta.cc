@@ -28,7 +28,8 @@ Capabilities::Capabilities() :
   _cpmsParamCount(-1),          // initialize to -1, must be set later by
                                 // setSMSStore() function
   _omitsColon(true),            // FIXME
-  _veryShortCOPSanswer(false)   // Falcom A2-1
+  _veryShortCOPSanswer(false),  // Falcom A2-1
+  _wrongSMSStatusCode(false)    // Motorola Timeport 260
 {
 }
 
@@ -64,6 +65,13 @@ void MeTa::init() throw(GsmException)
     _capabilities._veryShortCOPSanswer = true;
   }
 
+  // handle Motorola SMS store bug - wrong status code
+  if ((info._manufacturer == "Motorola" &&
+       info._model == "L Series"))
+  {
+    _capabilities._wrongSMSStatusCode = true;
+  } 
+ 
   // set GSM default character set
   try
   {
@@ -103,7 +111,7 @@ void MeTa::setPhonebook(string phonebookName) throw(GsmException)
   }
 }
 
-string MeTa::setSMSStore(string smsStore, bool needResultCode)
+string MeTa::setSMSStore(string smsStore, int storeTypes, bool needResultCode)
   throw(GsmException)
 {
   if (_capabilities._cpmsParamCount == -1)
@@ -127,7 +135,7 @@ string MeTa::setSMSStore(string smsStore, bool needResultCode)
 
     // build chat string
     string chatString = "+CPMS=\"" + smsStore + "\"";
-    for (int i = 1; i < _capabilities._cpmsParamCount; ++i)
+    for (int i = 1; i < min(_capabilities._cpmsParamCount, storeTypes); ++i)
       chatString += ",\"" + smsStore + "\"";
 
     return _at->chat(chatString, "+CPMS:");
@@ -153,7 +161,14 @@ static string stringVectorToString(const vector<string>& v,
   string result;
   for (vector<string>::const_iterator i = v.begin();;)
   {
-    result += *i;
+    string s = *i;
+    // remove leading and trailing "s
+    if (s.length() > 0 && s[0] == '"')
+      s.erase(s.begin());
+    if (s.length() > 0 && s[s.length() - 1] == '"')
+      s.erase(s.end() - 1);
+
+    result += s;
     // don't add end line to last
     if ( ++i == v.end() || !separator)
       break;
@@ -294,7 +309,6 @@ vector<OPInfo> MeTa::getAvailableOPInfo() throw(GsmException)
 OPInfo MeTa::getCurrentOPInfo() throw(GsmException)
 {
   OPInfo result;
-  bool done = false;
 
   // 1. This exception thing is necessary because not all ME/TA combinations
   // might support all the formats and then return "ERROR".
@@ -314,12 +328,15 @@ OPInfo MeTa::getCurrentOPInfo() throw(GsmException)
     }
     Parser p(_at->chat("+COPS?", "+COPS:"));
     result._mode = (OPModes)p.parseInt();
-    p.parseComma();
-    if (p.parseInt() == 0)
+    // some phones (e.g. Nokia Card Phone 2.0) just return "+COPS: 0"
+    // if no network connection
+    if (p.parseComma(true))
     {
-      p.parseComma();
-      result._longName = p.parseString();
-      done = true;
+      if (p.parseInt() == 0)
+      {
+        p.parseComma();
+        result._longName = p.parseString();
+      }
     }
   }
   catch (GsmException &e)
@@ -340,12 +357,15 @@ OPInfo MeTa::getCurrentOPInfo() throw(GsmException)
     }
     Parser p(_at->chat("+COPS?", "+COPS:"));
     result._mode = (OPModes)p.parseInt();
-    p.parseComma();
-    if (p.parseInt() == 1)
+    // some phones (e.g. Nokia Card Phone 2.0) just return "+COPS: 0"
+    // if no network connection
+    if (p.parseComma(true))
     {
-      p.parseComma();
-      result._shortName = p.parseString();
-      done = true;
+      if (p.parseInt() == 1)
+      {
+        p.parseComma();
+        result._shortName = p.parseString();
+      }
     }
   }
   catch (GsmException &e)
@@ -366,34 +386,35 @@ OPInfo MeTa::getCurrentOPInfo() throw(GsmException)
     }
     Parser p(_at->chat("+COPS?", "+COPS:"));
     result._mode = (OPModes)p.parseInt();
-    p.parseComma();
-    if (p.parseInt() == 2)
+    // some phones (e.g. Nokia Card Phone 2.0) just return "+COPS: 0"
+    // if no network connection
+    if (p.parseComma(true))
     {
-      p.parseComma();
-      try
+      if (p.parseInt() == 2)
       {
-        result._numericName = p.parseInt();
-      }
-      catch (GsmException &e)
-      {
-        if (e.getErrorClass() == ParserError)
+        p.parseComma();
+        try
         {
-          // the Ericsson GM12 GSM modem returns the numeric ID as string
-          string s = p.parseString();
-          result._numericName = checkNumber(s);
+          result._numericName = p.parseInt();
         }
-        else
-          throw e;
+        catch (GsmException &e)
+        {
+          if (e.getErrorClass() == ParserError)
+          {
+            // the Ericsson GM12 GSM modem returns the numeric ID as string
+            string s = p.parseString();
+            result._numericName = checkNumber(s);
+          }
+          else
+            throw e;
+        }
       }
-      done = true;
     }
   }
   catch (GsmException &e)
   {
     if (e.getErrorClass() != ChatError) throw;
   }
-  if (! done)
-    throw GsmException(_("cannot read current network operator"), OtherError);
   return result;
 }
 
@@ -594,8 +615,35 @@ void MeTa::getCallForwardInfo(ForwardReason reason,
                               ForwardInfo &fax,
                               ForwardInfo &data) throw(GsmException)
 {
+  // Initialize to some sensible values:
+  voice._active = false;
+  voice._cl = VoiceFacility;
+  voice._time = -1;
+  voice._reason = NoReason;
+  data._active = false;
+  data._cl = DataFacility;
+  data._time = -1;
+  data._reason = NoReason;
+  fax._active = false;
+  fax._cl = FaxFacility;
+  fax._time = -1;
+  fax._reason = NoReason;
+
   vector<string> responses =
     _at->chatv("+CCFC=" + intToStr(reason) + ",2", "+CCFC:");
+  if (responses.size() == 1)
+  {
+    // only one line was returned. We have to ask for all three classes
+    // (voice, data, fax) separately
+    responses.clear();
+    responses.push_back(_at->chat("+CCFC=" + intToStr(reason) +
+                                  ",2,,,1", "+CCFC:"));
+    responses.push_back(_at->chat("+CCFC=" + intToStr(reason) +
+                                  ",2,,,2", "+CCFC:"));
+    responses.push_back(_at->chat("+CCFC=" + intToStr(reason) +
+                                  ",2,,,4", "+CCFC:"));
+  }
+
   for (vector<string>::iterator i = responses.begin();
        i != responses.end(); ++i)
   {

@@ -20,7 +20,7 @@ libgsmme_la_SOURCES =	gsm_phonebook.cc gsm_util.cc gsm_unix_serial.cc \
 			gsm_sms.cc gsm_sms_codec.cc gsm_sms_store.cc \
 			gsm_event.cc gsm_sorted_phonebook.cc \
 			gsm_sorted_sms_store.cc gsm_nls.cc \
-			gsm_sorted_phonebook_base.cc
+			gsm_sorted_phonebook_base.cc gsm_cb.cc
 
 gsmincludedir =		$(includedir)/gsmlib
 
@@ -29,7 +29,7 @@ gsminclude_HEADERS =	gsm_at.h gsm_parser.h gsm_sms.h gsm_unix_serial.h \
 			gsm_util.h gsm_me_ta.h gsm_port.h gsm_sms_store.h \
 			gsm_event.h gsm_sorted_phonebook.h \
 			gsm_sorted_sms_store.h gsm_map_key.h \
-			gsm_sorted_phonebook_base.h
+			gsm_sorted_phonebook_base.h gsm_cb.h
 
 noinst_HEADERS =	gsm_nls.h gsm_sysdep.h
 

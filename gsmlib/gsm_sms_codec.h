@@ -67,7 +67,7 @@ namespace gsmlib
     bool empty() const;
 
     // return string representation
-    string toString() const;
+    string toString(bool appendTimeZone = true) const;
 
     friend bool operator<(const Timestamp &x, const Timestamp &y);
     friend bool operator==(const Timestamp &x, const Timestamp &y);
@@ -118,7 +118,7 @@ namespace gsmlib
     
     // set to default values (no message waiting, no message class indication,
     // default 7-bit alphabet)
-    DataCodingScheme() : _dcs(0) {}
+    DataCodingScheme() : _dcs(DCS_DEFAULT_ALPHABET) {}
 
     // return type of alphabet used (if messageWaitingIndication == false)
     unsigned char getAlphabet() const {return _dcs & (3 << 2);}

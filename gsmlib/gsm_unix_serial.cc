@@ -18,6 +18,7 @@
 #include <gsmlib/gsm_util.h>
 #include <termios.h>
 #include <fcntl.h>
+#include <iostream>
 #include <strstream>
 #include <errno.h>
 #include <stdio.h>

@@ -14,7 +14,7 @@
 INCLUDES =		-I..
 
 noinst_PROGRAMS =	testsms testsms2 testparser testgsmlib testpb testpb2 \
-			testspb testssms
+			testspb testssms testcb
 
 TESTS =			runspb.sh runspb2.sh runssms.sh runsms.sh \
 			runparser.sh runspbi.sh
@@ -59,3 +59,7 @@ testspb_LDADD =	../gsmlib/libgsmme.la $(INTLLIBS)
 # build testssms from testssms.cc and libgsmme.la
 testssms_SOURCES = testssms.cc
 testssms_LDADD = ../gsmlib/libgsmme.la $(INTLLIBS)
+
+# build testcb from testcb.cc and libgsmme.la
+testcb_SOURCES = testcb.cc
+testcb_LDADD = ../gsmlib/libgsmme.la $(INTLLIBS)

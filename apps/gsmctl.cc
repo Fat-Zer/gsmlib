@@ -115,10 +115,10 @@ static void printInfo(InfoParameter ip)
       cout << "<OP" << count << _(">  Status: ");
       switch (i->_status)
       {
-      case 0: cout << _("unknown"); break;
-      case 1: cout << _("current"); break;
-      case 2: cout << _("available"); break;
-      case 3: cout << _("forbidden"); break;
+      case UnknownOPStatus: cout << _("unknown"); break;
+      case CurrentOPStatus: cout << _("current"); break;
+      case AvailableOPStatus: cout << _("available"); break;
+      case ForbiddenOPStatus: cout << _("forbidden"); break;
       }
       cout << _("  Long name: '") << i->_longName << "' "
            << _("  Short name: '") << i->_shortName << "' "

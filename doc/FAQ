@@ -52,3 +52,15 @@ not change default SCA) and might not work with all phones.
 
 Try another baudrate, even higher baudrates sometimes work better then
 lower ones.
+
+*** 6. On Win32 accessing the COM device fails.
+
+Use COMx: (x is the number of the COM device) instead of the UNIX
+device name. If this doesn't work use "\\.\COMx:".
+
+*** 7. Windows 2000 Does Not Support Mapping Virtual COM Ports to
+       Infrared Ports.
+
+Windows 2000 users should follow the instructions in
+support.microsoft.com article Q252795 in order to connect with their
+mobile.

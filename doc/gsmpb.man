@@ -31,6 +31,8 @@ gsmpb \- GSM mobile phone phonebook manipulation program
 [ \fB--phonebook\fP \fIphonebook name\fP ]
 [ \fB-s\fP \fIsource device or file\fP ]
 [ \fB--source\fP \fIsource device or file\fP ]
+[ \fB-t\fP \fIcharacter set\fP ]
+[ \fB--charset\fP \fIcharacter set\fP ]
 [ \fB-v\fP ]
 [ \fB--version\fP ]
 [ \fB-V\fP ]
@@ -65,7 +67,8 @@ that can not be converted to Latin-1 are encoded as character code
 172 (Latin-1 boolean "not"). When writing file-based phonebook entries 
 to a mobile phone a conversion to the GSM default alphabet takes
 place. Characters that can not be converted are encoded as GSM delta
-(code 16).
+(code 16). If the default character set has been changed using the
+\fB--charset\fP option no conversion takes place.
 .PP
 Error messages are printed to the standard error output. If the program
 terminates on error the error code 1 is returned.
@@ -130,6 +133,10 @@ TA phonebook
 .ll 6.5i
 \fB-s\fP \fIsource\fP, \fB--source\fP \fIsource\fP
 The source device or file.
+.TP
+\fB-t\fP \fIcharacter set\fP, \fB--charset\fP \fIcharacter set\fP
+Set the character set to use for phonebook operations (default is the
+GSM default alphabet).
 .TP
 \fB-v\fP, \fB--version\fP
 Prints the program version.

@@ -92,7 +92,7 @@ bool Timestamp::empty() const
     _minute == 0 && _seconds == 0 && _timeZoneMinutes == 0;
 }
 
-string Timestamp::toString() const
+string Timestamp::toString(bool appendTimeZone) const
 {
   short timeZoneMinutes = _timeZoneMinutes;
   short timeZoneHours = timeZoneMinutes / 60;
@@ -119,6 +119,10 @@ string Timestamp::toString() const
   char *formattedTime = (char*)alloca(sizeof(char) * formattedTimeSize);
   strftime(formattedTime, formattedTimeSize, "%x %X", &t);
 #endif
+
+  if (! appendTimeZone)
+    return formattedTime;
+
   ostrstream os;
   os << formattedTime << " (" << (_negativeTimeZone ? '-' : '+')
      << setfill('0') << setw(2) << timeZoneHours 
@@ -422,8 +426,18 @@ Address SMSDecoder::getAddress(bool scAddressFormat)
   result._type = (Address::Type)getInteger(3);
 
   // get address
-  result._number = getSemiOctets(scAddressFormat ?
-                                 (addressLength - 1) * 2 : addressLength);
+  if (result._type == Address::Alphanumeric)
+  {
+    markSeptet();
+    // addressLength is number of semi-octets
+    // (addressLength / 2) * 8 is number of available bits
+    // divided by 7 is number of 7-bit characters
+    result._number = gsmToLatin1(getString((addressLength / 2) * 8 / 7));
+    alignOctet();
+  }
+  else
+    result._number = getSemiOctets(scAddressFormat ?
+                                   (addressLength - 1) * 2 : addressLength);
   return result;
 }
 
@@ -577,15 +591,29 @@ void SMSEncoder::setAddress(Address &address, bool scAddressFormat)
       return;                   // (set by +CSCA=)
     }
     setOctet(numberLen / 2 + numberLen % 2 + 1);
+    // not supported for SCA format
+    assert(address._type != Address::Alphanumeric);
   }
   else
-    setOctet(address._number.length());
+    if (address._type == Address::Alphanumeric)
+      // address in GSM default encoding, see also comment in getAddress()
+      setOctet((address._number.length() * 7 + 6) / 8 * 2);
+    else
+      setOctet(address._number.length());
 
   setInteger(address._plan, 4);
   setInteger(address._type, 3);
-  if (address._number.length() > 0) setBit(1);
+  setBit(1);
   
-  setSemiOctets(address._number);
+  if (address._number.length() > 0)
+    if (address._type == Address::Alphanumeric)
+    {
+      markSeptet();
+      setString(latin1ToGsm(address._number));
+    }
+    else
+      setSemiOctets(address._number);
+  alignOctet();
 }
 
 void SMSEncoder::setTimestamp(Timestamp timestamp)

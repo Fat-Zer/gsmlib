@@ -263,7 +263,7 @@ int main(int argc, char *argv[])
 
     int opt;
     int dummy;
-    while((opt = getopt_long(argc, argv, "I:p:s:d:b:cyhvViD:S:X", longOpts,
+    while((opt = getopt_long(argc, argv, "I:p:s:d:b:cyhvViD:S:Xt:", longOpts,
                              &dummy))
           != -1)
       switch (opt)
@@ -390,13 +390,16 @@ int main(int argc, char *argv[])
     }
 
     // make sure destination.c_str file exists
-    try
-    {
-      ofstream f(destination.c_str(), ios::out | ios::app);
-    }
-    catch (exception)
-    {
-    }
+	if (destination != "")
+	{
+      try
+	  {
+        ofstream f(destination.c_str(), ios::out | ios::app);
+	  }
+      catch (exception)
+	  {
+	  }
+	}
 
     // start accessing destination mobile phone or file
     if (destinationBackend != "")

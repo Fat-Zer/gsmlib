@@ -25,12 +25,16 @@ gsmsmsd \- SMS message reception daemon
 [ \fB--sca\fP \fIservice centre address\fP ]
 [ \fB-d\fP \fIdevice\fP ]
 [ \fB--device\fP \fIdevice\fP ]
+[ \fB-D\fP ]
+[ \fB--direct\fP ]
 [ \fB-f\fP ]
 [ \fB--flush\fP ]
 [ \fB-h\fP ]
 [ \fB--help\fP ]
 [ \fB-I\fP \fIinit string\fP ]
 [ \fB--init\fP \fIinit string\fP ]
+[ \fB-r\fP ]
+[ \fB--requeststat\fP ]
 [ \fB-s\fP \fIspool directory\fP ]
 [ \fB--spool\fP \fIspool directory\fP ]
 [ \fB-t\fP \fISMS store name\fP ]
@@ -98,6 +102,12 @@ work with some phones).
 The device to which the GSM modem is connected. The default is
 \fI/dev/mobilephone\fP.
 .TP
+\fB-D\fP, \fB--direct\fP
+Enables direct routing of incoming SMS messages to the TE. This is not
+supported by many mobile phone/GSM modem combinations. Therefore, the
+default is to store incoming SMS temporarily before processing them in 
+the indicated store.
+.TP
 \fB-f\fP, \fB--flush\fP
 This option causes \fIgsmsmsd\fP to flush (ie. read and erase)
 existing SMS messages from
@@ -113,6 +123,12 @@ Prints an option summary.
 \fB-I\fP \fIinit string\fP, \fB--init\fP \fIinit string\fP
 Initialization string to send to the TA (default: "E0"). Note that the
 sequence "ATZ" is sent first.
+.TP
+\fB-r\fP, \fB--requeststat\fP
+Request status reports for sent SMS. Note: This option only makes
+sense if the phone supports routing of status reports to the
+TE. Otherwise the status reports might show on the phone's display or
+get lost.
 .TP
 \fB-s\fP \fIspool directory\fP, \fB--spool\fP \fIspool directory\fP
 This option sets the spool directory where \fIgsmsmsd\fP expects SMS

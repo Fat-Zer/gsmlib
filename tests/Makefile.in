@@ -106,7 +106,7 @@ l = @l@
 
 INCLUDES = -I..
 
-noinst_PROGRAMS = testsms testsms2 testparser testgsmlib testpb testpb2 			testspb testssms
+noinst_PROGRAMS = testsms testsms2 testparser testgsmlib testpb testpb2 			testspb testssms testcb
 
 
 TESTS = runspb.sh runspb2.sh runssms.sh runsms.sh 			runparser.sh runspbi.sh
@@ -147,6 +147,10 @@ testspb_LDADD = ../gsmlib/libgsmme.la $(INTLLIBS)
 # build testssms from testssms.cc and libgsmme.la
 testssms_SOURCES = testssms.cc
 testssms_LDADD = ../gsmlib/libgsmme.la $(INTLLIBS)
+
+# build testcb from testcb.cc and libgsmme.la
+testcb_SOURCES = testcb.cc
+testcb_LDADD = ../gsmlib/libgsmme.la $(INTLLIBS)
 mkinstalldirs = $(SHELL) $(top_srcdir)/scripts/mkinstalldirs
 CONFIG_HEADER = ../gsm_config.h
 CONFIG_CLEAN_FILES = 
@@ -181,6 +185,9 @@ testspb_LDFLAGS =
 testssms_OBJECTS =  testssms.o
 testssms_DEPENDENCIES =  ../gsmlib/libgsmme.la
 testssms_LDFLAGS = 
+testcb_OBJECTS =  testcb.o
+testcb_DEPENDENCIES =  ../gsmlib/libgsmme.la
+testcb_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -193,8 +200,8 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = gtar
 GZIP_ENV = --best
-SOURCES = $(testsms_SOURCES) $(testsms2_SOURCES) $(testparser_SOURCES) $(testgsmlib_SOURCES) $(testpb_SOURCES) $(testpb2_SOURCES) $(testspb_SOURCES) $(testssms_SOURCES)
-OBJECTS = $(testsms_OBJECTS) $(testsms2_OBJECTS) $(testparser_OBJECTS) $(testgsmlib_OBJECTS) $(testpb_OBJECTS) $(testpb2_OBJECTS) $(testspb_OBJECTS) $(testssms_OBJECTS)
+SOURCES = $(testsms_SOURCES) $(testsms2_SOURCES) $(testparser_SOURCES) $(testgsmlib_SOURCES) $(testpb_SOURCES) $(testpb2_SOURCES) $(testspb_SOURCES) $(testssms_SOURCES) $(testcb_SOURCES)
+OBJECTS = $(testsms_OBJECTS) $(testsms2_OBJECTS) $(testparser_OBJECTS) $(testgsmlib_OBJECTS) $(testpb_OBJECTS) $(testpb2_OBJECTS) $(testspb_OBJECTS) $(testssms_OBJECTS) $(testcb_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -285,6 +292,10 @@ testspb: $(testspb_OBJECTS) $(testspb_DEPENDENCIES)
 testssms: $(testssms_OBJECTS) $(testssms_DEPENDENCIES)
 	@rm -f testssms
 	$(CXXLINK) $(testssms_LDFLAGS) $(testssms_OBJECTS) $(testssms_LDADD) $(LIBS)
+
+testcb: $(testcb_OBJECTS) $(testcb_DEPENDENCIES)
+	@rm -f testcb
+	$(CXXLINK) $(testcb_LDFLAGS) $(testcb_OBJECTS) $(testcb_LDADD) $(LIBS)
 .cc.o:
 	$(CXXCOMPILE) -c $<
 .cc.lo:
@@ -334,10 +345,13 @@ distdir: $(DISTFILES)
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
+testcb.o: testcb.cc ../gsm_config.h ../gsmlib/gsm_cb.h \
+	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_util.h \
+	../gsmlib/gsm_error.h ../gsmlib/gsm_nls.h
 testgsmlib.o: testgsmlib.cc ../gsm_config.h ../gsmlib/gsm_unix_serial.h \
 	../gsmlib/gsm_error.h ../gsmlib/gsm_port.h ../gsmlib/gsm_util.h \
 	../gsmlib/gsm_me_ta.h ../gsmlib/gsm_event.h ../gsmlib/gsm_sms.h \
-	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_at.h \
+	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_at.h ../gsmlib/gsm_cb.h \
 	../gsmlib/gsm_phonebook.h ../gsmlib/gsm_sorted_phonebook_base.h \
 	../gsmlib/gsm_map_key.h ../gsmlib/gsm_sms_store.h
 testparser.o: testparser.cc ../gsmlib/gsm_parser.h ../gsmlib/gsm_util.h \
@@ -345,13 +359,13 @@ testparser.o: testparser.cc ../gsmlib/gsm_parser.h ../gsmlib/gsm_util.h \
 testpb.o: testpb.cc ../gsmlib/gsm_unix_serial.h ../gsmlib/gsm_error.h \
 	../gsmlib/gsm_port.h ../gsmlib/gsm_util.h ../gsmlib/gsm_me_ta.h \
 	../gsmlib/gsm_event.h ../gsmlib/gsm_sms.h \
-	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_at.h \
+	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_at.h ../gsmlib/gsm_cb.h \
 	../gsmlib/gsm_phonebook.h ../gsmlib/gsm_sorted_phonebook_base.h \
 	../gsmlib/gsm_map_key.h ../gsmlib/gsm_sms_store.h
 testpb2.o: testpb2.cc ../gsmlib/gsm_unix_serial.h ../gsmlib/gsm_error.h \
 	../gsmlib/gsm_port.h ../gsmlib/gsm_util.h ../gsmlib/gsm_me_ta.h \
 	../gsmlib/gsm_event.h ../gsmlib/gsm_sms.h \
-	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_at.h \
+	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_at.h ../gsmlib/gsm_cb.h \
 	../gsmlib/gsm_phonebook.h ../gsmlib/gsm_sorted_phonebook_base.h \
 	../gsmlib/gsm_map_key.h ../gsmlib/gsm_sms_store.h
 testsms.o: testsms.cc ../gsm_config.h ../gsmlib/gsm_sms.h \
@@ -360,7 +374,7 @@ testsms.o: testsms.cc ../gsm_config.h ../gsmlib/gsm_sms.h \
 testsms2.o: testsms2.cc ../gsm_config.h ../gsmlib/gsm_unix_serial.h \
 	../gsmlib/gsm_error.h ../gsmlib/gsm_port.h ../gsmlib/gsm_util.h \
 	../gsmlib/gsm_me_ta.h ../gsmlib/gsm_event.h ../gsmlib/gsm_sms.h \
-	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_at.h \
+	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_at.h ../gsmlib/gsm_cb.h \
 	../gsmlib/gsm_phonebook.h ../gsmlib/gsm_sorted_phonebook_base.h \
 	../gsmlib/gsm_map_key.h ../gsmlib/gsm_sms_store.h
 testspb.o: testspb.cc ../gsmlib/gsm_unix_serial.h ../gsmlib/gsm_error.h \
@@ -373,8 +387,9 @@ testssms.o: testssms.cc ../gsmlib/gsm_unix_serial.h \
 	../gsmlib/gsm_error.h ../gsmlib/gsm_port.h ../gsmlib/gsm_util.h \
 	../gsmlib/gsm_sorted_sms_store.h ../gsmlib/gsm_sms_store.h \
 	../gsmlib/gsm_at.h ../gsmlib/gsm_sms.h \
-	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_map_key.h \
-	../gsmlib/gsm_phonebook.h ../gsmlib/gsm_sorted_phonebook_base.h
+	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_cb.h \
+	../gsmlib/gsm_map_key.h ../gsmlib/gsm_phonebook.h \
+	../gsmlib/gsm_sorted_phonebook_base.h
 
 check-TESTS: $(TESTS)
 	@failed=0; all=0; \

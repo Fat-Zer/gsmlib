@@ -1,93 +1,111 @@
-.\" -*- eval: (nroff-mode) -*-
-.de TQ
-.br
-.ns
-.TP \\$1
-..
-.\" Like TP, but if specified indent is more than half
-.\" the current line-length - indent, use the default indent.
-.de Tp
-.ie \\n(.$=0:((0\\$1)*2u>(\\n(.lu-\\n(.iu)) .TP
-.el .TP "\\$1"
-..
 .TH GSMCTL 8 "##DATE##" "gsmctl v##VERSION##"
-.PP
 .SH NAME
 gsmctl \- GSM mobile phone control program
-.PP
 .SH SYNOPSIS
 .B gsmctl
-[ \fB-b\fP \fIbaudrate\fP ]
-[ \fB--baudrate\fP \fIbaudrate\fP ]
-[ \fB-d\fP \fIdevice\fP ]
-[ \fB--device\fP \fIdevice\fP ]
-[ \fB-h\fP ]
-[ \fB--help\fP ]
-[ \fB-I\fP \fIinit string\fP ]
-[ \fB--init\fP \fIinit string\fP ]
-[ \fB-o\fP \fIoperation\fP ]
-[ \fB--operation\fP \fIoperation\fP ]
-[ \fB-v\fP ]
-[ \fB--version\fP ]
-[ \fB-X\fP ]
-[ \fB--xonxoff\fP ]
-{ \fIparameters\fP }
-.PP
+.RB [\| \-b
+.IR  baudrate \|]
+.RB [\| \-\-baudrate
+.IR baudrate\| ]
+.RB [ \|\-d
+.IR device\| ]
+.RB [ \|\-\-device
+.IR device\fP ]
+.RB [ \|\-h\| ]
+.RB [ \|\-\-help\| ]
+.RB [ \|\-I
+.IR "init string" \|]
+.RB [ \|\-\-init
+.IR "init string" \|]
+.RB [ \|\-v\| ]
+.RB [ \|\-\-version\| ]
+.RB [ \|\-X\| ]
+.RB [ \|\-\-xonxoff\| ]
+.BI \-o \ operation
+.RB  | \ \-\-operation
+.IR operation \ |
+.I parameters
 .SH DESCRIPTION
-\fIgsmctl\fP can request information from or perform operations on an GSM
-mobile phone.
+.B gsmctl
+can request information from or perform operations on an GSM mobile
+phone.
 .PP
-\fIgsmctl\fP attaches itself to the \fIdevice\fP given on the command
-line (usually an GSM modem) using the specified \fIbaudrate\fP.  If no
-\fIdevice\fP is given, the device \fI/dev/mobilephone\fP is used. If
-no \fIbaudrate\fP is given, a default baud rate of 38400 is used.
+.B gsmctl 
+attaches itself to the 
+.I device
+given on the command line (usually an GSM modem) using the specified
+.IR baudrate .  
+If no
+.I device
+is given, the device
+.I/dev/mobilephone
+is used. If no 
+.I baudrate
+is given, a default baud rate of 38400 is used.
 .PP
-\fIgsmctl\fP can be used in to modes: If no \fBoperation\fP option is
-given the \fIparameters\fP specify the status information to be
-retrieved from the mobile phone. See the section \fBSTATUS
-INFORMATION\fP for more details. If an \fBoperation\fP option is given
-the requested \fIoperation\fP is performed on the mobile using the
-\fIparameters\fP. See the section \fBOPERATIONS\fP for more details.
+.B gsmctl
+can be used in to modes: If no 
+.B \-\-operation
+option is given the
+.I parameters
+specify the status information to be retrieved from
+the mobile phone. See the section 
+.B STATUS INFORMATION
+for more details. If an 
+.B \-\-operation
+option is given the requested
+.I operation
+is performed on the mobile using the
+.IR parameters . 
+See the section 
+.B OPERATIONS
+for more details.
 .PP
-Error messages are printed to the standard error output.  If the program
-terminates on error the error code 1 is returned.
-.PP
+Error messages are printed to the standard error output.  If the
+program terminates on error the error code 1 is returned.
 .SH OPTIONS
 .TP
-\fB-b\fP \fIbaudrate\fP, \fB--baudrate\fP \fIbaudrate\fP
-The baud rate to use.
+.BI \-b\  baudrate ,\ \-\-baudrate\  baudrate
+The baud rate to use.  Defaults to 38400.
 .TP
-\fB-d\fP \fIdevice\fP, \fB--device\fP \fIdevice\fP
+.BI \-d\  device ,\ \-\-device\  device
 The device to which the GSM modem is connected. The default is
-\fI/dev/mobilephone\fP.
+.IR /dev/mobilephone .
 .TP
-\fB-h\fP, \fB--help\fP
+.B \-h,\ \-\-help
 Prints an option summary.
 .TP
-\fB-I\fP \fIinit string\fP, \fB--init\fP \fIinit string\fP
+.BI \-I\  "init string" ,\ \-\-init\  "init string"
 Initialization string to send to the TA (default: "E0"). Note that the
 sequence "ATZ" is sent first.
 .TP
-\fB-o\fP \fIoperation\fP, \fB--operation\fP \fIoperation\fP
+.BI \-o\  operation ,\ \-\-operation\  operation
 This option is used to perform an operation on the mobile phone. Refer
-to the section \fBOPERATIONS\fP for more information on the available
-operations and the \fIparameters\fP required for each operation.
+to the section 
+.B OPERATIONS
+for more information on the available
+operations and the 
+.I parameters
+required for each operation.
 .TP
-\fB-v\fP, \fB--version\fP
+.B \-v,\ \-\-version
 Prints the program version.
 .TP
-\fB-X\fP, \fB--xonxoff\fP
+.B \-X,\ \-\-xonxoff
 Uses software handshaking (XON/XOFF) for accessing the device.
-.PP
 .SH STATUS INFORMATION
-If called without the \fB--operation\fP option \fIgsmctl\fP prints out
-default mobile phone status information as specified by the
-\fIparameters\fP described below:
-.TP .7i
-\fBALL\fP
+If called without the 
+.B \-\-operation
+option 
+.B gsmctl
+prints out default mobile phone status information as specified by the
+.I parameters
+described below:
+.TP 7
+.B ALL
 Prints all available information.
-.TP .7i
-\fBBATT\fP
+.TP 7
+.B BATT
 Prints out information about the current battery status. Two lines of
 the form "<BATT0> text" and "<BATT1>  charge" are printed. Text may be 
 of "0 ME is powered by the battery", "1 ME has a battery connected,
@@ -95,393 +113,457 @@ but is not powered by it", "2 ME does not have a battery connected",
 or  "3 Recognized power fault, calls inhibited". Charge is a number in 
 the range 0..100 where 0 means that the battery is empty or not
 connected and 100 means full charge.
-.TP .7i
-\fBBITERR\fP
+.TP 7
+.B BITERR
 Prints information about the current bit error rate. The output is of
 form "<BITERR0>  value" where value can be of 0..7, 99 (99 means not
 available or not detectable).
-.TP .7i
-\fBCLIP\fP
+.TP 7
+.B CLIP
 This option prints a line of the form "<CLIP0> on" if caller line
 identification is turned on in the network, "<CLIP0> off" otherwise.
-.TP .7i
-\fBCURROP\fP
+.TP 7
+.B CSET
+Display info about charsets.  The output is in the form "<CSET0>
+available" and "<CSET1> current", which describes the charsets
+available and which is current.
+.TP 7
+.B CURROP
 Prints information about the current operator. The output line has the
 form "<CURROP0> Long name: \'xxxx\' Short name: \'yyyy\' Numeric Name: zzzz".
-.TP .7i
-\fBFLCAP\fP
+.TP 7
+.B FLCAP
 Prints out the two-letter names of available facility locks. The
 meaning of standardized facility lock names is as follows:
-.TP .3i
-.po +0.7i
-.ll 5.8i
-\fICS\fP
+.RS
+.TP 3
+.I CS
 Lock control surface (eg. phone keyboard)
-.TP .3i
-\fIPS\fP
-Lock phone to SIM card (mobile phone asks password when other than current SIM
-card inserted)
-.TP .3i
-\fISC\fP
+.TP 3
+.I PS
+Lock phone to SIM card (mobile phone asks password when other than
+current SIM card inserted)
+.TP 3
+.I SC
 Lock SIM card (SIM asks password in mobile phone power-up and when
 this lock command issued)
-.TP .3i
-\fIAO\fP
+.TP 3
+.I AO
 Barr all outgoing calls
-.TP .3i
-\fIOI\fP
+.TP 3
+.I OI
 Barr outgoing international calls
-.TP .3i
-\fIOX\fP
+.TP 3
+.I OX
 Barr outgoing international calls except to home country
-.TP .3i
-\fIAI\fP
+.TP 3
+.I AI
 Barr all incoming calls
-.TP .3i
-\fIIR\fP
+.TP 3
+.I IR
 Barr incoming calls when roaming outside the home country
-.TP .3i
-\fINT\fP
+.TP 3
+.I NT
 Barr incoming calls from numbers not stored to TA memory
-.TP .3i
-\fINM\fP
+.TP 3
+.I NM
 Barr incoming calls from numbers not stored to mobile phone memory
-.TP .3i
-\fINS\fP
+.TP 3
+.I NS
 Barr incoming calls from numbers not stored to SIM memory
-.TP .3i
-\fINA\fP
+.TP 3
+.I NA
 Barr incoming calls from numbers not stored in Any memory
-.TP .3i
-\fIAB\fP
+.TP 3
+.I AB
 All Barring services (FIXME)
-.TP .3i
-\fIAG\fP
+.TP 3
+.I AG
 All outGoing barring services (FIXME)
-.TP .3i
-\fIAC\fP
+.TP 3
+.I AC
 All inComing barring services (FIXME)
-.TP .3i
-\fIFD\fP
+.TP 3
+.I FD
 SIM fixed dialling memory feature (if PIN2 authentication has not been
 done during the current session, PIN2 is required as <passwd>)
 .PP
 Note that mobile phones may implement facility locks not documented
 here.
-.TP .7i
-.po -0.7i
-.ll 6.5i
-\fBFLSTAT\fP
+.RE
+.TP 7
+.B FLSTAT
 Prints information about the status of facility locking in the mobile
 phone. For each facility a line of the form "<FLSTATn> \'facilityname\'
 classes" is printed. The classes may be "Voice", "Data", and/or "Fax"
 depending on the class for which the facility is enabled. If "unknown"
 is printed out this means that the TA is not able to report the
 status. If the facility is not enabled for any class, no class
-identifier is printed. See \fBFLCAP\fP for information about the
-available two-letter names of facility locks.
-.TP .7i
-\fBFORW\fP
+identifier is printed. See 
+.B FLCAP
+for information about the available two-letter names of facility
+locks.
+.TP 7
+.B FORW
 Prints information about call forwarding enabled in the mobile
 phone. For each combination of reason (UnconditionalReason,
 MobileBusyReason, NoReplyReason, and NotReachableReason) and class
 (Voice, Data, and Fax) a line of the form "<FORWn.m> reason class
 number: xxx subaddr: yyy time: zzz" is printed. The time is the number 
 of seconds to wait before forwarding in case of NoReplyReason.
-.TP .7i
-\fBME\fP
+.TP 7
+.B ME
 Prints manufacturer, model, revision, and serial number of
 the mobile phone (ME = mobile equipment). Output lines are numbered from 
 "<ME0>" to "<ME3>".
-.TP .7i
-\fBOP\fP
+.TP 7
+.B OP
 Prints information about the currently available mobile network
 operators. For each operator an output line of the form "<OPn> status 
 Long name: \'xxxx\' Short name: \'yyyy\' Numeric name: zzz" is returned
 where status may be of:
-.TP .2i
-.po +0.7i
-.ll 5.8i
-\fIunknown\fP
+.RS
+.TP 10
+.I unknown
 The status of the operator is unknown.
 .TP
-\fIcurrent\fP
+.I current
 This is the currently selected operator.
 .TP
-\fIavailable\fP
+.I available
 This operator is available for selection.
 .TP
-\fIforbidden\fP
+.I forbidden
 This operator is not available for selection, ie. not
 accessible with this SIM card.
-.TP .7i
-.po -0.7i
-.ll 6.5i
-\fBPW\fP
+.RE
+.TP 7
+.B PW
 Facilities in the mobile phone may be protected by passwords (ie. PINs 
 or PUKs). This option prints out lines of the form "<PWn>
 \'facilityname\' len" for each facility for which a facility lock
-password exists. See \fBFLCAP\fP for information about the available
-two-letter names of facility locks.
-.TP .7i
-\fBSCA\fP
+password exists. See 
+.B FLCAP
+for information about the available two-letter names of facility
+locks.
+.TP 7
+.B SCA
 Reports the default SMS service centre address currently set in the
 mobile phone.
-.TP .7i
-\fBSIG\fP
+.TP 7
+.B SIG
 Prints information about the current network signal
 strength. The output is of the form "<SIG0> value". Following values
 are possible:
-.TP .3i
-.po +0.7i
-.ll 5.8i
-\fI0\fP
+.TP
+.po +7
+.I 0
 -113 dBm or less
-.TP .3i
-\fI1\fP
+.TP
+.I 1
 -111 dBm
-.TP .3i
-\fI2...30\fP
--109... -53 dBm
-.TP .3i
-\fI31\fP
+.TP
+.I 2...30
+-109... -53 dBm (in steps of 2 dBm)
+.TP
+.I 31
 -51 dBm or greater
-.TP .3i
-\fI99\fP
+.TP
+.I 99
 not known or not detectable
 .PP
-.po -0.7i
-.ll 6.5i
+.po 
 .SH OPERATIONS
-.TP .7i
-\fBdial\fP \fInumber\fP
-Dials \fInumber\fP. After dialling \fIgsmctl\fP waits for a <CR> keypress
-to terminate.
-.TP .7i
-\fBforw\fP \fImode\fP \fIreason\fP \fInumber\fP [ \fIfacilityclass\fP ] [ \fIforwardtime\fP ]
-Changes the call forwarding behaviour in the network. \fImode\fP can
-be any of:
-.TP .3i
-.po +0.7i
-.ll 5.8i
-\fIdisable\fP
+.TP
+.BI dial\  number
+Dials 
+.IR number .
+After dialling 
+.B gsmctl
+waits for a <CR> keypress to terminate.
+.PP
+.B forw
+.IR mode\ reason\ number\  [\| facilityclass\| ]\ [ forwardtime ]
+.RS
+Changes the call forwarding behaviour in the network. 
+.I mode
+can be any of:
+.RS 3
+.I disable
 Call forwarding is disabled.
-.TP .3i
-\fIenable\fP
+.PP
+.I enable
 Call forwarding is enabled. The call forwarding reason, number, and
 (optionally) forwardtime must be registered beforehand.
-.TP .3i
-\fIregister\fP
+.PP
+.I register
 This registers the call forwarding reason, number, and forwardtime in
 the network.
-\fIerase\fP
+.PP
+.I erase
 This is the counterpart to register. It erase the call forwarding info 
 in the network.
+.RE
 .PP
-\fIreason\fP can be any of:
-.TP .3i
-\fIunconditional\fP
+.I reason
+can be any of:
+.RS 3
+.I unconditional
 This applies to every call.
-.TP .3i
-\fImobilebusy\fP
-The mobile phone is busy.
-.TP .3i
-\fInoreply\fP
-The call is not answered in \fIforwardtime\fP seconds.
-.TP .3i
-\fInotreachable\fP
-Mobile phone cannot be reached (ie. switched off).
-.TP .3i
-\fIall\fP
-This refers to all forwarding reasons.
-.TP .3i
-\fIallconditional\fP
-This refers to all conditional forward reasons (\fImobilebusy\fP,
-\fInoreply\fP, \fInotreachable\fP).
 .PP
-\fInumber\fP is the number the incoming call is forwarded to. See the
-explanation for \fIlock\fP operation for the meaning of 
-\fIfacilityclass\fP. The default for \fIforwardtime\fP is 20 seconds if
-omitted. \fIforwardtime\fP can be in the range 1..30.
-.TP .7i
-.po -0.7i
-.ll 6.5i
-\fBlock\fP \fIfacility\fP [ \fIfacilityclass\fP ] [ \fIpasswd\fP ]
-Locks the named facility. Use \fIgsmctl\fP \fIflcap\fP to get a list
-of supported facilities. The \fIfacilityclass\fP can be any of:
-.TP .3i
-.po +0.7i
-.ll 5.8i
-\fIall\fP
+.I mobilebusy
+The mobile phone is busy.
+.PP
+.I noreply
+The call is not answered in \fIforwardtime\fP seconds.
+.PP
+.I notreachable
+Mobile phone cannot be reached (ie. switched off).
+.PP
+.I all
+This refers to all forwarding reasons.
+.PP
+.I allconditional
+This refers to all conditional forward reasons 
+.RI ( mobilebusy ,\  noreply ,\  notreachable ).
+.RE
+.PP
+.I number
+is the number the incoming call is forwarded to. See the explanation
+for 
+.I lock
+operation for the meaning of 
+.IR facilityclass .
+The default for 
+.I forwardtime
+is 20 seconds if omitted. 
+.I forwardtime
+can be in the range 1..30.
+.RE
+.PP
+.B lock
+.IR facility\  [\| facilityclass \|]\ [\| passwd \|]
+.RS 
+Locks the named facility. Use 
+.BI gsmctl\  flcap
+to get a list of supported facilities. The 
+.I facilityclass
+can be any of:
+.RS 3
+.I all
 Voice, data, and fax.
-.TP .3i
-\fIv\fP \fIvf\fP \fIvd\fP \fIf\fP \fIfd\fP \fId\fP 
-Any combination of voice, data, fax.
+.PP
+.I v\ vf\ vd\ f\ fd\ d
+Any combination of voice, data and fax.
+.RE
 .PP
 The default is \fIall\fP if \fIfacilityclass\fP is omitted. The
 \fIpasswd\fP is password for the facility. If no password is given
 this parameter can be omitted.
-.TP .7i
-.po -0.7i
-.ll 6.5i
-\fBsetop\fP \fIopmode\fP \fInumericname\fP
-Sets the current operator to \fInumericname\fP. Use \fIgsmctl\fP
-\fIop\fP to get a list of operators with their numeric
-codes. \fIopmode\fP can be any of:
-.TP .3i
-.po +0.7i
-.ll 5.8i
-\fIautomatic\fP
-.TP .3i
-\fImanual\fP
-.TP .3i
-\fIderegister\fP
+.RE
+.PP
+.BI setop\  opmode\ numericname
+.RS
+Sets the current operator to 
+.IR numericname . 
+Use 
+.BI gsmctl\  op
+to get a list of operators with their numeric codes. 
+.I opmode
+can be any of:
+.RS 3
+.I automatic
+.PP
+.I manual
+.PP
+.I deregister
 Deregister from network.
-.TP .3i
-\fImanualautomatic\fP
+.PP
+.I manualautomatic
 If manual selection fails, automatic mode is entered.
-.TP .7i
-.po -0.7i
-.ll 6.5i
-\fBsetpw\fP \fIfacility\fP [ \fIoldpasswd\fP ] [ \fInewpasswd\fP ]
+.RE
+.RE
+.PP
+.B setpw
+.IR facility\  [\| oldpasswd\| ]\ [\| newpasswd\| ]
+.RS
 Sets the password for the facility. If one of the passwords is omitted 
 this means that the facility has no password protection. Passwords are 
 PIN1, PIN2, PUK etc.
-.TP .7i
-\fBsetsca\fP \fIservice centre address\fP
+.RE
+.TP
+.BI setsca\  service\ centre\ address
 Sets the default SMS service centre address.
-.TP .7i
-\fBunlock\fP \fIfacility\fP [ \fIfacilityclass\fP ] [ \fIpasswd\fP ]
+.PP
+.B unlock
+.IR facility\  [\| facilityclass\| ]\ [ \|passwd\| ]
+.RS
 This is the reverse operation to \fBlock\fP. See above for a
 description of the parameters.
-.PP
+.RE
 .SH EXAMPLES
-The following invocation of \fIgsmctl\fP prints out all available
-status information for the mobile phone connected to
-\fB/dev/mobilephone\fP:
+The following invocation of 
+.I gsmctl
+prints out all available status information for the mobile phone
+connected to
+.B /dev/mobilephone
 .PP
 .nf
+.IP "" 3 
 gsmctl all
 .fi
 .PP
 The output could look like (lines edited to fit):
+.RS 3
 .PP
-.nf
+.PD 0
 <ME0>  Manufacturer: SIEMENS
+.HP
 <ME1>  Model: S10
+.HP
 <ME2>  Revision: 06
+.HP
 <ME3>  Serial Number: 448058511817585
-<OP0>  Status: available  Long name: 'D1-TELEKOM'   Short name: ''
-       Numeric name: 26201
-<OP1>  Status: forbidden  Long name: 'D2  PRIVAT'   Short name: ''
-       Numeric name: 26202
-<CURROP0>  Long name: 'D1-TELEKOM'   Short name: ''   Numeric name: 26201
-           Mode: automatic
+.HP
+<OP0>  Status: available  Long name: 'D1-TELEKOM' Short name: '' Numeric name: 26201
+.HP
+<OP1>  Status: forbidden  Long name: 'D2  PRIVAT' Short name: '' Numeric name: 26202
+.HP
+<CURROP0>  Long name: 'D1-TELEKOM'   Short name: '' Numeric name: 26201 Mode: automatic
+.HP
 <FLSTAT0>  'CS'
+.HP
 <FLSTAT1>  'PS'
+.HP
 <FLSTAT2>  'SC'  Voice  Data  Fax
+.HP
 <FLSTAT3>  'AO'
+.HP
 <FLSTAT4>  'OI'
+.HP
 <FLSTAT5>  'OX'
+.HP
 <FLSTAT6>  'AI'
+.HP
 <FLSTAT7>  'IR'
+.HP
 <FLCAP0>  'CS' 'PS' 'SC' 'AO' 'OI' 'OX' 'AI' 'IR' 'AB' 'AG' 'AC' 
+.HP
 <PW0>  'PS' 8
+.HP
 <PW1>  'SC' 8
+.HP
 <PW2>  'AO' 4
+.HP
 <PW3>  'OI' 4
+.HP
 <PW4>  'OX' 4
+.HP
 <PW5>  'AI' 4
+.HP
 <PW6>  'IR' 4
+.HP
 <PW7>  'AB' 4
+.HP
 <PW8>  'AG' 4
+.HP
 <PW9>  'AC' 4
+.HP
 <CLIP0>  on
-<FORW0.0>  UnconditionalReason  Voice  inactive number:   subaddr:
-           time: -1
-<FORW0.1>  UnconditionalReason  Data  inactive number:   subaddr:
-           time: -1
-<FORW0.2>  UnconditionalReason  Fax  inactive number:   subaddr:
-           time: -1
-<FORW1.0>  MobileBusyReason  Voice  active number: +494012345678
-           subaddr:   time: -1
-<FORW1.1>  MobileBusyReason  Data  inactive number:   subaddr:   time: -1
-<FORW1.2>  MobileBusyReason  Fax  inactive number:   subaddr:   time: -1
-<FORW2.0>  NoReplyReason  Voice  active number: +494012345678
-           subaddr:   time: 20
-<FORW2.1>  NoReplyReason  Data  inactive number:   subaddr:   time: -1
-<FORW2.2>  NoReplyReason  Fax  inactive number:   subaddr:   time: -1
-<FORW3.0>  NotReachableReason  Voice  active number: +494012345678
-           subaddr:   time: -1
-<FORW3.1>  NotReachableReason  Data  inactive number:   subaddr:
-           time: -1
-<FORW3.2>  NotReachableReason  Fax  inactive number:   subaddr:
-           time: -1
+.HP
+<FORW0.0>  UnconditionalReason  Voice  inactive number:   subaddr:  time: -1
+.HP
+<FORW0.1>  UnconditionalReason  Data  inactive number:   subaddr:  time: -1
+.HP
+<FORW0.2>  UnconditionalReason  Fax  inactive number:   subaddr:  time: -1
+.HP
+<FORW1.0>  MobileBusyReason  Voice  active number: +494012345678  subaddr:   time: -1
+.HP
+<FORW1.1>  MobileBusyReason  Data  inactive number:   subaddr:  time: -1
+.HP
+<FORW1.2>  MobileBusyReason  Fax  inactive number:   subaddr:  time: -1
+.HP
+<FORW2.0>  NoReplyReason  Voice  active number: +494012345678  subaddr:   time: 20
+.HP
+<FORW2.1>  NoReplyReason  Data  inactive number:   subaddr:  time: -1
+.HP
+<FORW2.2>  NoReplyReason  Fax  inactive number:   subaddr:  time: -1
+.HP
+<FORW3.0>  NotReachableReason  Voice  active number: +494012345678  subaddr:  time: -1
+.HP
+<FORW3.1>  NotReachableReason  Data  inactive number:  subaddr:  time: -1
+.HP
+<FORW3.2>  NotReachableReason  Fax  inactive number:  subaddr:  time: -1
+.HP
 <BATT0>   0 ME is powered by the battery
+.HP
 <BATT1>  100
+.HP
 <BITERR0>  0
+.HP
 <SIG0>  19
-.fi
+.RE
+.PD
 .PP
 The following locks the keys on the mobile phone:
-.PP
 .nf
+.IP "" 3
 gsmctl -o lock cs
 .fi
 .PP
 This changes the SIM card PIN from 1234 to 2345:
-.PP
 .nf
+.IP "" 3
 gsmctl -o setpw sc 1234 2345
 .fi
 .PP
 Switch off all call forwarding (actually erase the numbers):
-.PP
 .nf
+.IP "" 3
 gsmctl -o forw erase all
 .fi
 .PP
 Switch on call forwarding to German D1 voice box:
-.PP
 .nf
+.IP "" 3
 gsmctl -o forw register notreachable 3313
 gsmctl -o forw enable notreachable
 .fi
 .PP
 .SH FILES
-.TP 1.4i
+.TP
 .B /dev/mobilephone
 Default mobile phone device.
-.PP
 .SH AUTHOR
 Peter Hofmann <software@pxh.de>
-.PP
 .SH BUGS
-Report bugs to software@pxh.de.  Include a complete, self-contained
+Report bugs to software@pxh.de.  Include a complete, self-ncontained
 example that will allow the bug to be reproduced, and say which
 version of \fIgsmctl\fP you are using.
-.PP
 .SH COPYRIGHT
 Copyright \(co 1999 Peter Hofmann
-.LP
-\fIgsmctl\fP is free software; you can redistribute it and/or modify it under
-the terms of the GNU Library General Public License as published by the Free
-Software Foundation; either version 2, or (at your option) any later
-version.
-.LP
-\fIgsmctl\fP is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Library General Public License for more details.
-.LP
-You should have received a copy of the GNU Library General Public License along
-with \fIgsmctl\fP; see the file COPYING.  If not, write to the Free Software
-Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 .PP
+.B gsmctl
+is free software; you can redistribute it and/or modify it under the
+terms of the GNU Library General Public License as published by the
+Free Software Foundation; either version 2, or (at your option) any
+later version.
+.PP
+.B gsmctl
+is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+License for more details.
+.PP
+You should have received a copy of the GNU Library General Public
+License along with 
+.BR gsmctl ; 
+see the file COPYING.  If not, write to the Free Software Foundation,
+675 Mass Ave, Cambridge, MA 02139, USA.
 .SH "SEE ALSO"
-.BR gsminfo(7),
-.BR gsmpb(1),
-.BR gsmsendsms(1),
-.BR gsmsmsd(8),
-.BR gsmsmsstore(1).
+.BR gsminfo (7),
+.BR gsmpb (1),
+.BR gsmsendsms (1),
+.BR gsmsmsd (8),
+.BR gsmsmsstore (1).
 

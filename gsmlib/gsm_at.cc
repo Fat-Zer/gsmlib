@@ -62,6 +62,9 @@ string GsmAt::cutResponse(string answer, string responseToMatch)
 
 void GsmAt::throwCmeException(string s) throw(GsmException)
 {
+  if (matchResponse(s, "ERROR"))
+    throw GsmException(_("unspecified ME/TA error"), ChatError);
+
   bool meError = matchResponse(s, "+CME ERROR:");
   if (meError)
     s = cutResponse(s, "+CME ERROR:");
@@ -142,7 +145,7 @@ string GsmAt::chat(string atCommand, string response, string &pdu,
       pdu = ps;
       // remove trailing zero added by some devices (e.g. Falcom A2-1)
       if (pdu.length() > 0 && pdu[pdu.length() - 1] == 0)
-        pdu = pdu.erase(pdu.end() - 1);
+        pdu.erase(pdu.length() - 1);
     }
   }
 
@@ -266,17 +269,44 @@ string GsmAt::sendPdu(string atCommand, string response,
 {
   string s;
   bool errorCondition = false;
+  bool retry = false;
 
-  putLine("AT" + atCommand);
-  // read two bytes "> "
-  int c = readByte();
-
-  if (c == '+')            // error or unsolicited result code
+  int c;
+  do
   {
-    _port->putBack(c);
-    s = normalize(getLine());
-    errorCondition = (s != "");
+    putLine("AT" + atCommand);
+    // read first of two bytes "> "
+    c = readByte();
+    
+    if (c == '+' || c == 'E')   // error or unsolicited result code
+    {
+      _port->putBack(c);
+      s = normalize(getLine());
+      errorCondition = (s != "");
+      
+      retry = ! errorCondition;
+      // The following code is for the unlikely case that the TA wants
+      // to resume PDU sending after an unsolicited result code.
+      // For the time being I have decided that it is better to retry
+      // in this case.
+//       if (! errorCondition)
+//       {
+//         // readByte() times out after TIMEOUT_SECS (gsm_port.h) seconds 
+//         try
+//         {
+//           c = readByte();
+//           retry = c != '>';     // TA still expects PDU if c == '>'
+//           if (retry)
+//              _port->putBack(c);
+//         }
+//         catch (GsmException &e)
+//         {
+//           retry = true;         // TA does not expect PDU anymore, retry
+//         }
+//       }
+    }
   }
+  while (retry);
 
   if (! errorCondition)
   {

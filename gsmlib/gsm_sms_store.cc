@@ -24,6 +24,12 @@ using namespace gsmlib;
 
 // SMSStoreEntry members
 
+SMSStoreEntry::SMSStoreEntry() :
+   _status(Unknown), _cached(false), _mySMSStore(NULL), _index(0)
+{
+}
+
+
 SMSMessageRef SMSStoreEntry::message() const throw(GsmException)
 {
   if (! cached())
@@ -35,6 +41,20 @@ SMSMessageRef SMSStoreEntry::message() const throw(GsmException)
     thisEntry->_cached = true;
   }
   return _message;
+}
+
+CBMessageRef SMSStoreEntry::cbMessage() const throw(GsmException)
+{
+  assert(_mySMSStore != NULL);
+
+  // these operations are at least "logically const"
+  SMSStoreEntry *thisEntry = const_cast<SMSStoreEntry*>(this);
+  // don't cache CB message for now
+  thisEntry->_cached = false;
+
+  CBMessageRef result;
+  _mySMSStore->readEntry(_index, result);
+  return result;
 }
 
 SMSStoreEntry::SMSMemoryStatus SMSStoreEntry::status() const
@@ -76,12 +96,73 @@ bool SMSStoreEntry::cached() const
     return _cached && _mySMSStore->_useCache;
 }
 
+Ref<SMSStoreEntry> SMSStoreEntry::clone()
+{
+  Ref<SMSStoreEntry> result = new SMSStoreEntry(_message->clone());
+  result->_status = _status;
+  result->_index = _index;
+  return result;
+}
+
 bool SMSStoreEntry::operator==(const SMSStoreEntry &e) const
 {
   if (_message.isnull() || e._message.isnull())
     return _message.isnull() && e._message.isnull();
   else
     return _message->encode() == e._message->encode();
+}
+
+SMSStoreEntry::SMSStoreEntry(const SMSStoreEntry &e)
+{
+ _message = e._message;
+ _status = e._status;
+ _cached = e._cached;
+ _mySMSStore = e._mySMSStore;
+ _index = e._index;
+}
+
+SMSStoreEntry &SMSStoreEntry::operator=(const SMSStoreEntry &e)
+{
+ _message = e._message;
+ _status = e._status;
+ _cached = e._cached;
+ _mySMSStore = e._mySMSStore;
+ _index = e._index;
+ return *this;
+}
+
+// iterator members
+
+SMSStoreEntry &SMSStoreIterator::operator*()
+{
+  return (*_store)[_index];
+}
+  
+SMSStoreEntry *SMSStoreIterator::operator->()
+{
+  return &(*_store)[_index];
+}
+
+SMSStoreIterator::operator SMSStoreEntry*()
+{
+  return &(*_store)[_index];
+}
+
+SMSStoreIterator &SMSStoreIterator::operator=(const SMSStoreIterator &i)
+{
+  _index = i._index;
+  _store = i._store;
+  return *this;
+}
+
+const SMSStoreEntry &SMSStoreConstIterator::operator*()
+{
+  return (*_store)[_index];
+}
+  
+const SMSStoreEntry *SMSStoreConstIterator::operator->()
+{
+  return &(*_store)[_index];
 }
 
 // SMSStore members
@@ -91,16 +172,31 @@ void SMSStore::readEntry(int index, SMSMessageRef &message,
   throw(GsmException)
 {
   // select SMS store
-  _meTa.setSMSStore(_storeName);
+  _meTa.setSMSStore(_storeName, 1);
 
 #ifndef NDEBUG
   if (debugLevel() >= 1)
     cerr << "*** Reading SMS entry " << index << endl;
-#endif NDEBUG
+#endif // NDEBUG
 
   string pdu;
-  Parser p(_at->chat("+CMGR=" + intToStr(index + 1), "+CMGR:", pdu, false,
-                     true, true));
+  Ref<Parser> p;
+  try
+  {
+    p = new Parser(_at->chat("+CMGR=" + intToStr(index + 1), "+CMGR:",
+                             pdu, false, true, true));
+  }
+  catch (GsmException &ge)
+  {
+    if (ge.getErrorCode() != SMS_INVALID_MEMORY_INDEX)
+      throw ge;
+    else
+    {
+      message = SMSMessageRef();
+      status = SMSStoreEntry::Unknown;
+      return;
+    }
+  }
 
   if (pdu.length() == 0)
   {
@@ -113,20 +209,57 @@ void SMSStore::readEntry(int index, SMSMessageRef &message,
     if (! _at->getMeTa().getCapabilities()._hasSMSSCAprefix)
       pdu = "00" + pdu;
 
-    status = (SMSStoreEntry::SMSMemoryStatus)p.parseInt();
+    status = (SMSStoreEntry::SMSMemoryStatus)p->parseInt();
+
     // ignore the rest of the line
     message = SMSMessageRef(
       SMSMessage::decode(pdu,
                          !(status == SMSStoreEntry::StoredUnsent ||
-                           status == SMSStoreEntry::StoredSent)));
+                           status == SMSStoreEntry::StoredSent),
+                         _at.getptr()));
   }
+}
+
+void SMSStore::readEntry(int index, CBMessageRef &message)
+  throw(GsmException)
+{
+  // select SMS store
+  _meTa.setSMSStore(_storeName, 1);
+
+#ifndef NDEBUG
+  if (debugLevel() >= 1)
+    cerr << "*** Reading CB entry " << index << endl;
+#endif // NDEBUG
+
+  string pdu;
+  Ref<Parser> p;
+  try
+  {
+    p = new Parser(_at->chat("+CMGR=" + intToStr(index + 1), "+CMGR:",
+                             pdu, false, true, true));
+  }
+  catch (GsmException &ge)
+  {
+    if (ge.getErrorCode() != SMS_INVALID_MEMORY_INDEX)
+      throw ge;
+    else
+    {
+      message = CBMessageRef();
+      return;
+    }
+  }
+
+  if (pdu.length() == 0)
+    message = CBMessageRef();
+  else
+    message = CBMessageRef(new CBMessage(pdu));
 }
 
 void SMSStore::writeEntry(int &index, SMSMessageRef message)
   throw(GsmException)
 {
   // select SMS store
-  _meTa.setSMSStore(_storeName);
+  _meTa.setSMSStore(_storeName, 2);
 
 #ifndef NDEBUG
   if (debugLevel() >= 1)
@@ -151,7 +284,7 @@ void SMSStore::writeEntry(int &index, SMSMessageRef message)
 void SMSStore::eraseEntry(int index) throw(GsmException)
 {
   // Select SMS store
-  _meTa.setSMSStore(_storeName);
+  _meTa.setSMSStore(_storeName, 1);
 
 #ifndef NDEBUG
   if (debugLevel() >= 1)
@@ -189,7 +322,8 @@ int SMSStore::doInsert(SMSMessageRef message)
   int index;
   writeEntry(index, message);
   // it is safer to force reading back the SMS from the ME
-  _store[index]._cached = false;
+  resizeStore(index + 1);
+  _store[index]->_cached = false;
   return index;
 }
 
@@ -202,72 +336,86 @@ SMSStore::SMSStore(string storeName, Ref<GsmAt> at, MeTa &meTa)
   
   p.parseInt();                 // skip number of used mems
   p.parseComma();
-  _capacity = p.parseInt();     // ignore rest of line
 
-  // initialize store entries
-  _store = new SMSStoreEntry[_capacity];
-  for (int i = 0; i < _capacity; i++)
+  resizeStore(p.parseInt());    // ignore rest of line
+}
+
+void SMSStore::resizeStore(int newSize)
+{
+  int oldSize = _store.size();
+  if (newSize > oldSize)
   {
-    _store[i]._index = i;
-    _store[i]._cached = false;
-    _store[i]._mySMSStore = this;
+    //    cout << "*** Resizing from " << oldSize << " to " << newSize << endl;
+    _store.resize(newSize);
+    
+    // initialize store entries
+    for (int i = oldSize; i < newSize; i++)
+    {
+      _store[i] = new SMSStoreEntry();
+      _store[i]->_index = i;
+      _store[i]->_cached = false;
+      _store[i]->_mySMSStore = this;
+    }
   }
+  _capacity = newSize;
 }
 
 SMSStore::iterator SMSStore::begin()
 {
-  return &_store[0];
+  return SMSStoreIterator(0, this);
 }
 
 SMSStore::const_iterator SMSStore::begin() const
 {
-  return &_store[0];
+  return SMSStoreConstIterator(0, this);
 }
 
 SMSStore::iterator SMSStore::end()
 {
-  return &_store[_capacity];
+  return SMSStoreIterator(_capacity, this);
 }
 
 SMSStore::const_iterator SMSStore::end() const
 {
-  return &_store[_capacity];
+  return SMSStoreConstIterator(_capacity, this);
 }
 
 SMSStore::reference SMSStore::operator[](int n)
 {
-  return _store[n];
+  resizeStore(n + 1);
+  return *_store[n];
 }
 
 SMSStore::const_reference SMSStore::operator[](int n) const
 {
-  return _store[n];
+  const_cast<SMSStore*>(this)->resizeStore(n + 1);
+  return *_store[n];
 }
 
 SMSStore::reference SMSStore::front()
 {
-  return _store[0];
+  return *_store[0];
 }
 
 SMSStore::const_reference SMSStore::front() const
 {
-  return _store[0];
+  return *_store[0];
 }
 
 SMSStore::reference SMSStore::back()
 {
-  return _store[_capacity - 1];
+  return *_store.back();
 }
 
 SMSStore::const_reference SMSStore::back() const
 {
-  return _store[_capacity - 1];
+  return *_store.back();
 }
 
 int SMSStore::size() const throw(GsmException)
 {
   // select SMS store
-  Parser p(_meTa.setSMSStore(_storeName, true));
+  Parser p(_meTa.setSMSStore(_storeName, 1, true));
   
   return p.parseInt();  
 }
@@ -277,7 +425,14 @@ SMSStore::iterator SMSStore::insert(iterator position,
   throw(GsmException)
 {
   int index = doInsert(x.message());
-  return &_store[index];
+  return SMSStoreIterator(index, this);
+}
+
+SMSStore::iterator SMSStore::insert(const SMSStoreEntry& x)
+  throw(GsmException)
+{
+  int index = doInsert(x.message());
+  return SMSStoreIterator(index, this);
 }
 
 void SMSStore::insert (iterator pos, int n, const SMSStoreEntry& x)
@@ -305,7 +460,7 @@ SMSStore::iterator SMSStore::erase(iterator position)
 SMSStore::iterator SMSStore::erase(iterator first, iterator last)
   throw(GsmException)
 {
-  iterator i;
+  iterator i(0, this);
   for (i = first; i != last; ++i)
     erase(i);
   return i;
@@ -319,6 +474,8 @@ void SMSStore::clear() throw(GsmException)
 
 SMSStore::~SMSStore()
 {
-  delete []_store;
+  for (vector<SMSStoreEntry*>::iterator i = _store.begin();
+       i != _store.end(); ++i)
+    delete *i;
 }
 

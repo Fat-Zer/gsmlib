@@ -27,6 +27,8 @@ gsmsendsms \- SMS message sender utility
 [ \fB--help\fP ]
 [ \fB-I\fP \fIinit string\fP ]
 [ \fB--init\fP \fIinit string\fP ]
+[ \fB-r\fP ]
+[ \fB--requeststat\fP ]
 [ \fB-t\fP ]
 [ \fB--test\fP ]
 [ \fB-v\fP ]
@@ -73,6 +75,9 @@ Prints an option summary.
 \fB-I\fP \fIinit string\fP, \fB--init\fP \fIinit string\fP
 Initialization string to send to the TA (default: "E0"). Note that the
 sequence "ATZ" is sent first.
+.TP
+\fB-r\fP, \fB--requeststat\fP
+Request status reports for sent SMS.
 .TP
 \fB-t\fP, \fB--test\fP
 If this option is given the text is converted

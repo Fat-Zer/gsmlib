@@ -108,12 +108,12 @@ INCLUDES = -I..
 
 lib_LTLIBRARIES = libgsmme.la
 
-libgsmme_la_SOURCES = gsm_phonebook.cc gsm_util.cc gsm_unix_serial.cc 			gsm_me_ta.cc gsm_at.cc gsm_error.cc gsm_parser.cc 			gsm_sms.cc gsm_sms_codec.cc gsm_sms_store.cc 			gsm_event.cc gsm_sorted_phonebook.cc 			gsm_sorted_sms_store.cc gsm_nls.cc 			gsm_sorted_phonebook_base.cc
+libgsmme_la_SOURCES = gsm_phonebook.cc gsm_util.cc gsm_unix_serial.cc 			gsm_me_ta.cc gsm_at.cc gsm_error.cc gsm_parser.cc 			gsm_sms.cc gsm_sms_codec.cc gsm_sms_store.cc 			gsm_event.cc gsm_sorted_phonebook.cc 			gsm_sorted_sms_store.cc gsm_nls.cc 			gsm_sorted_phonebook_base.cc gsm_cb.cc
 
 
 gsmincludedir = $(includedir)/gsmlib
 
-gsminclude_HEADERS = gsm_at.h gsm_parser.h gsm_sms.h gsm_unix_serial.h 			gsm_error.h gsm_phonebook.h gsm_sms_codec.h 			gsm_util.h gsm_me_ta.h gsm_port.h gsm_sms_store.h 			gsm_event.h gsm_sorted_phonebook.h 			gsm_sorted_sms_store.h gsm_map_key.h 			gsm_sorted_phonebook_base.h
+gsminclude_HEADERS = gsm_at.h gsm_parser.h gsm_sms.h gsm_unix_serial.h 			gsm_error.h gsm_phonebook.h gsm_sms_codec.h 			gsm_util.h gsm_me_ta.h gsm_port.h gsm_sms_store.h 			gsm_event.h gsm_sorted_phonebook.h 			gsm_sorted_sms_store.h gsm_map_key.h 			gsm_sorted_phonebook_base.h gsm_cb.h
 
 
 noinst_HEADERS = gsm_nls.h gsm_sysdep.h
@@ -135,7 +135,8 @@ libgsmme_la_LIBADD =
 libgsmme_la_OBJECTS =  gsm_phonebook.lo gsm_util.lo gsm_unix_serial.lo \
 gsm_me_ta.lo gsm_at.lo gsm_error.lo gsm_parser.lo gsm_sms.lo \
 gsm_sms_codec.lo gsm_sms_store.lo gsm_event.lo gsm_sorted_phonebook.lo \
-gsm_sorted_sms_store.lo gsm_nls.lo gsm_sorted_phonebook_base.lo
+gsm_sorted_sms_store.lo gsm_nls.lo gsm_sorted_phonebook_base.lo \
+gsm_cb.lo
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -295,17 +296,20 @@ distdir: $(DISTFILES)
 	done
 gsm_at.lo gsm_at.o : gsm_at.cc ../gsm_config.h gsm_at.h gsm_port.h \
 	gsm_error.h gsm_util.h gsm_nls.h gsm_event.h gsm_sms.h \
-	gsm_sms_codec.h gsm_me_ta.h gsm_phonebook.h \
+	gsm_sms_codec.h gsm_cb.h gsm_me_ta.h gsm_phonebook.h \
 	gsm_sorted_phonebook_base.h gsm_map_key.h gsm_sms_store.h
+gsm_cb.lo gsm_cb.o : gsm_cb.cc ../gsm_config.h gsm_cb.h gsm_sms_codec.h \
+	gsm_util.h gsm_error.h gsm_nls.h
 gsm_error.lo gsm_error.o : gsm_error.cc ../gsm_config.h gsm_nls.h \
 	gsm_error.h gsm_util.h
 gsm_event.lo gsm_event.o : gsm_event.cc ../gsm_config.h gsm_nls.h \
 	gsm_event.h gsm_sms.h gsm_sms_codec.h gsm_error.h gsm_util.h \
-	gsm_at.h gsm_port.h gsm_parser.h gsm_me_ta.h gsm_phonebook.h \
-	gsm_sorted_phonebook_base.h gsm_map_key.h gsm_sms_store.h
+	gsm_at.h gsm_port.h gsm_cb.h gsm_parser.h gsm_me_ta.h \
+	gsm_phonebook.h gsm_sorted_phonebook_base.h gsm_map_key.h \
+	gsm_sms_store.h
 gsm_me_ta.lo gsm_me_ta.o : gsm_me_ta.cc ../gsm_config.h gsm_nls.h \
 	gsm_me_ta.h gsm_error.h gsm_event.h gsm_sms.h gsm_sms_codec.h \
-	gsm_util.h gsm_at.h gsm_port.h gsm_phonebook.h \
+	gsm_util.h gsm_at.h gsm_port.h gsm_cb.h gsm_phonebook.h \
 	gsm_sorted_phonebook_base.h gsm_map_key.h gsm_sms_store.h \
 	gsm_parser.h
 gsm_nls.lo gsm_nls.o : gsm_nls.cc ../gsm_config.h gsm_nls.h
@@ -315,17 +319,19 @@ gsm_phonebook.lo gsm_phonebook.o : gsm_phonebook.cc ../gsm_config.h \
 	gsm_nls.h gsm_sysdep.h gsm_phonebook.h \
 	gsm_sorted_phonebook_base.h gsm_util.h gsm_error.h \
 	gsm_map_key.h gsm_sms_codec.h gsm_at.h gsm_port.h gsm_parser.h \
-	gsm_me_ta.h gsm_event.h gsm_sms.h gsm_sms_store.h
+	gsm_me_ta.h gsm_event.h gsm_sms.h gsm_cb.h gsm_sms_store.h
 gsm_sms.lo gsm_sms.o : gsm_sms.cc ../gsm_config.h gsm_nls.h gsm_sysdep.h \
 	gsm_sms.h gsm_sms_codec.h gsm_error.h gsm_util.h gsm_at.h \
-	gsm_port.h gsm_parser.h gsm_me_ta.h gsm_event.h gsm_phonebook.h \
-	gsm_sorted_phonebook_base.h gsm_map_key.h gsm_sms_store.h
+	gsm_port.h gsm_parser.h gsm_me_ta.h gsm_event.h gsm_cb.h \
+	gsm_phonebook.h gsm_sorted_phonebook_base.h gsm_map_key.h \
+	gsm_sms_store.h
 gsm_sms_codec.lo gsm_sms_codec.o : gsm_sms_codec.cc ../gsm_config.h \
 	gsm_nls.h gsm_sysdep.h gsm_sms_codec.h gsm_util.h gsm_error.h
 gsm_sms_store.lo gsm_sms_store.o : gsm_sms_store.cc ../gsm_config.h \
 	gsm_sms_store.h gsm_at.h gsm_port.h gsm_error.h gsm_util.h \
-	gsm_sms.h gsm_sms_codec.h gsm_parser.h gsm_me_ta.h gsm_event.h \
-	gsm_phonebook.h gsm_sorted_phonebook_base.h gsm_map_key.h
+	gsm_sms.h gsm_sms_codec.h gsm_cb.h gsm_parser.h gsm_me_ta.h \
+	gsm_event.h gsm_phonebook.h gsm_sorted_phonebook_base.h \
+	gsm_map_key.h
 gsm_sorted_phonebook.lo gsm_sorted_phonebook.o : gsm_sorted_phonebook.cc \
 	../gsm_config.h gsm_util.h gsm_error.h gsm_sorted_phonebook.h \
 	gsm_sorted_phonebook_base.h gsm_map_key.h gsm_sms_codec.h \
@@ -337,7 +343,7 @@ gsm_sorted_phonebook_base.lo gsm_sorted_phonebook_base.o : \
 gsm_sorted_sms_store.lo gsm_sorted_sms_store.o : gsm_sorted_sms_store.cc \
 	../gsm_config.h gsm_nls.h gsm_sysdep.h gsm_sorted_sms_store.h \
 	gsm_sms_store.h gsm_at.h gsm_port.h gsm_error.h gsm_util.h \
-	gsm_sms.h gsm_sms_codec.h gsm_map_key.h
+	gsm_sms.h gsm_sms_codec.h gsm_cb.h gsm_map_key.h
 gsm_unix_serial.lo gsm_unix_serial.o : gsm_unix_serial.cc \
 	../gsm_config.h gsm_nls.h gsm_unix_serial.h gsm_error.h \
 	gsm_port.h gsm_util.h

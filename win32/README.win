@@ -25,3 +25,17 @@ COMPILATION
      If you encounter problems you can use the debug versions and set
      the environment variable GSMLIB_DEBUG to 1 or 2 to get debugging
      output.
+
+HINTS
+     - Use COMx: (x is the number of the COM device) instead of the UNIX
+       device name. If this doesn't work use "\\.\COMx:".
+
+     - The files under Release are without debugging code. If you see
+       errors please use the Debug versions and execute
+
+         set GSMLIB_DEBUG=2
+
+       for executing the programs. Please send me the debugging
+       output:
+
+         gsmsmsstore ..... 2> \temp\debug.log

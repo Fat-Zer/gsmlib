@@ -39,6 +39,7 @@ using namespace gsmlib;
 #ifdef HAVE_GETOPT_LONG
 static struct option longOpts[] =
 {
+  {"requeststat", no_argument, (int*)NULL, 'r'},
   {"xonxoff", no_argument, (int*)NULL, 'X'},
   {"sca", required_argument, (int*)NULL, 'C'},
   {"device", required_argument, (int*)NULL, 'd'},
@@ -101,12 +102,13 @@ int main(int argc, char *argv[])
     Ref<GsmAt> at;
     string initString = DEFAULT_INIT_STRING;
     bool swHandshake = false;
+    bool requestStatusReport = false;
     // service centre address (set on command line)
     string serviceCentreAddress;
 
     int opt;
     int dummy;
-    while((opt = getopt_long(argc, argv, "C:I:d:b:thvX", longOpts, &dummy))
+    while((opt = getopt_long(argc, argv, "C:I:d:b:thvXr", longOpts, &dummy))
           != -1)
       switch (opt)
       {
@@ -128,6 +130,9 @@ int main(int argc, char *argv[])
       case 't':
         test = true;
         break;
+      case 'r':
+        requestStatusReport = true;
+        break;
       case 'v':
         cerr << argv[0] << stringPrintf(_(": version %s [compiled %s]"),
                                         VERSION, __DATE__) << endl;
@@ -146,6 +151,7 @@ int main(int argc, char *argv[])
                   "to") << endl
              << _("  -h, --help        prints this message") << endl
              << _("  -I, --init        device AT init sequence") << endl
+             << _("  -r, --requeststat request SMS status report") << endl
              << _("  -t, --test        convert text to GSM alphabet and "
                   "vice\n"
                   "                    versa, no SMS message is sent") << endl
@@ -214,13 +220,15 @@ int main(int argc, char *argv[])
     else
     {
       // send SMS
-      Ref<SMSMessage> submitSMS = new SMSSubmitMessage(text, phoneNumber);
+      Ref<SMSSubmitMessage> submitSMS =
+        new SMSSubmitMessage(text, phoneNumber);
       // set service centre address in new submit PDU if requested by user
       if (serviceCentreAddress != "")
       {
         Address sca(serviceCentreAddress);
         submitSMS->setServiceCentreAddress(sca);
       }
+      submitSMS->setStatusReportRequest(requestStatusReport);
       submitSMS->setAt(at);
       Ref<SMSMessage> ackPDU;
       submitSMS->send(ackPDU);

@@ -99,8 +99,6 @@ namespace gsmlib
     
     // store traversal commands
     // these are suitable to use stdc++ lib algorithms and iterators
-    // ME have fixed storage space implemented as memory slots
-    // that may either be empty or used
     
     // traversal commands
     iterator begin() {return _sortedSMSStore.begin();}

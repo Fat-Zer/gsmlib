@@ -33,9 +33,7 @@ namespace gsmlib
   class SMSMessage : public RefBase
   {
   private:
-    unsigned int _index;        // index used by SMSStore
-    bool _cached;               // true if cached in SMSStore
-    Ref<GsmAt> _at;                 // connection to the device
+    Ref<GsmAt> _at;             // connection to the device
 
   public:
     // possible values for message type indicator
@@ -50,6 +48,7 @@ namespace gsmlib
     UserDataHeader _userDataHeader;
     Address _serviceCentreAddress;
     MessageType _messageTypeIndicator;// 2 bits
+    DataCodingScheme _dataCodingScheme;
 
   public:
     // decode hexadecimal pdu string
@@ -77,6 +76,9 @@ namespace gsmlib
     // create textual representation of SMS
     virtual string toString() const = 0;
 
+    // return deep copy of this message
+    virtual Ref<SMSMessage> clone() = 0;
+
     // return length of SC address when encoded
     unsigned int getSCAddressLen();
 
@@ -96,15 +98,26 @@ namespace gsmlib
     // return the size of user data (including user data header)
     unsigned char userDataLength() const;
 
+    // accessor functions
     virtual void setUserDataHeader(UserDataHeader x) {_userDataHeader = x;}
     virtual UserDataHeader userDataHeader() const {return _userDataHeader;}
     
+    virtual DataCodingScheme dataCodingScheme() const
+      {return _dataCodingScheme;}
+    virtual void setDataCodingScheme(DataCodingScheme x)
+      {_dataCodingScheme = x;}
+
     void setServiceCentreAddress(Address &x) {_serviceCentreAddress = x;}
     void setAt(Ref<GsmAt> at) {_at = at;}
 
     virtual ~SMSMessage();
 
+    // print ASCII hex representation of message
     ostream& operator<<(ostream& s);
+
+    // copy constructor and assignment
+//     SMSMessage(SMSMessage &m);
+//     SMSMessage &operator=(SMSMessage &m);
 
     friend class SMSStore;
   };
@@ -119,7 +132,6 @@ namespace gsmlib
     bool _statusReportIndication;
     Address _originatingAddress;
     unsigned char _protocolIdentifier; // octet
-    DataCodingScheme _dataCodingScheme;
     Timestamp _serviceCentreTimestamp;
 
     // initialize members to sensible values
@@ -140,6 +152,7 @@ namespace gsmlib
 
     // inherited from SMSMessage
     Address address() const;
+    Ref<SMSMessage> clone();
 
     // accessor functions
     bool moreMessagesToSend() const {return _moreMessagesToSend;}
@@ -147,7 +160,6 @@ namespace gsmlib
     bool statusReportIndication() const {return _statusReportIndication;}
     Address originatingAddress() const {return _originatingAddress;}
     unsigned char protocolIdentifier() const {return _protocolIdentifier;}
-    DataCodingScheme dataCodingScheme() const {return _dataCodingScheme;}
     Timestamp serviceCentreTimestamp() const {return _serviceCentreTimestamp;}
 
     void setMoreMessagesToSend(bool x) {_moreMessagesToSend = x;}
@@ -155,7 +167,6 @@ namespace gsmlib
     void setStatusReportIndication(bool x) {_statusReportIndication = x;}
     void setOriginatingAddress(Address &x) {_originatingAddress = x;}
     void setProtocolIdentifier(unsigned char x) {_protocolIdentifier = x;}
-    void setDataCodingScheme(DataCodingScheme x) {_dataCodingScheme = x;}
     void setServiceCentreTimestamp(Timestamp &x) {_serviceCentreTimestamp = x;}
 
     virtual ~SMSDeliverMessage() {}
@@ -173,7 +184,6 @@ namespace gsmlib
     unsigned char _messageReference; // integer
     Address _destinationAddress;
     unsigned char _protocolIdentifier;
-    DataCodingScheme _dataCodingScheme;
     TimePeriod _validityPeriod;
 
     // initialize members to sensible values
@@ -198,6 +208,7 @@ namespace gsmlib
 
     // inherited from SMSMessage
     Address address() const;
+    Ref<SMSMessage> clone();
 
     // accessor functions
     bool rejectDuplicates() const {return _rejectDuplicates;}
@@ -208,7 +219,6 @@ namespace gsmlib
     unsigned char messageReference() const {return _messageReference;}
     Address destinationAddress() const {return _destinationAddress;}
     unsigned char protocolIdentifier() const {return _protocolIdentifier;}
-    DataCodingScheme dataCodingScheme() const {return _dataCodingScheme;}
     TimePeriod validityPeriod() const {return _validityPeriod;}
 
     void setRejectDuplicates(bool x) {_rejectDuplicates = x;}
@@ -219,7 +229,6 @@ namespace gsmlib
     void setMessageReference(unsigned char x) {_messageReference = x;}
     void setDestinationAddress(Address &x) {_destinationAddress = x;}
     void setProtocolIdentifier(unsigned char x) {_protocolIdentifier = x;}
-    void setDataCodingScheme(DataCodingScheme x) {_dataCodingScheme = x;}
     void setValidityPeriod(TimePeriod &x) {_validityPeriod = x;}
     
     virtual ~SMSSubmitMessage() {}
@@ -256,6 +265,7 @@ namespace gsmlib
 
     // inherited from SMSMessage
     Address address() const;
+    Ref<SMSMessage> clone();
 
     // accessor functions
     bool moreMessagesToSend() const {return _moreMessagesToSend;}
@@ -314,6 +324,7 @@ namespace gsmlib
 
     // inherited from SMSMessage
     Address address() const;
+    Ref<SMSMessage> clone();
 
     // accessor functions
     unsigned char messageReference() const {return _messageReference;}
@@ -346,7 +357,6 @@ namespace gsmlib
     bool _dataCodingSchemePresent;
     bool _userDataLengthPresent;
     unsigned char _protocolIdentifier;
-    DataCodingScheme _dataCodingScheme;
     
     // initialize members to sensible values
     void init();
@@ -366,6 +376,7 @@ namespace gsmlib
 
     // inherited from SMSMessage
     Address address() const;
+    Ref<SMSMessage> clone();
 
     // accessor functions
     bool protocolIdentifierPresent() const {return _protocolIdentifierPresent;}
@@ -428,6 +439,7 @@ namespace gsmlib
 
     // inherited from SMSMessage
     Address address() const;
+    Ref<SMSMessage> clone();
 
     // accessor functions
     Timestamp serviceCentreTimestamp() const {return _serviceCentreTimestamp;}

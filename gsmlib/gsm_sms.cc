@@ -54,7 +54,12 @@ Ref<SMSMessage> SMSMessage::decode(string pdu,
       break;
 
     case SMS_SUBMIT_REPORT:
-      result = new SMSSubmitReportMessage(pdu);
+      // observed with Motorola Timeport 260, the SCtoMEdirection can
+      // be wrong in this case
+      if (at != NULL && at->getMeTa().getCapabilities()._wrongSMSStatusCode)
+        result = new SMSSubmitMessage(pdu);
+      else
+        result = new SMSSubmitReportMessage(pdu);
       break;
 
     default:
@@ -143,7 +148,10 @@ unsigned int SMSMessage::getSCAddressLen()
 unsigned char SMSMessage::userDataLength() const
 {
   unsigned int udhl = _userDataHeader.length();
-  return _userData.length() + (udhl ? (1 + udhl) : 0);
+  if (_dataCodingScheme.getAlphabet() == DCS_DEFAULT_ALPHABET)
+    return _userData.length() + (udhl ? ((1 + udhl) * 8 + 6) / 7 : 0);
+  else
+    return _userData.length() + (udhl ? (1 + udhl) : 0);
 }
 
 ostream& SMSMessage::operator<<(ostream& s)
@@ -170,6 +178,16 @@ ostream& SMSMessage::operator<<(ostream& s)
   s << ScToMe;
   return s << encode();
 }
+
+// SMSMessage::SMSMessage(SMSMessage &m)
+// {
+//   _at = m._at;
+  
+// }
+
+// SMSMessage &SMSMessage::operator=(SMSMessage &m)
+// {
+// }
 
 SMSMessage::~SMSMessage() {}
 
@@ -207,17 +225,20 @@ SMSDeliverMessage::SMSDeliverMessage(string pdu) throw(GsmException)
   _serviceCentreTimestamp = d.getTimestamp();
   unsigned char userDataLength = d.getOctet();
   d.markSeptet();
-  if (userDataHeaderIndicator) 
+
+  if (userDataHeaderIndicator)
   {
     _userDataHeader.decode(d);
-    userDataLength -= ((string)_userDataHeader).length() + 1;
+    if (_dataCodingScheme.getAlphabet() == DCS_DEFAULT_ALPHABET)
+      userDataLength -= ((_userDataHeader.length() + 1) * 8 + 6) / 7;
+    else
+      userDataLength -= ((string)_userDataHeader).length() + 1;
   }
   else
-  {
     _userDataHeader = UserDataHeader();
-  }
+
   if (_dataCodingScheme.getAlphabet() == DCS_DEFAULT_ALPHABET)
-  {
+  {                             // userDataLength is length in septets
     _userData = d.getString(userDataLength);
     _userData = gsmToLatin1(_userData);
   }
@@ -292,6 +313,12 @@ Address SMSDeliverMessage::address() const
   return _originatingAddress;
 }
 
+Ref<SMSMessage> SMSDeliverMessage::clone()
+{
+  Ref<SMSMessage> result = new SMSDeliverMessage(*this);
+  return result;
+}
+
 // SMSSubmitMessage members
 
 void SMSSubmitMessage::init()
@@ -332,17 +359,20 @@ SMSSubmitMessage::SMSSubmitMessage(string pdu) throw(GsmException)
     _validityPeriod = d.getTimePeriod(_validityPeriodFormat);
   unsigned char userDataLength = d.getOctet();
   d.markSeptet();
-  if (userDataHeaderIndicator) 
+
+  if (userDataHeaderIndicator)
   {
     _userDataHeader.decode(d);
-    userDataLength -= ((string)_userDataHeader).length() + 1;
+    if (_dataCodingScheme.getAlphabet() == DCS_DEFAULT_ALPHABET)
+      userDataLength -= ((_userDataHeader.length() + 1) * 8 + 6) / 7;
+    else
+      userDataLength -= ((string)_userDataHeader).length() + 1;
   }
-  else 
-  {
+  else
     _userDataHeader = UserDataHeader();
-  }
+
   if (_dataCodingScheme.getAlphabet() == DCS_DEFAULT_ALPHABET)
-  {
+  {                             // userDataLength is length in septets
     _userData = d.getString(userDataLength);
     _userData = gsmToLatin1(_userData);
   }
@@ -442,6 +472,12 @@ Address SMSSubmitMessage::address() const
   return _destinationAddress;
 }
 
+Ref<SMSMessage> SMSSubmitMessage::clone()
+{
+  Ref<SMSMessage> result = new SMSSubmitMessage(*this);
+  return result;
+}
+
 // SMSStatusReportMessage members
 
 void SMSStatusReportMessage::init()
@@ -512,6 +548,12 @@ string SMSStatusReportMessage::toString() const
 Address SMSStatusReportMessage::address() const
 {
   return _recipientAddress;
+}
+
+Ref<SMSMessage> SMSStatusReportMessage::clone()
+{
+  Ref<SMSMessage> result = new SMSStatusReportMessage(*this);
+  return result;
 }
 
 // SMSCommandMessage members
@@ -596,6 +638,12 @@ string SMSCommandMessage::toString() const
 Address SMSCommandMessage::address() const
 {
   return _destinationAddress;
+}
+
+Ref<SMSMessage> SMSCommandMessage::clone()
+{
+  Ref<SMSMessage> result = new SMSCommandMessage(*this);
+  return result;
 }
 
 // SMSDeliverReportMessage members
@@ -700,6 +748,12 @@ Address SMSDeliverReportMessage::address() const
   return Address();
 }
 
+Ref<SMSMessage> SMSDeliverReportMessage::clone()
+{
+  Ref<SMSMessage> result = new SMSDeliverReportMessage(*this);
+  return result;
+}
+
 // SMSSubmitReportMessage members
 
 void SMSSubmitReportMessage::init()
@@ -800,3 +854,10 @@ Address SMSSubmitReportMessage::address() const
   assert(0);                    // not address, should not be in SMS store
   return Address();
 }
+
+Ref<SMSMessage> SMSSubmitReportMessage::clone()
+{
+  Ref<SMSMessage> result = new SMSSubmitReportMessage(*this);
+  return result;
+}
+

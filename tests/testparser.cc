@@ -13,6 +13,7 @@
 #include <gsmlib/gsm_parser.h>
 #include <assert.h>
 #include <algorithm>
+#include <iostream>
 
 using namespace std;
 using namespace gsmlib;

@@ -214,7 +214,7 @@ SortedSMSStore::SortedSMSStore(string filename) throw(GsmException) :
   _sortOrder(ByDate), _readonly(false), _filename(filename), _nextIndex(0)
 {
   // open the file
-	  ifstream pbs(filename.c_str(), ios::in | ios::binary);
+  ifstream pbs(filename.c_str(), ios::in | ios::binary);
   if (pbs.bad())
     throw GsmException(stringPrintf(_("cannot open file '%s'"),
                                     filename.c_str()), OSError);
@@ -237,20 +237,24 @@ SortedSMSStore::SortedSMSStore(SMSStoreRef meSMSStore)
   _changed(false), _fromFile(false), _madeBackupFile(false),
   _sortOrder(ByDate), _readonly(false), _meSMSStore(meSMSStore)
 {
+  // It is necessary to count the entries read because
+  // the maximum index into the SMS store may be larger than smsStore.size()
   int entriesRead = 0;
-  for (SMSStore::iterator i = _meSMSStore->begin();
-       i != _meSMSStore->end(); ++i)
-    if (! i->empty())
+  for (int i = 0;; ++i)
+  {
+    if (entriesRead == _meSMSStore->size())
+      break;                 // ready
+    if (! _meSMSStore()[i].empty())
     {
       _sortedSMSStore.insert(
         SMSStoreMap::value_type(
-          SMSMapKey(*this, i->message()->serviceCentreTimestamp()),
-          i)
+          SMSMapKey(*this,
+                    _meSMSStore()[i].message()->serviceCentreTimestamp()),
+          &_meSMSStore()[i])
         );
       ++entriesRead;
-      if (entriesRead == _meSMSStore->size())
-        return;                 // ready
     }
+  }
 }
 
 void SortedSMSStore::setSortOrder(SortOrder newOrder)
@@ -336,9 +340,9 @@ SortedSMSStore::insert(const SMSStoreEntry& x) throw(GsmException)
   else
   {
     SMSStoreEntry newMEEntry(x.message());
-    newEntry = _meSMSStore->insert(NULL, newMEEntry);
+    newEntry = _meSMSStore->insert(newMEEntry);
   }
-
+  
   switch (_sortOrder)
   {
   case ByIndex:

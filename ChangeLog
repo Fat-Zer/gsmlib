@@ -1,3 +1,35 @@
+gsmlib-1.7
+     - fixed bug with calculation of userData length if userDataHeader
+       is present (octet count was subtracted, not septet count)
+
+     - fixed problem with string erase() at end of PDU for Falcom A2-1
+
+     - -t/--charset option of gsmpb did not work due to missing parameter
+       of getopt_long, fixed
+
+     - The SMS decoder/encoder can now handle alphanumeric addresses
+       in the GSM default alphabet
+
+     - set only those SMS stores that are actually needed to perform
+       SMS store operation
+
+     - Fixed signalling error 321 (Invalid memory index) when trying to
+       read from empty SMS store entry
+
+     - Fixed parsing error when reading current network operator if no
+       network connection
+
+     - Added capability to parse cell broadcast messages to gsmlib and
+       the gsmsmsd program
+
+     - Added workaround for Motorola Timeport 260 bug that doesn't correctly
+       report the message status when retrieving SMS messages from the
+       store
+
+     - Added workaround for Motorola Timeport 260 that allocates index
+       numbers to SMS messages linearly so that index number can be
+       be larger than capacity reported by AT command
+
 gsmlib-1.6
      - more fixes for the COPS=? return format
 

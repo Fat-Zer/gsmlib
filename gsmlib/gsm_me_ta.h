@@ -37,6 +37,7 @@ namespace gsmlib
                                 // CPMS command
     bool _omitsColon;           // omits trailing ':' in AT responses
     bool _veryShortCOPSanswer;  // Falcom A2-1
+    bool _wrongSMSStatusCode;   // Motorola Timeport 260
     Capabilities();             // constructor, set default behaviours
   };
   
@@ -56,8 +57,8 @@ namespace gsmlib
                 DeregisterOPMode = 2, ManualAutomaticOPMode = 4};
 
   // status codes or network operaton selection
-  enum OPStatus {UnknownOPStatus = 0, CurrentOPStatus = 1,
-                 AvailableOPStatus = 2, ForbiddenOPStatus = 3};
+  enum OPStatus {UnknownOPStatus = 0, AvailableOPStatus = 1,
+                 CurrentOPStatus = 2, ForbiddenOPStatus = 3};
 
   // network operator info
   struct OPInfo
@@ -67,6 +68,8 @@ namespace gsmlib
     string _longName;
     string _shortName;
     int _numericName;           // may be NOT_SET
+
+    OPInfo() : _status(UnknownOPStatus), _numericName(NOT_SET) {}
   };
 
   // facility classes
@@ -85,7 +88,7 @@ namespace gsmlib
   // AllConditionalReasons encompasses 1..3
   enum ForwardReason {UnconditionalReason = 0, MobileBusyReason = 1,
                       NoReplyReason = 2, NotReachableReason = 3,
-                      AllReasons = 4, AllConditionalReasons = 5};
+                      AllReasons = 4, AllConditionalReasons = 5, NoReason = 6};
 
   // call forward modes
   enum ForwardMode {DisableMode = 0, EnableMode = 1,
@@ -140,8 +143,14 @@ namespace gsmlib
     void setPhonebook(string phonebookName) throw(GsmException);
 
     // set the current SMS store in the ME
+    // set storeTypes to
+    //   1 to set store for reading and deleting
+    //   2 to set store for writing and sending (includes type 1)
+    //   3 to preferred store for receiving SMS (includes types 1 and 2)
     // remember the last SMS store set for optimisation
-    string setSMSStore(string smsStore, bool needResultCode = false)
+    // if needResultCode is set this optimisation is not done
+    string setSMSStore(string smsStore, int storeTypes,
+                       bool needResultCode = false)
       throw(GsmException);
 
     // get capabilities of this ME/TA

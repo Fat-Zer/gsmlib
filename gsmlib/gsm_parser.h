@@ -22,7 +22,7 @@ using namespace std;
 
 namespace gsmlib
 {
-  class Parser
+  class Parser : public RefBase
   {
   private:
     unsigned int _i;            // index into _s, next character

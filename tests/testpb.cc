@@ -2,6 +2,7 @@
 #include <gsmlib/gsm_me_ta.h>
 #include <gsmlib/gsm_phonebook.h>
 #include <algorithm>
+#include <iostream>
 #include <strstream>
 
 using namespace std;
