@@ -486,6 +486,8 @@ int main(int argc, char *argv[])
         // wait for keypress from stdin
         char c;
         read(1, &c, 1);
+
+        m->hangup();
       }
       else if (operation == "on")
       {

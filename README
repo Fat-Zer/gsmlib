@@ -76,6 +76,7 @@ HARDWARE
      - Nokia 8290 (USA GSM 1900MHz)/- (Linux IrDA serial device)
      - Falcom A2-1/- (stand-alone GSM module)
      - Ericsson R320s/- (Linux IrDA serial device)
+     - Ericsson R520s/-
      - Motorola Timeport 260/- (Serial cable and Linux IrDA serial device)
      - Motorola Timeport 250/- (Linux IrDA serial device)
      - Motorola Timeport P7389/- (Linux IrDA serial device)
@@ -88,6 +89,8 @@ HARDWARE
      - Ericcson T39m/Bluetooth
      - Option International GlobeTrotter PCMCIA
      - Samsung A300e/- (Linux IrDA)
+     - Sony Ericsson T300/- (Linux IrDA)
+     - "Vierling ECOTEL" GSM Gateway
 
      Note 1: Some of the mobile phones have an integrated GSM modem
      that can be accessed via the Linux IrDA drivers.

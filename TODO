@@ -3,6 +3,23 @@ necessarily in order of importance):
 
 ("+" = DONE)
 
+- fix compiler warnings
+
+- SPEC file of M. Brill
+
+- > I have found out how to make gsmsmsd both send and receive messages.
+   > 
+   > But the program fails when it encounters an sms-file that does not meet
+   > the requirements.
+   > For instance an empty file.
+   > 
+   > Then the process hangs and keeps taking more and more CPU time:
+   > 
+   > root      7518 10.8 80.9 70480 49864 pts/0   R    15:38   2:19 gsmsmsd
+   > -d /dev/t
+   > 
+   > The 80.9 is % CPU-time and the number continually grows.
+   
 - create non-existing files in gsmpb and gsmsmsstore programs
 
 + handle:

@@ -179,10 +179,16 @@ UnixSerialPort::UnixSerialPort(string device, speed_t lineSpeed,
   // switch off non-blocking mode
   int fdFlags;
   if ((fdFlags = fcntl(_fd, F_GETFL)) == -1)
+  {
+    close(_fd);
     throwModemException(_("getting file status flags failed"));
+  }
   fdFlags &= ~O_NONBLOCK;
   if (fcntl(_fd, F_SETFL, fdFlags) == -1)
+  {
+    close(_fd);
     throwModemException(_("switching of non-blocking mode failed"));
+  }
 
   long int saveTimeoutVal = _timeoutVal;
   _timeoutVal = 3;
@@ -195,16 +201,24 @@ UnixSerialPort::UnixSerialPort(string device, speed_t lineSpeed,
     // toggle DTR to reset modem
     int mctl = TIOCM_DTR;
     if (ioctl(_fd, TIOCMBIC, &mctl) < 0)
+    {
+      close(_fd);
       throwModemException(_("clearing DTR failed"));
+    }
     // the waiting time for DTR toggling is increased with each loop
     usleep(holdoff[initTries]);
     if (ioctl(_fd, TIOCMBIS, &mctl) < 0)
+    {
+      close(_fd);
       throwModemException(_("setting DTR failed"));
-  
+    }
     // get line modes
     if (tcgetattr(_fd, &t) < 0)
+    {
+      close(_fd);
       throwModemException(stringPrintf(_("tcgetattr device '%s'"),
                                        device.c_str()));
+    }
 
     // set line speed
     cfsetispeed(&t, lineSpeed);
@@ -230,8 +244,11 @@ UnixSerialPort::UnixSerialPort(string device, speed_t lineSpeed,
 
     // write back
     if(tcsetattr (_fd, TCSANOW, &t) < 0)
+    {
+      close(_fd);
       throwModemException(stringPrintf(_("tcsetattr device '%s'"),
                                        device.c_str()));
+    }
     // the waiting time for writing to the ME/TA is increased with each loop
     usleep(holdoff[initTries]);
 
@@ -280,10 +297,14 @@ UnixSerialPort::UnixSerialPort(string device, speed_t lineSpeed,
     {
       _timeoutVal = saveTimeoutVal;
       if (initTries == 0)
+      {
+        close(_fd);
         throw e;
+      }
     }
   }
   // no response after 3 tries
+  close(_fd);
   throw GsmException(stringPrintf(_("reset modem failed '%s'"),
                                   device.c_str()), OtherError);
 }

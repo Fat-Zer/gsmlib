@@ -495,7 +495,7 @@ SMSStatusReportMessage::SMSStatusReportMessage(string pdu) throw(GsmException)
   _serviceCentreAddress = d.getAddress(true);
   _messageTypeIndicator = (MessageType)d.get2Bits(); // bits 0..1
   assert(_messageTypeIndicator == SMS_STATUS_REPORT);
-  _moreMessagesToSend = d.getBit(); // bit 2
+  _moreMessagesToSend = ! d.getBit(); // bit 2
   d.getBit();                   // bit 3
   d.getBit();                   // bit 4
   _statusReportQualifier = d.getBit(); // bit 5
@@ -511,7 +511,7 @@ string SMSStatusReportMessage::encode()
   SMSEncoder e;
   e.setAddress(_serviceCentreAddress, true);
   e.set2Bits(_messageTypeIndicator); // bits 0..1
-  e.setBit(_moreMessagesToSend); // bit 2
+  e.setBit(! _moreMessagesToSend); // bit 2
   e.setBit();                   // bit 3
   e.setBit();                   // bit 4
   e.setBit(_statusReportQualifier); // bit 5

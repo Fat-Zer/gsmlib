@@ -3,6 +3,23 @@ gsmlib-1.11
        are now referenced explicitly inside gsmlib namespace to avoid
        namespace pollution
 
+     - fixed file descriptor leak in UnixSerialPort constructor in case
+       of exceptions
+
+     - added workaround for phones that return the list of available
+       charsets with parentheses
+
+     - Make SPEC file more RPM-conformant (thanks to Soós Péter) 
+
+     - Added hangup call for dial function of gsmctl
+
+     - Added fix for WindowsXP (thanks to Randy Palmer)
+
+     - Added new functionality (SMS priorities, error restart, syslog)
+       to gsmsmsd (thanks to Matthias Goebl)
+
+     - More standards-conformant spec file (thanks to Matthias Brill)
+
 gsmlib-1.10
      - reactivated code in gsm_at to retry sending PDU after
        unsolicited result code 

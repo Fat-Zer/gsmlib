@@ -249,7 +249,8 @@ MEInfo MeTa::getMEInfo() throw(GsmException)
 vector<string> MeTa::getSupportedCharSets() throw(GsmException)
 {
   Parser p(_at->chat("+CSCS=?", "+CSCS:"));
-  return p.parseStringList();
+  // Some phones leave out the parentheses
+  return p.parseStringList(false, true);
 }
     
 string MeTa::getCurrentCharSet() throw(GsmException)
@@ -337,12 +338,12 @@ vector<OPInfo> MeTa::getAvailableOPInfo() throw(GsmException)
 //       while (i->length() > 0 && ! isprint((*i)[i->length() - 1]))
 //         i->erase(i->length() - 1, 1);
 
-      bool expectClosingBracket = false;
+      bool expectClosingParenthesis = false;
       Parser p(*i);
       while (1)
       {
         OPInfo opi;
-        expectClosingBracket = p.parseChar('(', true);
+        expectClosingParenthesis = p.parseChar('(', true);
         int status = p.parseInt(true);
         opi._status = (status == NOT_SET ? UnknownOPStatus : (OPStatus)status);
         p.parseComma();
@@ -365,14 +366,14 @@ vector<OPInfo> MeTa::getAvailableOPInfo() throw(GsmException)
           else
             throw e;
         }
-        if (expectClosingBracket) p.parseChar(')');
+        if (expectClosingParenthesis) p.parseChar(')');
         result.push_back(opi);
         if (! p.parseComma(true)) break;
         // two commas ",," mean the list is finished
         if (p.getEol() == "" || p.parseComma(true)) break;
       }
       // without brackets, the ME/TA must use format 3.
-      if (! expectClosingBracket) break;
+      if (! expectClosingParenthesis) break;
     }
   return result;
 }

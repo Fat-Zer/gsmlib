@@ -62,7 +62,9 @@ namespace gsmlib
 
     // parse a list of the form "("ABC", DEF")"
     // the list can be empty (ie. == "" ) if allowNoList == true
-    vector<string> parseStringList(bool allowNoList = false)
+    // the list can be without parentheses if allowNoParentheses = true
+    vector<string> parseStringList(bool allowNoList = false,
+                                   bool allowNoParentheses = false)
       throw(GsmException);
 
     // parse a list of the form "(12, 14)" or "(1-4, 10)"

@@ -142,14 +142,15 @@ bool Parser::parseChar(char c, bool allowNoChar) throw(GsmException)
   return true;
 }
 
-vector<string> Parser::parseStringList(bool allowNoList)
+vector<string> Parser::parseStringList(bool allowNoList,
+                                       bool allowNoParentheses)
   throw(GsmException)
 {
   // handle case of empty parameter
   vector<string> result;
   if (checkEmptyParameter(allowNoList)) return result;
 
-  parseChar('(');
+  bool expectClosingParenthesis = parseChar('(', allowNoParentheses);
   if (nextChar() != ')')
   {
     putBackChar();
@@ -160,7 +161,10 @@ vector<string> Parser::parseStringList(bool allowNoList)
       if (c == ')')
       break;
       if (c == -1)
-        throwParseException();
+        if (expectClosingParenthesis)
+          throwParseException();
+        else
+          break;
       if (c != ',')
         throwParseException(_("expected ')' or ','"));
     }
