@@ -1,0 +1,425 @@
+# Makefile.in generated automatically by automake 1.4 from Makefile.am
+
+# Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+# *************************************************************************
+# * GSM TA/ME library
+# *
+# * File:    Makefile.am
+# *
+# * Purpose: GSM library Makefile
+# *
+# * Author:  Peter Hofmann (software@pxh.de)
+# *
+# * Created: 5.5.1999
+# *************************************************************************
+
+
+SHELL = @SHELL@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+
+DESTDIR =
+
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = ..
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+transform = @program_transform_name@
+
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
+CATALOGS = @CATALOGS@
+CATOBJEXT = @CATOBJEXT@
+CC = @CC@
+CPP = @CPP@
+CXX = @CXX@
+DATADIRNAME = @DATADIRNAME@
+GENCAT = @GENCAT@
+GMOFILES = @GMOFILES@
+GMSGFMT = @GMSGFMT@
+GSM_VERSION = @GSM_VERSION@
+GT_NO = @GT_NO@
+GT_YES = @GT_YES@
+INCLUDE_LOCALE_H = @INCLUDE_LOCALE_H@
+INSTOBJEXT = @INSTOBJEXT@
+INTLDEPS = @INTLDEPS@
+INTLLIBS = @INTLLIBS@
+INTLOBJS = @INTLOBJS@
+LD = @LD@
+LIBTOOL = @LIBTOOL@
+LN_S = @LN_S@
+MAKEINFO = @MAKEINFO@
+MKINSTALLDIRS = @MKINSTALLDIRS@
+MSGFMT = @MSGFMT@
+NM = @NM@
+PACKAGE = @PACKAGE@
+POFILES = @POFILES@
+POSUB = @POSUB@
+RANLIB = @RANLIB@
+USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
+USE_NLS = @USE_NLS@
+VERSION = @VERSION@
+l = @l@
+
+INCLUDES = -I..
+
+lib_LTLIBRARIES = libgsm.la
+
+libgsm_la_SOURCES = gsm_phonebook.cc gsm_util.cc gsm_unix_serial.cc 			gsm_me_ta.cc gsm_at.cc gsm_error.cc gsm_parser.cc 			gsm_sms.cc gsm_sms_codec.cc gsm_sms_store.cc 			gsm_event.cc gsm_sorted_phonebook.cc 			gsm_sorted_sms_store.cc gsm_nls.cc 			gsm_sorted_phonebook_base.cc
+
+
+gsmincludedir = $(includedir)/gsmlib
+
+gsminclude_HEADERS = gsm_at.h gsm_parser.h gsm_sms.h gsm_unix_serial.h 			gsm_error.h gsm_phonebook.h gsm_sms_codec.h 			gsm_util.h gsm_me_ta.h gsm_port.h gsm_sms_store.h 			gsm_event.h gsm_sorted_phonebook.h 			gsm_sorted_sms_store.h gsm_map_key.h 			gsm_sorted_phonebook_base.h
+
+
+noinst_HEADERS = gsm_nls.h gsm_sysdep.h
+
+libgsm_la_LDFLAGS = -version-info $(GSM_VERSION)
+mkinstalldirs = $(SHELL) $(top_srcdir)/scripts/mkinstalldirs
+CONFIG_HEADER = ../gsm_config.h
+CONFIG_CLEAN_FILES = 
+LTLIBRARIES =  $(lib_LTLIBRARIES)
+
+
+DEFS = @DEFS@ -I. -I$(srcdir) -I..
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+libgsm_la_LIBADD = 
+libgsm_la_OBJECTS =  gsm_phonebook.lo gsm_util.lo gsm_unix_serial.lo \
+gsm_me_ta.lo gsm_at.lo gsm_error.lo gsm_parser.lo gsm_sms.lo \
+gsm_sms_codec.lo gsm_sms_store.lo gsm_event.lo gsm_sorted_phonebook.lo \
+gsm_sorted_sms_store.lo gsm_nls.lo gsm_sorted_phonebook_base.lo
+CXXFLAGS = @CXXFLAGS@
+CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+CXXLD = $(CXX)
+CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
+HEADERS =  $(gsminclude_HEADERS) $(noinst_HEADERS)
+
+DIST_COMMON =  Makefile.am Makefile.in
+
+
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+
+TAR = gtar
+GZIP_ENV = --best
+SOURCES = $(libgsm_la_SOURCES)
+OBJECTS = $(libgsm_la_OBJECTS)
+
+all: all-redirect
+.SUFFIXES:
+.SUFFIXES: .S .c .cc .lo .o .s
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps gsmlib/Makefile
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+
+mostlyclean-libLTLIBRARIES:
+
+clean-libLTLIBRARIES:
+	-test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
+
+distclean-libLTLIBRARIES:
+
+maintainer-clean-libLTLIBRARIES:
+
+install-libLTLIBRARIES: $(lib_LTLIBRARIES)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(libdir)
+	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    echo "$(LIBTOOL)  --mode=install $(INSTALL) $$p $(DESTDIR)$(libdir)/$$p"; \
+	    $(LIBTOOL)  --mode=install $(INSTALL) $$p $(DESTDIR)$(libdir)/$$p; \
+	  else :; fi; \
+	done
+
+uninstall-libLTLIBRARIES:
+	@$(NORMAL_UNINSTALL)
+	list='$(lib_LTLIBRARIES)'; for p in $$list; do \
+	  $(LIBTOOL)  --mode=uninstall rm -f $(DESTDIR)$(libdir)/$$p; \
+	done
+
+.c.o:
+	$(COMPILE) -c $<
+
+.s.o:
+	$(COMPILE) -c $<
+
+.S.o:
+	$(COMPILE) -c $<
+
+mostlyclean-compile:
+	-rm -f *.o core *.core
+
+clean-compile:
+
+distclean-compile:
+	-rm -f *.tab.c
+
+maintainer-clean-compile:
+
+.c.lo:
+	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
+
+.s.lo:
+	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
+
+.S.lo:
+	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
+
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
+
+distclean-libtool:
+
+maintainer-clean-libtool:
+
+libgsm.la: $(libgsm_la_OBJECTS) $(libgsm_la_DEPENDENCIES)
+	$(CXXLINK) -rpath $(libdir) $(libgsm_la_LDFLAGS) $(libgsm_la_OBJECTS) $(libgsm_la_LIBADD) $(LIBS)
+.cc.o:
+	$(CXXCOMPILE) -c $<
+.cc.lo:
+	$(LTCXXCOMPILE) -c $<
+
+install-gsmincludeHEADERS: $(gsminclude_HEADERS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(gsmincludedir)
+	@list='$(gsminclude_HEADERS)'; for p in $$list; do \
+	  if test -f "$$p"; then d= ; else d="$(srcdir)/"; fi; \
+	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(gsmincludedir)/$$p"; \
+	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(gsmincludedir)/$$p; \
+	done
+
+uninstall-gsmincludeHEADERS:
+	@$(NORMAL_UNINSTALL)
+	list='$(gsminclude_HEADERS)'; for p in $$list; do \
+	  rm -f $(DESTDIR)$(gsmincludedir)/$$p; \
+	done
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES) $(LISP)
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	here=`pwd` && cd $(srcdir) \
+	  && mkid -f$$here/ID $$unique $(LISP)
+
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
+	tags=; \
+	here=`pwd`; \
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags  $$unique $(LISP) -o $$here/TAGS)
+
+mostlyclean-tags:
+
+clean-tags:
+
+distclean-tags:
+	-rm -f TAGS ID
+
+maintainer-clean-tags:
+
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
+subdir = gsmlib
+
+distdir: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pr $$/$$file $(distdir)/$$file; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
+	done
+gsm_at.lo gsm_at.o : gsm_at.cc ../gsm_config.h gsm_at.h gsm_port.h \
+	gsm_error.h gsm_util.h gsm_nls.h gsm_event.h gsm_sms.h \
+	gsm_sms_codec.h gsm_me_ta.h gsm_phonebook.h \
+	gsm_sorted_phonebook_base.h gsm_map_key.h gsm_sms_store.h
+gsm_error.lo gsm_error.o : gsm_error.cc ../gsm_config.h gsm_nls.h \
+	gsm_error.h gsm_util.h
+gsm_event.lo gsm_event.o : gsm_event.cc ../gsm_config.h gsm_nls.h \
+	gsm_event.h gsm_sms.h gsm_sms_codec.h gsm_error.h gsm_util.h \
+	gsm_at.h gsm_port.h gsm_parser.h gsm_me_ta.h gsm_phonebook.h \
+	gsm_sorted_phonebook_base.h gsm_map_key.h gsm_sms_store.h
+gsm_me_ta.lo gsm_me_ta.o : gsm_me_ta.cc ../gsm_config.h gsm_nls.h \
+	gsm_me_ta.h gsm_error.h gsm_event.h gsm_sms.h gsm_sms_codec.h \
+	gsm_util.h gsm_at.h gsm_port.h gsm_phonebook.h \
+	gsm_sorted_phonebook_base.h gsm_map_key.h gsm_sms_store.h \
+	gsm_parser.h
+gsm_nls.lo gsm_nls.o : gsm_nls.cc ../gsm_config.h gsm_nls.h
+gsm_parser.lo gsm_parser.o : gsm_parser.cc ../gsm_config.h gsm_parser.h \
+	gsm_util.h gsm_error.h gsm_nls.h
+gsm_phonebook.lo gsm_phonebook.o : gsm_phonebook.cc ../gsm_config.h \
+	gsm_nls.h gsm_sysdep.h gsm_phonebook.h \
+	gsm_sorted_phonebook_base.h gsm_util.h gsm_error.h \
+	gsm_map_key.h gsm_sms_codec.h gsm_at.h gsm_port.h gsm_parser.h \
+	gsm_me_ta.h gsm_event.h gsm_sms.h gsm_sms_store.h
+gsm_sms_codec.lo gsm_sms_codec.o : gsm_sms_codec.cc ../gsm_config.h \
+	gsm_nls.h gsm_sysdep.h gsm_sms_codec.h gsm_util.h gsm_error.h
+gsm_sms.lo gsm_sms.o : gsm_sms.cc ../gsm_config.h gsm_nls.h gsm_sysdep.h \
+	gsm_sms.h gsm_sms_codec.h gsm_error.h gsm_util.h gsm_at.h \
+	gsm_port.h gsm_parser.h gsm_me_ta.h gsm_event.h gsm_phonebook.h \
+	gsm_sorted_phonebook_base.h gsm_map_key.h gsm_sms_store.h
+gsm_sms_store.lo gsm_sms_store.o : gsm_sms_store.cc ../gsm_config.h \
+	gsm_sms_store.h gsm_at.h gsm_port.h gsm_error.h gsm_util.h \
+	gsm_sms.h gsm_sms_codec.h gsm_parser.h gsm_me_ta.h gsm_event.h \
+	gsm_phonebook.h gsm_sorted_phonebook_base.h gsm_map_key.h
+gsm_sorted_phonebook_base.lo gsm_sorted_phonebook_base.o : \
+	gsm_sorted_phonebook_base.cc ../gsm_config.h \
+	gsm_sorted_phonebook_base.h gsm_util.h gsm_error.h \
+	gsm_map_key.h gsm_sms_codec.h gsm_nls.h
+gsm_sorted_phonebook.lo gsm_sorted_phonebook.o : gsm_sorted_phonebook.cc \
+	../gsm_config.h gsm_util.h gsm_error.h gsm_sorted_phonebook.h \
+	gsm_sorted_phonebook_base.h gsm_map_key.h gsm_sms_codec.h \
+	gsm_phonebook.h gsm_at.h gsm_port.h gsm_nls.h
+gsm_sorted_sms_store.lo gsm_sorted_sms_store.o : gsm_sorted_sms_store.cc \
+	../gsm_config.h gsm_nls.h gsm_sysdep.h gsm_sorted_sms_store.h \
+	gsm_sms_store.h gsm_at.h gsm_port.h gsm_error.h gsm_util.h \
+	gsm_sms.h gsm_sms_codec.h gsm_map_key.h
+gsm_unix_serial.lo gsm_unix_serial.o : gsm_unix_serial.cc \
+	../gsm_config.h gsm_nls.h gsm_unix_serial.h gsm_error.h \
+	gsm_port.h gsm_util.h
+gsm_util.lo gsm_util.o : gsm_util.cc ../gsm_config.h gsm_nls.h \
+	gsm_util.h gsm_error.h
+
+info-am:
+info: info-am
+dvi-am:
+dvi: dvi-am
+check-am: all-am
+check: check-am
+installcheck-am:
+installcheck: installcheck-am
+install-exec-am: install-libLTLIBRARIES
+install-exec: install-exec-am
+
+install-data-am: install-gsmincludeHEADERS
+install-data: install-data-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-am
+uninstall-am: uninstall-libLTLIBRARIES uninstall-gsmincludeHEADERS
+uninstall: uninstall-am
+all-am: Makefile $(LTLIBRARIES) $(HEADERS)
+all-redirect: all-am
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
+installdirs:
+	$(mkinstalldirs)  $(DESTDIR)$(libdir) $(DESTDIR)$(gsmincludedir)
+
+
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+mostlyclean-am:  mostlyclean-libLTLIBRARIES mostlyclean-compile \
+		mostlyclean-libtool mostlyclean-tags \
+		mostlyclean-generic
+
+mostlyclean: mostlyclean-am
+
+clean-am:  clean-libLTLIBRARIES clean-compile clean-libtool clean-tags \
+		clean-generic mostlyclean-am
+
+clean: clean-am
+
+distclean-am:  distclean-libLTLIBRARIES distclean-compile \
+		distclean-libtool distclean-tags distclean-generic \
+		clean-am
+	-rm -f libtool
+
+distclean: distclean-am
+
+maintainer-clean-am:  maintainer-clean-libLTLIBRARIES \
+		maintainer-clean-compile maintainer-clean-libtool \
+		maintainer-clean-tags maintainer-clean-generic \
+		distclean-am
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+maintainer-clean: maintainer-clean-am
+
+.PHONY: mostlyclean-libLTLIBRARIES distclean-libLTLIBRARIES \
+clean-libLTLIBRARIES maintainer-clean-libLTLIBRARIES \
+uninstall-libLTLIBRARIES install-libLTLIBRARIES mostlyclean-compile \
+distclean-compile clean-compile maintainer-clean-compile \
+mostlyclean-libtool distclean-libtool clean-libtool \
+maintainer-clean-libtool uninstall-gsmincludeHEADERS \
+install-gsmincludeHEADERS tags mostlyclean-tags distclean-tags \
+clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi check \
+check-am installcheck-am installcheck install-exec-am install-exec \
+install-data-am install-data install-am install uninstall-am uninstall \
+all-redirect all-am all installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
+
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

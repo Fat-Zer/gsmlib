@@ -1,0 +1,49 @@
+*** 1. I get the error
+       /usr/local/bin/gsmsmsd [ERROR]: cannot route status report message to TE
+
+Some phones/modems cannot route all kinds of SMS to the TE
+(computer). Please try
+
+  gsmsmsd no_stat
+
+This is documented in the gsmsmsd manual page.
+
+
+*** 2. Siemens M20T expects an initial PIN.
+
+For the Siemens M20T an initial PIN must be send once (probably when
+it is switched on or the computer is powered on). This PIN is used for
+all subsequent invocations of gsmlib-based programs. The trick is to
+issue the following program (eg. in the rc-scripts of the operating system):
+
+  gsmctl -I "+cpin=<MY PIN>"
+
+
+*** 3. Sending SMS with or retrieving SMS from my Ericsson SH888 does
+not work.
+
+Set the environment variable GSMLIB_SH888_FIX:
+
+export GSMLIB_SH888_FIX=1     (bash)
+setenv GSMLIB_SH888_FIX 1     (tcsh)
+
+If it works now, I need your model number. You could just enter
+"AT+CGMM" in a terminal program and send me the results. Alternatively 
+set the environment variable GSMLIB_DEBUG=2 and me the dump.
+
+*** 4. I get the error "ME/TA error 'Unidentified subscriber' (code
+28)" when trying to send SMS using gsmsendsms or gsmsmsd.
+
+The SMS service centre address (SCA, the phone number of the centre that is
+accepting SMS for delivery) is not set correctly in your phone. There
+are three ways to correct this:
+
+1. set the default SCA (example is for Germany T-D1):
+
+  gsmctl -o setsca "+491710760000"
+
+2. Use the menus of your phone to set the SMS SCA.
+
+3. Use the option "--sca 1234567" for the gsmsmsd, gsmsmsstore, and
+gsmsendsms programs. This tries to set the SCA in the SMS itself (does
+not change default SCA) and might not work with all phones.

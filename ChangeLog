@@ -1,0 +1,225 @@
+gsmlib-1.5
+     - adapted MeTa::getCurrentOPInfo() and MeTa::getAvailableOPInfo()
+       to handle Nokia 8290 quirks
+
+     - code to set line speed in gsm_unix_serial reinserted (it was
+       accidentally removed in previous version)
+
+     - minor changes to initialization sequence in gsm_unix_serial
+
+     - bugfix in gsm_unix_serial.cc: readByte() == 0 does not mean no
+       more bytes, but is legal value
+
+     - additionally allowed characters "*#pwPW" and '+' at any
+       position in telephone numbers
+
+     - added environment variable GSMLIB_SH888_FIX that (if set)
+       enables the gsmlib workaround for Ericsson SH888's broken SMS TPDUs
+
+     - fixed command line parameter handling bug in gsmsmsstore
+
+     - fixed %files section .spec file to correctly include manual pages
+
+     - fixed some bugs in terminal line setup (gsm_unix_serial) regarding
+       software/hardware handshake 
+
+     - added new "--sca" option to SMS-related apps to set the SMS
+       service centre address on the command line (useful if default is not
+       set correctly in the phone)
+
+     - removed tcflush() call in UnixSerialPort::putLine that broke
+       the event system needed for gsmsmsd
+
+gsmlib-1.4
+     - more attempts to fix UNIX serial port access
+
+     - allow custom backends for sorted phonebooks to be integrated
+       into gsmlib (eg. for RDBMS or LDAP storage). Introduced a new
+       module gsm_sorted_phonebook_base that contains the infrastructure for
+       this.
+
+     - Now gsmlib needs at least gcc-2.95.2 to compile correctly.
+
+     - Implemented option to open device with software handshaking (XON/XOFF).
+       The applications now have an -X option to turn this on.
+
+     - gsmlib now contains a facility to interrupt ongoing activity in a
+       controlled way. gsm_unix_serial now blocks for one second
+       maximum until it checks whether it was interrupted.
+
+     - various small bugfixes
+
+     - added workaround for phones that omit ':' in AT command responses
+
+     - all debugging output is now printed to stderr
+
+     - gsm_unix_serial: new attempt to initialize modem in a more
+       robust way (contributed)
+
+     - gsm_sms: fixed handling of user data header (contributed)
+
+gsmlib-1.3
+     - fixed bug that caused gsmlib to hang if TAs don't respond
+       to AT inquiries for serial number etc.
+
+     - fixed bug with handling of CB mode AT command construction in
+       gsm_me_ta.cc, setSMSRoutingToTA()
+
+     - allow '+' as the first character of phonenumbers
+
+     - implemented reading and writing from/to stdin/stdout in
+       gsm_sorted_[sms_store|phonebook] and gsmpb/gsmsmsstore
+
+     - fixed (hopefully) the intermittent hangup problem in
+       gsm_unix_serial_port
+
+     - Some mobile phones cannot report the status of some facility
+       locks. The gsmctl program now prints out "unknown" in the
+       corresponding result line from the FLSTAT
+       operation if this problem occurs (instead of terminating).
+
+     - switched off non-blocking access to serial device
+
+gsmlib-1.2
+     - gsmlib now also works with TAs that can not switch off echo
+
+     - fixed bug that prevented gsmlib from copying SMS_DELIVER and 
+       SMS_STATUS_REPORT back to the ME
+
+     - introduced -I (--init) parameter to all command line apps to
+       allow for device-specific initialization
+
+     - made SMS decoding routines more robust against bad SMS (especially
+       premature end of PDU)
+
+     - New debugging feature: If compiled without NDEBUG, the
+       environment variable GSMLIB_DEBUG determines the verbosity of
+       debugging messages (0 = none, 1 = many, 2 = extreme)
+
+gsmlib-1.1
+
+     - Parse multiple COPS (operator info) lines returned by some phones
+
+     - accept string as numeric value when interpreting COPS=? response
+       (Ericsson phone + GSM12 GSM module)
+
+     - accept string as numeric value when interpreting COPS? response
+       (Ericsson phone + GSM12 GSM module)
+
+     - retry when initializing TA (ATZ/ATE0 sequences)
+
+     - Set SMS routing:
+       allow mode 3 (special in-band technique) when setting routing
+       to TA (gsmlib should not be active when phone is switched to data mode
+       anyway) 
+
+    -  Set SMS routing:
+       handle buffer mode but only if it was reported by the +CNMI=? command
+       (the Ericsson GM12 GSM modem does not like it otherwise)
+
+     - Determine CPMS number of parameters for CPMS command (better
+       compability with some mobile phones / GSM modems)
+
+     - handle missing service centre address in incoming SMS for Ericsson
+       model 6050102
+
+     - add new RING event to gsm_event.h/.cc, gsmsmsd now handles RING
+       indications properly
+
+     - defined default event handler mostly to handle unexpected RING
+       indications that might otherwise confuse gsmlib
+
+     - gsmsmsd: can now be cleanly terminated using the SIGINT or SIGTERM
+       signals
+
+     - gsmsmsd: now handles multiple incoming SMS messages cleanly, before
+       there was a chance that some SMS messages coming in rapid succession
+       might have been lost
+
+     - gsmsmsd: flush option implemented that dispatches and erases
+       existing messages in SMS store
+
+     - gsmsmsd: added sending of SMS messages. gsmsmsd now accepts a
+       spool directory options where it expects to find SMS message file in a 
+       simple format, these are dispatched every 5 seconds
+
+gsmlib-1.0
+
+     - RPM support (spec file)
+
+     - the "+" is at least for the Siemens S10 and S25 a valid char in 
+       telephone numbers (inserts a pause of 3 seconds), therefore it is now
+       allowed as part of telephone numbers
+
+     - fixed incorrect analysis of facility class parameters in gsmctl.cc
+
+     - restricted call forward time to 0..30 seconds in gsm_me_ta.cc
+
+gsmlib-0.3
+
+     - implemented timeout for accessing the mobile phone in order
+       to avoid hangs
+
+     - upgraded to BETA status
+
+     - written glossary for abbreviations (gsminfo(7))
+
+     - implemented NLS support, added German translations
+
+     - implemented preserving the index position of phonebook entries in 
+       gsmpb.cc and gsm_sorted_phonebook
+
+     - cleaned up manual pages (alphabetic ordering of options etc.)
+
+     - gsmsmstore program and gsm_sorted_sms_store./.cc completed and
+       tested
+
+     - gsmpb and gsmsmsstore now have --verbose (-V) options for detailed
+       progress reporting
+
+     - now check for getopt_long in configure (can be compiled on non-GNU
+       systems)
+
+     - removed asserts regarding lengths of numeric data types, put them
+       into configure script
+
+     - sorted options in apps/*.cc alphabetically (--help option)
+
+     - in gsm_sorted_sms_store compare telephone numbers more sensibly
+
+     - introduced -v option to gsmpb and gsmsmsstore to report execution
+       statistics 
+
+     - tested new synchronization function in gsmpb program
+
+     - implemented operations in the gsmctl program
+
+     - rewrote test cases (compare output)
+
+     - completed gsmsmsstore program
+
+     - first changes for compilation with VC++ 6.0 on WIN32
+
+gsmlib-0.2
+
+     - gsmsmstore program and gsm_sorted_sms_store./.cc mostly
+       completed but not yet much tested
+
+     - Fixed problem with some mobiles/TAs not giving prefixes after
+       certain AT sequences (reported for SIEMENS S25/IrDA, Nokia
+       8810/IrDA)
+
+     - Fixed problem with Xircom REM56G.100/Nokia 6150 that give
+       "CABLE: GSM" instead of "OK" after ATZ
+
+     - Mobiles that return nothing when empty phonebook entries are
+       requested are now handled correctly (reported for SIEMENS S25/IrDA)
+
+     - optimizations in gsm_*_phonebook modules (less AT commands necessary)
+
+     - new synchronization function in gsmpb program that is (hopefully)
+       more sensible (see man page for details)
+
+gsmlib-0.1
+
+     - Initial release
