@@ -348,7 +348,8 @@ Phonebook::Phonebook(string phonebookName, Ref<GsmAt> at, MeTa &myMeTa,
   else
     _phonebook = new PhonebookEntry[_maxSize];
   int nextAvailableIndex = 0;
-  for (int i = 0; i < _maxSize; i++)
+  int i;
+  for (i = 0; i < _maxSize; i++)
   {
     while (! availablePositions[nextAvailableIndex])
       nextAvailableIndex++;
@@ -359,8 +360,8 @@ Phonebook::Phonebook(string phonebookName, Ref<GsmAt> at, MeTa &myMeTa,
   }
 
   // find out first index number of phonebook
-  int firstIndex;
-  for (int i = 0; i < _maxSize; i++)
+  int firstIndex = -1;
+  for (i = 0; i < _maxSize; i++)
     if (availablePositions[i])
     {
       firstIndex = i;
@@ -550,13 +551,14 @@ Phonebook::iterator Phonebook::find(string text) throw(GsmException)
   int index;
   string telephone;
 
-  for (int i = 0; i < _maxSize; i++)
+  int i;
+  for (i = 0; i < _maxSize; i++)
     if (_phonebook[i].text() == text)
       return begin() + i;
 
   findEntry(text, index, telephone);
   
-  for (int i = 0; i < _maxSize; i++)
+  for (i = 0; i < _maxSize; i++)
     if (_phonebook[i].index() == index)
       if (_phonebook[i].cached())
       {

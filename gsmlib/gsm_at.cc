@@ -265,8 +265,8 @@ string GsmAt::normalize(string s)
   return s.substr(start, end - start);
 }
 
-string GsmAt::sendPdu(string atCommand, string response,
-                      string pdu) throw(GsmException)
+string GsmAt::sendPdu(string atCommand, string response, string pdu,
+                      bool acceptEmptyResponse) throw(GsmException)
 {
   string s;
   bool errorCondition = false;
@@ -334,6 +334,10 @@ string GsmAt::sendPdu(string atCommand, string response,
   if (matchResponse(s, "ERROR"))
     throw GsmException(_("ME/TA error '<unspecified>' (code not known)"), 
                        ChatError, -1);
+
+  // return if response is "OK" and caller says this is OK
+  if (acceptEmptyResponse && s == "OK")
+    return "";
 
   if (matchResponse(s, response))
   {

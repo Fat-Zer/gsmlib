@@ -30,7 +30,7 @@ AC_CONFIG_AUX_DIR(scripts)
 AC_PROG_INSTALL
 
 dnl use automake
-AM_INIT_AUTOMAKE(gsmlib, 1.8)
+AM_INIT_AUTOMAKE(gsmlib, 1.9)
 
 dnl change to no if you want no shared libraries for debugging purposes
 AM_ENABLE_SHARED(yes)
@@ -108,7 +108,7 @@ AC_CHECK_SIZEOF(unsigned long int, 4)
 AC_CHECK_SIZEOF(unsigned int, 4)
 
 dnl Project-specific settings
-GSM_VERSION="1:2:0"
+GSM_VERSION="1:3:0"
 AC_SUBST(GSM_VERSION)
 
 dnl set locale dir (FIXME there must be a better way)

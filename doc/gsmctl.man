@@ -238,6 +238,46 @@ This operator is not available for selection, ie. not
 accessible with this SIM card.
 .RE
 .TP 7
+.B PIN
+Prints information about the current PIN status. The output is of
+form "<PIN0>  status". Where status can be one of the following lines:
+.RS
+.TP 10
+.I READY
+ME is not pending for any password.
+.TP
+.I SIM PIN
+ME is waiting SIM PIN to be given.
+.TP
+.I SIM PUK
+ME is waiting SIM PUK to be given.
+.TP
+.I PH-SIM PIN
+ME is waiting phone-to-SIM card password to be given.
+.TP
+.I PH-FSIM PIN
+ME is waiting phone-to-very first SIM card password to be given.
+.TP
+.I PH-FSIM PUK
+ME is waiting phone-to-very first SIM card unblocking password to be
+given.
+.TP
+.I SIM PIN2
+ME is waiting SIM PIN2 to be given.
+.TP
+.I SIM PUK2
+ME is waiting SIM PUK2 to be given.
+.TP
+.I PH-NET PIN
+ME is waiting network personalisation password to be given.
+.TP
+.I PH-NET PUK
+ME is waiting network personalisation unblocking password to be given.
+.TP
+.I PH-NETSUB PIN
+ME is waiting network subset personalisation password to be given.
+.RE
+.TP 7
 .B PW
 Facilities in the mobile phone may be protected by passwords (ie. PINs 
 or PUKs). This option prints out lines of the form "<PWn>
@@ -340,6 +380,12 @@ is 20 seconds if omitted.
 .I forwardtime
 can be in the range 1..30.
 .RE
+.PP
+.TP
+.BI pin\  pin
+Sets PIN code. Use
+.BI gsmctl\ pin
+to get the current pin status.
 .PP
 .B lock
 .IR facility\  [\| facilityclass \|]\ [\| passwd \|]

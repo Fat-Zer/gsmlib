@@ -5,9 +5,9 @@
 // *
 // * Purpose: GSM Siemens mobile phone control program
 // *
-// * Author:  Christian W. Zuckschwerdt (zany@triq.net)
+// * Author:  Christian W. Zuckschwerdt  <zany@triq.net>
 // *
-// * Created: 15.12.2001
+// * Created: 2001-12-15
 // *************************************************************************
 
 #ifdef HAVE_CONFIG_H
@@ -100,7 +100,19 @@ void printForwardReason(string s, ForwardInfo &info)
 
 void printIntRange(IntRange ir)
 {
-  cout << "(" << ir._low << "-" << ir._high << ")";
+  cout << "(" << ir._low;
+  if (ir._high != NOT_SET)
+    cout << "-" << ir._high;
+  cout << ")";
+}
+
+// helper function, prints parameter range
+
+void printParameterRange(ParameterRange pr)
+{
+  cout << "(\"" << pr._parameter << "\",";
+  printIntRange(pr._range);
+  cout << ")";
 }
 
 // print information
@@ -319,14 +331,20 @@ static void printInfo(InfoParameter ip)
   case BinaryInfo:
   {
     cout << "<BIN0>  ";
-    vector<string> br = m->getSupportedBinaryReads();
-    for (vector<string>::iterator i = br.begin(); i != br.end(); ++i)
-      cout << "'" << *i << "' ";
+    vector<ParameterRange> bnr = m->getSupportedBinaryReads();
+    for (vector<ParameterRange>::iterator i = bnr.begin(); i != bnr.end(); ++i)
+    {
+      printParameterRange(*i);
+      cout << " ";
+    }
     cout << endl;
     cout << "<BIN1>  ";
-    vector<string> bw = m->getSupportedBinaryWrites();
-    for (vector<string>::iterator i = bw.begin(); i != bw.end(); ++i)
-      cout << "'" << *i << "' ";
+    vector<ParameterRange> bnw = m->getSupportedBinaryWrites();
+    for (vector<ParameterRange>::iterator i = bnw.begin(); i != bnw.end(); ++i)
+    {
+      printParameterRange(*i);
+      cout << " ";
+    }
     cout << endl;
     break;
   }

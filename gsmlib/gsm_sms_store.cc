@@ -235,8 +235,11 @@ void SMSStore::readEntry(int index, CBMessageRef &message)
   Ref<Parser> p;
   try
   {
-    p = new Parser(_at->chat("+CMGR=" + intToStr(index + 1), "+CMGR:",
-                             pdu, false, true, true));
+    // this is just one row splitted in two part
+    // (msvc6 fail with internal compiler error)
+    string s = _at->chat("+CMGR=" + intToStr(index + 1), "+CMGR:",
+                         pdu, false, true, true);
+    p = new Parser(s);
   }
   catch (GsmException &ge)
   {
@@ -363,7 +366,6 @@ void SMSStore::resizeStore(int newSize)
       _store[i]->_mySMSStore = this;
     }
   }
-  _capacity = newSize;
 }
 
 SMSStore::iterator SMSStore::begin()
@@ -378,12 +380,12 @@ SMSStore::const_iterator SMSStore::begin() const
 
 SMSStore::iterator SMSStore::end()
 {
-  return SMSStoreIterator(_capacity, this);
+  return SMSStoreIterator(_store.size(), this);
 }
 
 SMSStore::const_iterator SMSStore::end() const
 {
-  return SMSStoreConstIterator(_capacity, this);
+  return SMSStoreConstIterator(_store.size(), this);
 }
 
 SMSStore::reference SMSStore::operator[](int n)

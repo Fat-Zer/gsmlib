@@ -50,6 +50,8 @@ namespace gsmlib
     // set timeout for the readByte(), getLine(), and putLine() functions
     // (globally for ALL ports)
     virtual void setTimeOut(unsigned int timeout) =0;
+
+    virtual ~Port() {}
   };
 };
 

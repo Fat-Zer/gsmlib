@@ -124,11 +124,8 @@ void GsmEvent::dispatch(string s, GsmAt &at) throw(GsmException)
       
       SMSMessageRef sms = SMSMessage::decode(pdu);
       
-      // find out whether we are supposed to send an acknowledgment
-      Parser p(at.chat("+CSMS?", "+CSMS:"));
-      bool sendAck = p.parseInt() >= 1;
-      
-      if (sendAck)
+      // send acknowledgement if necessary
+      if (at.getMeTa().getCapabilities()._sendAck)
         at.chat("+CNMA");
       
       // call the event handler

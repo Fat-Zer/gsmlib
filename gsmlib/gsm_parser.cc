@@ -265,7 +265,39 @@ vector<bool> Parser::parseIntList(bool allowNoList)
   return result;
 }
 
-IntRange Parser::parseRange(bool allowNoRange)
+vector<ParameterRange> Parser::parseParameterRangeList(bool allowNoList)
+  throw(GsmException)
+{
+  // handle case of empty parameter
+  vector<ParameterRange> result;
+  if (checkEmptyParameter(allowNoList)) return result;
+
+  result.push_back(parseParameterRange());
+  while (parseComma(true))
+  {
+    result.push_back(parseParameterRange());
+  }
+  
+  return result;
+}
+
+ParameterRange Parser::parseParameterRange(bool allowNoParameterRange)
+  throw(GsmException)
+{
+  // handle case of empty parameter
+  ParameterRange result;
+  if (checkEmptyParameter(allowNoParameterRange)) return result;
+
+  parseChar('(');
+  result._parameter = parseString();
+  parseComma();
+  result._range = parseRange(false, true);
+  parseChar(')');
+
+  return result;
+}
+
+IntRange Parser::parseRange(bool allowNoRange, bool allowNonRange)
   throw(GsmException)
 {
   // handle case of empty parameter
@@ -274,8 +306,9 @@ IntRange Parser::parseRange(bool allowNoRange)
 
   parseChar('(');
   result._low = parseInt();
-  parseChar('-');
-  result._high = parseInt();
+  // allow non-ranges is allowNonRange == true
+  if (parseChar('-', allowNonRange))
+    result._high = parseInt();
   parseChar(')');
 
   return result;

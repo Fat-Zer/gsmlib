@@ -432,7 +432,7 @@ Address SMSDecoder::getAddress(bool scAddressFormat)
     // addressLength is number of semi-octets
     // (addressLength / 2) * 8 is number of available bits
     // divided by 7 is number of 7-bit characters
-    result._number = gsmToLatin1(getString((addressLength / 2) * 8 / 7));
+    result._number = gsmToLatin1(getString(addressLength * 4 / 7));
     alignOctet();
   }
   else

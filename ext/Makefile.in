@@ -106,21 +106,29 @@ l = @l@
 
 INCLUDES = -I..
 
+EXTRA_DIST = README.sieme
+
 # build addon library
 lib_LTLIBRARIES = libgsmext.la
 
 libgsmext_la_SOURCES = gsm_sie_me.cc
+
+libgsmext_la_LDFLAGS = -version-info $(GSM_VERSION)
 
 gsmincludedir = $(includedir)/gsmlib
 
 gsminclude_HEADERS = gsm_sie_me.h
 
 # build programs
-bin_PROGRAMS = gsmsiectl
+bin_PROGRAMS = gsmsiectl gsmsiexfer
 
 # build gsmsiectl from gsmsiectl.cc and libgsmme.la
 gsmsiectl_SOURCES = gsmsiectl.cc
 gsmsiectl_LDADD = ../gsmlib/libgsmme.la libgsmext.la $(INTLLIBS)
+
+# build gsmsiexfer from gsmsiexfer.cc and libgsmme.la
+gsmsiexfer_SOURCES = gsmsiexfer.cc
+gsmsiexfer_LDADD = ../gsmlib/libgsmme.la libgsmext.la $(INTLLIBS)
 mkinstalldirs = $(SHELL) $(top_srcdir)/scripts/mkinstalldirs
 CONFIG_HEADER = ../gsm_config.h
 CONFIG_CLEAN_FILES = 
@@ -131,7 +139,6 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-libgsmext_la_LDFLAGS = 
 libgsmext_la_LIBADD = 
 libgsmext_la_OBJECTS =  gsm_sie_me.lo
 PROGRAMS =  $(bin_PROGRAMS)
@@ -139,6 +146,9 @@ PROGRAMS =  $(bin_PROGRAMS)
 gsmsiectl_OBJECTS =  gsmsiectl.o
 gsmsiectl_DEPENDENCIES =  ../gsmlib/libgsmme.la libgsmext.la
 gsmsiectl_LDFLAGS = 
+gsmsiexfer_OBJECTS =  gsmsiexfer.o
+gsmsiexfer_DEPENDENCIES =  ../gsmlib/libgsmme.la libgsmext.la
+gsmsiexfer_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -153,8 +163,8 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = gtar
 GZIP_ENV = --best
-SOURCES = $(libgsmext_la_SOURCES) $(gsmsiectl_SOURCES)
-OBJECTS = $(libgsmext_la_OBJECTS) $(gsmsiectl_OBJECTS)
+SOURCES = $(libgsmext_la_SOURCES) $(gsmsiectl_SOURCES) $(gsmsiexfer_SOURCES)
+OBJECTS = $(libgsmext_la_OBJECTS) $(gsmsiectl_OBJECTS) $(gsmsiexfer_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -261,6 +271,10 @@ uninstall-binPROGRAMS:
 gsmsiectl: $(gsmsiectl_OBJECTS) $(gsmsiectl_DEPENDENCIES)
 	@rm -f gsmsiectl
 	$(CXXLINK) $(gsmsiectl_LDFLAGS) $(gsmsiectl_OBJECTS) $(gsmsiectl_LDADD) $(LIBS)
+
+gsmsiexfer: $(gsmsiexfer_OBJECTS) $(gsmsiexfer_DEPENDENCIES)
+	@rm -f gsmsiexfer
+	$(CXXLINK) $(gsmsiexfer_LDFLAGS) $(gsmsiexfer_OBJECTS) $(gsmsiexfer_LDADD) $(LIBS)
 .cc.o:
 	$(CXXCOMPILE) -c $<
 .cc.lo:
@@ -326,7 +340,7 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 gsm_sie_me.lo gsm_sie_me.o : gsm_sie_me.cc ../gsm_config.h \
-	../gsmlib/gsm_me_ta.h ../gsmlib/gsm_error.h \
+	../gsmlib/gsm_nls.h ../gsmlib/gsm_me_ta.h ../gsmlib/gsm_error.h \
 	../gsmlib/gsm_event.h ../gsmlib/gsm_sms.h \
 	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_util.h \
 	../gsmlib/gsm_at.h ../gsmlib/gsm_port.h ../gsmlib/gsm_cb.h \
@@ -341,6 +355,14 @@ gsmsiectl.o: gsmsiectl.cc ../gsm_config.h ../gsmlib/gsm_nls.h \
 	../gsmlib/gsm_phonebook.h ../gsmlib/gsm_sorted_phonebook_base.h \
 	../gsmlib/gsm_map_key.h ../gsmlib/gsm_sms_store.h gsm_sie_me.h \
 	../gsmlib/gsm_sysdep.h ../gsmlib/gsm_unix_serial.h
+gsmsiexfer.o: gsmsiexfer.cc ../gsm_config.h ../gsmlib/gsm_nls.h \
+	../gsmlib/gsm_unix_serial.h ../gsmlib/gsm_error.h \
+	../gsmlib/gsm_port.h ../gsmlib/gsm_util.h ../gsmlib/gsm_me_ta.h \
+	../gsmlib/gsm_event.h ../gsmlib/gsm_sms.h \
+	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_at.h ../gsmlib/gsm_cb.h \
+	../gsmlib/gsm_phonebook.h ../gsmlib/gsm_sorted_phonebook_base.h \
+	../gsmlib/gsm_map_key.h ../gsmlib/gsm_sms_store.h gsm_sie_me.h \
+	../gsmlib/gsm_sorted_phonebook.h
 
 info-am:
 info: info-am

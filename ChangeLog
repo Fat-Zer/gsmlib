@@ -1,3 +1,29 @@
+gsmlib-1.9
+     - fixed decoding of alphanumeric addresses in gsm_sms_codec.
+
+     - fixed bug in gsm_event when checking whether to send an
+       acknowledgment for a received SMS
+
+     - More Siemens-specific patches, some extensions to the AT
+       command parser
+
+     - New code to print PIN status and set the PIN in gsmctl, setPIN
+       function in MeTa class (Andreas Roedl <flood@flood-net.de>)
+
+     - Missing virtual destructor in Port class caused destructors of
+       UnixSerialPort and Win32SerialPort not to be called - fixed
+
+     - Added new code to set functionality level on or off (thanks to
+       David Woodhouse)
+
+     - found bug in SMS store implementation that caused the now
+       obsolete _capacity member to be set to a too low value
+
+     - Added changes contributed by Frediano Ziglio to enable compilation
+       on Windows
+
+     - Added call waiting functions contributed by Ivan
+
 gsmlib-1.8
      - added workaround for Nokia Cellular Card Phone RPE-1 GSM900
        that reports a CDS event that actually is an CDSI and sends a spurious

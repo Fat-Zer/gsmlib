@@ -63,6 +63,13 @@ namespace gsmlib
     IntRange() : _high(NOT_SET), _low(NOT_SET) {}
   };
 
+  // A valid integer range for a given parameter
+  struct ParameterRange
+  {
+    string _parameter;
+    IntRange _range;
+  };
+
   // *** general-purpose pointer wrapper with reference counting
 
   class RefBase

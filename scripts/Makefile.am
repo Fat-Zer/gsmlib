@@ -4,7 +4,7 @@
 # *
 # * File:    Makefile.am
 # *
-# * Purpose: apps Makefile
+# * Purpose: scripts Makefile
 # *
 # * Author:  Peter Hofmann (software@pxh.de)
 # *

@@ -59,6 +59,7 @@ static struct option longOpts[] =
 // my ME
 
 static MeTa *me;
+string receiveStoreName;        // store name for received SMSs
 
 // service centre address (set on command line)
 
@@ -127,7 +128,12 @@ void EventHandler::SMSReceptionIndication(string storeName, unsigned int index,
 {
   IncomingMessage m;
   m._index = index;
-  m._storeName = storeName;
+
+  if (receiveStoreName != "" && ( storeName == "MT" || storeName == "mt"))
+    m._storeName = receiveStoreName;
+  else
+    m._storeName = storeName;
+
   m._messageType = messageType;
   newMessages.push_back(m);
 }
@@ -233,7 +239,6 @@ int main(int argc, char *argv[])
     bool flushSMS = false;
     bool onlyReceptionIndication = true;
     string spoolDir;
-    string storeName;
     string initString = DEFAULT_INIT_STRING;
     bool swHandshake = false;
 
@@ -256,7 +261,7 @@ int main(int argc, char *argv[])
         initString = optarg;
         break;
       case 't':
-        storeName = optarg;
+        receiveStoreName = optarg;
         break;
       case 'd':
         device = optarg;
@@ -365,11 +370,11 @@ int main(int argc, char *argv[])
     // if flush option is given get all SMS from store and dispatch them
     if (flushSMS)
     {
-      if (storeName == "")
+      if (receiveStoreName == "")
         throw GsmException(_("store name must be given for flush option"),
                            ParameterError);
       
-      SMSStoreRef store = me->getSMSStore(storeName);
+      SMSStoreRef store = me->getSMSStore(receiveStoreName);
       for (SMSStore::iterator s = store->begin(); s != store->end(); ++s)
         if (! s->empty())
         {
@@ -392,9 +397,15 @@ int main(int argc, char *argv[])
         }
     }
 
-    // set default SMS store if -t option was given
-    if (storeName != "")
-      m.setSMSStore(storeName, 3);
+    // set default SMS store if -t option was given or
+    // read from ME otherwise
+    if (receiveStoreName == "")
+    {
+      string dummy1, dummy2;
+      m.getSMSStore(dummy1, dummy2, receiveStoreName );
+    }
+    else
+      m.setSMSStore(receiveStoreName, 3);
 
     // switch message service level to 1
     // this enables SMS routing to TA

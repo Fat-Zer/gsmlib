@@ -39,6 +39,7 @@ namespace gsmlib
     bool _veryShortCOPSanswer;  // Falcom A2-1
     bool _wrongSMSStatusCode;   // Motorola Timeport 260
     bool _CDSmeansCDSI;         // Nokia Cellular Card Phone RPE-1 GSM900
+    bool _sendAck;              // send ack for directly routed SMS
     Capabilities();             // constructor, set default behaviours
   };
   
@@ -154,6 +155,11 @@ namespace gsmlib
                        bool needResultCode = false)
       throw(GsmException);
 
+    // get current SMS store settings
+    void getSMSStore(string &readDeleteStore,
+                     string &writeSendStore,
+                     string &receiveStore) throw(GsmException);
+
     // get capabilities of this ME/TA
     Capabilities getCapabilities() const {return _capabilities;}
 
@@ -192,6 +198,17 @@ namespace gsmlib
     // dial a number, CLI presentation as defined in network
     void dial(string number) throw(GsmException);// (ATD)
 
+    // answer
+    void answer() throw(GsmException); // (ATA)
+
+    // hangup
+    void hangup() throw(GsmException); // (ATH)
+    
+    // set Personal Identification Number
+    void setPIN(string number) throw(GsmException);// (+CPIN)
+
+    // get PIN Status
+    string getPINStatus() throw(GsmException);// (+CPIN?)
 
     // *** ETSI GSM 07.07 Section 7: "Network service related commands"
     
@@ -267,6 +284,16 @@ namespace gsmlib
     // *** ETSI GSM 07.07 Section 8: "Mobile Equipment control
     //                                and status commands"
 
+    // return/set ME functionality level (+CFUN):
+    // 0 Minimum functionality
+    // 1 full functionality
+    // 2 disable phone transmit RF circuits only
+    // 3 disable phone receive RF circuits only
+    // 4 disable phone both transmit and receive RF circuits
+    // 5...127 implementation-defined
+    int MeTa::getFunctionalityLevel() throw(GsmException);
+    void MeTa::setFunctionalityLevel(int level) throw(GsmException);
+
     // return battery charge status (+CBC):
     // 0 ME is powered by the battery
     // 1 ME has a battery connected, but is not powered by it
@@ -340,6 +367,16 @@ namespace gsmlib
                            bool onlyReceptionIndication = true)
       throw(GsmException);
     // (+CNMI=)
+
+    // functions to handle call waiting status
+    bool getCallWaitingLockStatus(FacilityClass cl)
+      throw(GsmException);
+	
+    void lockCallWaiting(FacilityClass cl)
+      throw(GsmException);
+	
+    void unlockCallWaiting(FacilityClass cl)
+      throw(GsmException);
 
     friend class Phonebook;
     friend class SMSStore;

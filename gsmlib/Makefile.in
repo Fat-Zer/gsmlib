@@ -298,8 +298,8 @@ gsm_at.lo gsm_at.o : gsm_at.cc ../gsm_config.h gsm_at.h gsm_port.h \
 	gsm_error.h gsm_util.h gsm_nls.h gsm_event.h gsm_sms.h \
 	gsm_sms_codec.h gsm_cb.h gsm_me_ta.h gsm_phonebook.h \
 	gsm_sorted_phonebook_base.h gsm_map_key.h gsm_sms_store.h
-gsm_cb.lo gsm_cb.o : gsm_cb.cc ../gsm_config.h gsm_cb.h gsm_sms_codec.h \
-	gsm_util.h gsm_error.h gsm_nls.h
+gsm_cb.lo gsm_cb.o : gsm_cb.cc ../gsm_config.h gsm_sysdep.h gsm_cb.h \
+	gsm_sms_codec.h gsm_util.h gsm_error.h gsm_nls.h
 gsm_error.lo gsm_error.o : gsm_error.cc ../gsm_config.h gsm_nls.h \
 	gsm_error.h gsm_util.h
 gsm_event.lo gsm_event.o : gsm_event.cc ../gsm_config.h gsm_nls.h \
@@ -311,7 +311,7 @@ gsm_me_ta.lo gsm_me_ta.o : gsm_me_ta.cc ../gsm_config.h gsm_nls.h \
 	gsm_me_ta.h gsm_error.h gsm_event.h gsm_sms.h gsm_sms_codec.h \
 	gsm_util.h gsm_at.h gsm_port.h gsm_cb.h gsm_phonebook.h \
 	gsm_sorted_phonebook_base.h gsm_map_key.h gsm_sms_store.h \
-	gsm_parser.h
+	gsm_parser.h gsm_sysdep.h
 gsm_nls.lo gsm_nls.o : gsm_nls.cc ../gsm_config.h gsm_nls.h
 gsm_parser.lo gsm_parser.o : gsm_parser.cc ../gsm_config.h gsm_parser.h \
 	gsm_util.h gsm_error.h gsm_nls.h

@@ -86,8 +86,8 @@ namespace gsmlib
     // send pdu (wait for <CR><LF><greater_than><space> and send <CTRL-Z>
     // at the end
     // return text after response
-    string sendPdu(string atCommand, string response,
-                   string pdu) throw(GsmException);
+    string sendPdu(string atCommand, string response, string pdu,
+		   bool acceptEmptyResponse = false) throw(GsmException);
 
     // functions from class Port
     string getLine() throw(GsmException);

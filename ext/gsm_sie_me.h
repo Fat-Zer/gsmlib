@@ -1,13 +1,21 @@
-/*
- * According to 
- * AT command set for S45 Siemens mobile phones, v1.8, 26. July 2001
- * Common AT prefix is "^S" (two characters, not the control code!)
- */
-
+// *************************************************************************
+// * GSM TA/ME library
+// *
+// * File:    gsm_sie_me.h
+// *
+// * Purpose: Mobile Equipment/Terminal Adapter and SMS functions
+// *          (According to "AT command set for S45 Siemens mobile phones"
+// *           v1.8, 26. July 2001 - Common AT prefix is "^S")
+// *
+// * Author:  Christian W. Zuckschwerdt  <zany@triq.net>
+// *
+// * Created: 2001-12-15
+// *************************************************************************
 
 #ifndef GSM_SIE_ME_H
 #define GSM_SIE_ME_H
 
+#include <gsmlib/gsm_error.h>
 #include <gsmlib/gsm_at.h>
 #include <string>
 #include <vector>
@@ -16,6 +24,17 @@ using namespace std;
 
 namespace gsmlib
 {
+  // *** Siemens mobile phone binary objects (bitmap, midi, vcal, vcard)
+
+  struct BinaryObject
+  {
+    string _type;               // Object type
+    int _subtype;               // Object subtype (storage number)
+    unsigned char *_data;       // Object binary data
+    int _size;                  // Object data size
+  };
+
+  // *** this class allows extended access to Siemens moblie phones
 
   class SieMe : public MeTa
   {
@@ -29,12 +48,12 @@ namespace gsmlib
 
 
     // get the current phonebook in the Siemens ME
-    vector<string> getSupportedPhonebooks() throw(GsmException); // (AT^SPBS=?)
+    vector<string> getSupportedPhonebooks() throw(GsmException);// (AT^SPBS=?)
+
     // get the current phonebook in the Siemens ME
-
     string getCurrentPhonebook() throw(GsmException); // (AT^SPBS?)
-    // set the current phonebook in the Siemens ME
 
+    // set the current phonebook in the Siemens ME
     // remember the last phonebook set for optimisation
     void setPhonebook(string phonebookName) throw(GsmException); // (AT^SPBS=)
 
@@ -56,23 +75,24 @@ namespace gsmlib
     // Siemens set ringing tone
     void setRingingTone(int tone, int volume) throw(GsmException);// (AT^SRTC=)
     // Siemens set ringing tone on
-    void ringingToneOn() throw(GsmException); // (AT^SRTC)
+    void playRingingTone() throw(GsmException);
     // Siemens set ringing tone of
-    void ringingToneOff() throw(GsmException); // (AT^SRTC)
+    void stopRingingTone() throw(GsmException);
     // Siemens toggle ringing tone
     void toggleRingingTone() throw(GsmException); // (AT^SRTC)
 
     // Siemens get supported binary read
-    vector<string> getSupportedBinaryReads() throw(GsmException); // (AT^SBNR=?)
+    vector<ParameterRange> getSupportedBinaryReads() throw(GsmException);
 
     // Siemens get supported binary write
-    vector<string> getSupportedBinaryWrites() throw(GsmException); // (AT^SBNW=?)
+    vector<ParameterRange> getSupportedBinaryWrites() throw(GsmException);
 
     // Siemens Binary Read
-    void getBinary(string binary) throw(GsmException); // (AT^SBNR)
+    BinaryObject getBinary(string type, int subtype) throw(GsmException);
 
     // Siemens Binary Write
-    void setBinary(string binary) throw(GsmException); // (AT^SBNW)
+    void setBinary(string type, int subtype, BinaryObject obj)
+      throw(GsmException);
   };
 };
 

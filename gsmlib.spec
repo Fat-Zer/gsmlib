@@ -1,7 +1,7 @@
-%define LIBVER 1.0.2
+%define LIBVER 1.0.3
 Summary: Library to access GSM mobile phones through GSM modems
 Name: gsmlib
-Version: 1.8
+Version: 1.9
 Release: 1
 Source: gsmlib-%{version}.tar.gz
 Group: System Environment/Libraries
@@ -13,6 +13,11 @@ Buildroot: /var/tmp/gsmlib-root
 %package devel
 Summary: Development tools for programs which will use the gsmlib library.
 Group: Development/Libraries
+Requires: gsmlib
+
+%package ext
+Summary: Extensions to gsmlib to support non-standard phone features.
+Group:  Development/Libraries
 Requires: gsmlib
 
 %description
@@ -29,6 +34,12 @@ provided to use these functionalities.
 %description devel
 The gsmlib-devel package includes the header files and static libraries
 necessary for developing programs which use the gsmlib library.
+
+%description ext
+The extension package of gsmlib contains programs, libraries, and
+documentation to support non-standard features of GSM phones. The
+following phones/phone types are currently supported:
+ * Siemens GSM phones
 
 %prep
 %setup
@@ -67,4 +78,10 @@ rm -rf $RPM_BUILD_ROOT
 /usr/lib/libgsmme.a
 /usr/include/gsmlib
 
+%files ext
+/usr/bin/gsmsiectl
+/usr/bin/gsmsiexfer
+/usr/lib/libgsmext.so
+/usr/lib/libgsmext.so.1.0.3
 
+%doc ext/README.sieme

@@ -1,9 +1,24 @@
+// *************************************************************************
+// * GSM TA/ME library
+// *
+// * File:    gsm_sie_me.cc
+// *
+// * Purpose: Mobile Equipment/Terminal Adapter and SMS functions
+// *          (According to "AT command set for S45 Siemens mobile phones"
+// *           v1.8, 26. July 2001 - Common AT prefix is "^S")
+// *
+// * Author:  Christian W. Zuckschwerdt  <zany@triq.net>
+// *
+// * Created: 2001-12-15
+// *************************************************************************
 
 #ifdef HAVE_CONFIG_H
 #include <gsm_config.h>
 #endif
+#include <gsmlib/gsm_nls.h>
 #include <gsmlib/gsm_me_ta.h>
 #include <gsmlib/gsm_parser.h>
+#include <gsmlib/gsm_util.h>
 #include <gsm_sie_me.h>
 
 using namespace std;
@@ -101,7 +116,7 @@ void SieMe::setRingingTone(int tone, int volume) throw(GsmException)
   _at->chat("^SRTC=" + intToStr(tone) + "," + intToStr(volume));
 }
 
-void SieMe:: ringingToneOn() throw(GsmException) // (AT^SRTC)
+void SieMe:: playRingingTone() throw(GsmException)
 {
   // get ringing bool
   Parser p(_at->chat("^SRTC?", "^SRTC:"));
@@ -113,10 +128,10 @@ void SieMe:: ringingToneOn() throw(GsmException) // (AT^SRTC)
   int ringing = p.parseInt();
 
   if (ringing == 0)
-    _at->chat("^SRTC");
+    toggleRingingTone();
 }
 
-void SieMe::ringingToneOff() throw(GsmException) // (AT^SRTC)
+void SieMe::stopRingingTone() throw(GsmException)
 {
   // get ringing bool
   Parser p(_at->chat("^SRTC?", "^SRTC:"));
@@ -128,7 +143,7 @@ void SieMe::ringingToneOff() throw(GsmException) // (AT^SRTC)
   int ringing = p.parseInt();
 
   if (ringing == 1)
-    _at->chat("^SRTC");
+    toggleRingingTone();
 }
 
 void SieMe::toggleRingingTone() throw(GsmException) // (AT^SRTC)
@@ -137,47 +152,106 @@ void SieMe::toggleRingingTone() throw(GsmException) // (AT^SRTC)
 }
 
 // Siemens get supported binary read
-vector<string> SieMe::getSupportedBinaryReads() throw(GsmException)
+vector<ParameterRange> SieMe::getSupportedBinaryReads() throw(GsmException)
 {
   Parser p(_at->chat("^SBNR=?", "^SBNR:"));
   // ^SBNR: ("bmp",(0-3)),("mid",(0-4)),("vcf",(0-500)),("vcs",(0-50))
 
-  return p.parseStringList();
+  return p.parseParameterRangeList();
 }
 
 // Siemens get supported binary write
-vector<string> SieMe::getSupportedBinaryWrites() throw(GsmException)
+vector<ParameterRange> SieMe::getSupportedBinaryWrites() throw(GsmException)
 {
   Parser p(_at->chat("^SBNW=?", "^SBNW:"));
   // ^SBNW: ("bmp",(0-3)),("mid",(0-4)),("vcf",(0-500)),("vcs",(0-50)),("t9d",(0))
 
-  return p.parseStringList();
+  return p.parseParameterRangeList();
 }
 
 // Siemens Binary Read
-void SieMe::getBinary(string binary) throw(GsmException) // (AT^SBNR)
+BinaryObject SieMe::getBinary(string type, int subtype) throw(GsmException)
 {
-    // same as chat() above but also get pdu if expectPdu == true
-    //string chat(string atCommand,
-    //            string response,
-    //            string &pdu,
-    //            bool ignoreErrors = false,
-    //            bool expectPdu = true,
-    //            bool acceptEmptyResponse = false) throw(GsmException);
+  // expect several response lines
+  vector<string> result;
+  result = _at->chatv("^SBNR=\"" + type + "\"," + intToStr(subtype), "^SBNR:");
+  // "bmp",0,1,5 <CR><LF> pdu <CR><LF> "bmp",0,2,5 <CR><LF> ...
+  // most likely to be PDUs of 382 chars (191 * 2)
+  string pdu;
+  int fragmentCount = 0;
+  for (vector<string>::iterator i = result.begin(); i != result.end(); ++i)
+  {
+    ++fragmentCount;
+    // parse header
+    Parser p(*i);
+    string fragmentType = p.parseString();
+    if (fragmentType != type)
+      throw GsmException(_("bad PDU type"), ChatError);
+    p.parseComma();
+    int fragmentSubtype = p.parseInt();
+    if (fragmentSubtype != subtype)
+      throw GsmException(_("bad PDU subtype"), ChatError);
+    p.parseComma();
+    int fragmentNumber = p.parseInt();
+    if (fragmentNumber != fragmentCount)
+      throw GsmException(_("bad PDU number"), ChatError);
+    p.parseComma();
+    int numberOfFragments = p.parseInt();
+    if (fragmentNumber > numberOfFragments)
+      throw GsmException(_("bad PDU number"), ChatError);
 
-    // same as above, but expect several response lines
-    //vector<string> chatv(string atCommand = "",
-    //                     string response = "",
-    //                     bool ignoreErrors = false)
+    // concat pdu fragment
+    ++i;
+    pdu += *i;
+  }
+
+  BinaryObject bnr;
+  bnr._type = type;
+  bnr._subtype = subtype;
+  bnr._size = pdu.length() / 2;
+  bnr._data = new unsigned char[pdu.length() / 2];
+  if (! hexToBuf(pdu, bnr._data))
+    throw GsmException(_("bad hexadecimal PDU format"), ChatError);
+
+  return bnr;
 }
 
 // Siemens Binary Write
-void SieMe::setBinary(string binary) throw(GsmException) // (AT^SBNW)
+void SieMe::setBinary(string type, int subtype, BinaryObject obj)
+  throw(GsmException)
 {
-    // send pdu (wait for <CR><LF><greater_than><space> and send <CTRL-Z>
-    // at the end
-    // return text after response
-    //string sendPdu(string atCommand, string response,
-    //               string pdu) throw(GsmException);
+  if (obj._size <= 0)
+    throw GsmException(_("bad object"), ParameterError);
+
+  // Limitation: The maximum pdu size is 176 bytes (or 352 characters)
+  // this should be a configurable field 
+  int maxPDUsize = 176;
+  int numberOfPDUs = (obj._size + maxPDUsize - 1) / maxPDUsize;
+  unsigned char *p = obj._data;
+
+  for (int i = 1; i <= numberOfPDUs; ++i)
+  {
+    // construct pdu
+    int size = maxPDUsize;
+    if (i == numberOfPDUs)
+      size = obj._size - (numberOfPDUs - 1) * maxPDUsize;
+    string pdu = bufToHex(p, size);
+    p += size;
+
+    cout << "processing " << i << " of " << numberOfPDUs
+	 << " of " << size << " bytes." << endl;
+    cout << "^SBNW=\"" + type + "\"," + intToStr(subtype) + ","
+	+ intToStr(i) + "," + intToStr(numberOfPDUs) << endl;
+    cout << pdu << endl;
+
+    _at->sendPdu("^SBNW=\"" + type + "\"," + intToStr(subtype) + ","
+		 + intToStr(i) + "," + intToStr(numberOfPDUs), "",
+		 pdu, true);
+    cout << "OK" << endl;
+  }
 }
+
+
+
+
 

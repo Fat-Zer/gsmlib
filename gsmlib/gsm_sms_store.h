@@ -188,7 +188,6 @@ namespace gsmlib
   {
   private:
     vector<SMSStoreEntry*> _store; // vector of store entries
-    int _capacity;              // maximum size of phonebook
     string _storeName;          // name of the store, 2-byte like "SM"
     Ref<GsmAt> _at;             // my GsmAt class
     MeTa &_meTa;                // my MeTa class
@@ -253,8 +252,8 @@ namespace gsmlib
     // (perhaps this should be changed, because it is unexpected behavior)
 
     int size() const throw(GsmException);
-    int max_size() const {return _capacity;}
-    int capacity() const {return _capacity;}
+    int max_size() const {return _store.size();}
+    int capacity() const {return _store.size();}
     bool empty() const throw(GsmException) {return size() == 0;}
 
     // insert iterators insert into the first empty cell regardless of position

@@ -160,6 +160,8 @@ Win32SerialPort::Win32SerialPort(string device, int lineSpeed,
   throw(GsmException) :
   _oldChar(-1)
 {
+ try
+ {
   int holdoff[] = {2000, 1000, 400};
 
   // open device
@@ -295,6 +297,13 @@ Win32SerialPort::Win32SerialPort(string device, int lineSpeed,
   // no response after 3 tries
   throw GsmException(stringPrintf(_("reset modem failed '%s'"),
                                   device.c_str()), OtherError);
+ }
+ catch (GsmException &e)
+ {
+  if ( _file != INVALID_HANDLE_VALUE)
+   CloseHandle(_file);  
+  throw e;
+ }
 }
 
 string Win32SerialPort::getLine() throw(GsmException)
@@ -425,17 +434,23 @@ bool Win32SerialPort::wait(GsmTime timeout) throw(GsmException)
 {
   // See differences from UNIX
   // Why do I use Windows ?
-  ExceptionSafeOverlapped over;
-
-  SetCommMask(_file,EV_RXCHAR);
   DWORD dwEvent;
+  SetCommMask(_file,EV_RXCHAR);
+  if (!timeout)
+  {
+    if( !WaitCommEvent(_file,&dwEvent,NULL) )
+      throwModemException(_("error comm waiting"));
+    return true;
+  }
+  
+  ExceptionSafeOverlapped over;
   if( !WaitCommEvent(_file,&dwEvent,&over) )
   {
     // check true errors
     if (GetLastError() != ERROR_IO_PENDING)
       throwModemException(_("error comm waiting"));
 
-    switch( WaitForSingleObject( over.hEvent, timeout->tv_sec*1000U+timeout->tv_usec ) ) 
+    switch( WaitForSingleObject( over.hEvent, timeout->tv_sec*1000U+(timeout->tv_usec/1000U) ) ) 
     {
     case WAIT_TIMEOUT:
       CancelIo(_file);

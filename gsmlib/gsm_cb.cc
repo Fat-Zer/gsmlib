@@ -13,7 +13,8 @@
 #ifdef HAVE_CONFIG_H
 #include <gsm_config.h>
 #endif
-#include <gsm_cb.h>
+#include <gsmlib/gsm_sysdep.h>
+#include <gsmlib/gsm_cb.h>
 #include <gsmlib/gsm_nls.h>
 #include <strstream>
 

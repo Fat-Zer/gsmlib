@@ -5,7 +5,7 @@ necessarily in order of importance):
 
 - make update po
 
-- add find function
++ add find function
 
 - specify exact location of manual files in /usr/man/man* in spec
   file, so that erase does not try to delete these directories

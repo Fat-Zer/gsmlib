@@ -93,6 +93,10 @@ SOURCE=..\gsmlib\gsm_error.cc
 # End Source File
 # Begin Source File
 
+SOURCE=..\gsmlib\gsm_cb.cc
+# End Source File
+# Begin Source File
+
 SOURCE=..\gsmlib\gsm_event.cc
 # End Source File
 # Begin Source File
@@ -150,6 +154,10 @@ SOURCE=..\gsmlib\gsm_win32_serial.cc
 # Begin Source File
 
 SOURCE=..\gsmlib\gsm_at.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gsmlib\gsm_cb.h
 # End Source File
 # Begin Source File
 

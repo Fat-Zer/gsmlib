@@ -72,10 +72,23 @@ namespace gsmlib
     vector<bool> parseIntList(bool allowNoList = false)
       throw(GsmException);
 
+    // parse a list of parameter ranges (see below)
+    // the list can be empty (ie. == "" ) if allowNoList == true
+    vector<ParameterRange> parseParameterRangeList(bool allowNoList = false)
+      throw(GsmException);
+
+    // parse a string plus its valid integer range of the
+    // form "("string",(1-125))"
+    // the parameter range may be absent if allowNoParameterRange == true
+    ParameterRange parseParameterRange(bool allowNoParameterRange = false)
+      throw(GsmException);
+
     // parse an integer range of the form "(1-125)"
     // the range may be absent if allowNoRange == true
     // then IntRange::_high and _low are set to NOT_SET
-    IntRange parseRange(bool allowNoRange = false)
+    // the range may be short if allowNonRange == true
+    // then IntRange::_high is set to NOT_SET
+    IntRange parseRange(bool allowNoRange = false, bool allowNonRange = false)
       throw(GsmException);
     
     // parse an integer of the form "1234"

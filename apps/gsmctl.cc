@@ -44,11 +44,13 @@ static MeTa *m;
 
 enum InfoParameter {AllInfo, // print all info
                     MeInfo,     // MeInfo must be first!
+                    FunctionalityInfo,
                     OperatorInfo,
                     CurrentOperatorInfo,
                     FacilityLockStateInfo,
                     FacilityLockCapabilityInfo,
                     PasswordInfo,
+                    PINInfo,
                     CLIPInfo,
                     CallForwardingInfo,
                     BatteryInfo,
@@ -104,6 +106,17 @@ static void printInfo(InfoParameter ip)
          << _("<ME1>  Model: ") << mei._model << endl
          << _("<ME2>  Revision: ") << mei._revision << endl
          << _("<ME3>  Serial Number: ") << mei._serialNumber << endl;
+    break;
+  }
+  case FunctionalityInfo:
+  {
+    try {
+      int fun;
+      fun = m->getFunctionalityLevel();
+      cout << _("<FUN>  Functionality Level: ") << fun << endl;
+    } catch (GsmException &x) { 
+      cout << _("<FUN>  Functionality Level: ") << _("unsupported") << endl;
+    }
     break;
   }
   case OperatorInfo:
@@ -204,6 +217,11 @@ static void printInfo(InfoParameter ip)
            << i->_facility << "' " << i->_maxPasswdLen << endl;
       ++count;
     }
+    break;
+  }
+  case PINInfo:
+  {
+    cout << "<PIN0> " << m->getPINStatus() << endl;
     break;
   }
   case CLIPInfo:
@@ -420,6 +438,8 @@ int main(int argc, char *argv[])
             printInfo((InfoParameter)ip);
         else if (param == "me")
           printInfo(MeInfo);
+        else if (param == "fun")
+          printInfo(FunctionalityInfo);
         else if (param == "op")
           printInfo(OperatorInfo);
         else if (param == "currop")
@@ -430,6 +450,8 @@ int main(int argc, char *argv[])
           printInfo(FacilityLockCapabilityInfo);
         else if (param == "pw")
           printInfo(PasswordInfo);
+        else if (param == "pin")
+          printInfo(PINInfo);
         else if (param == "clip")
           printInfo(CLIPInfo);
         else if (param == "forw")
@@ -464,6 +486,21 @@ int main(int argc, char *argv[])
         // wait for keypress from stdin
         char c;
         read(1, &c, 1);
+      }
+      else if (operation == "on")
+      {
+	  m->setFunctionalityLevel(1);
+      }
+      else if (operation == "off")
+      {
+	  m->setFunctionalityLevel(0);
+      }
+      else if (operation == "pin")
+      {
+        // pin: PIN
+        checkParamCount(optind, argc, 1, 1);
+
+        m->setPIN(argv[optind]);
       }
       else if (operation == "setop")
       {

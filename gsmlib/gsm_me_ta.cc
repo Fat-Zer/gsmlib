@@ -17,6 +17,7 @@
 #include <gsmlib/gsm_nls.h>
 #include <gsmlib/gsm_me_ta.h>
 #include <gsmlib/gsm_parser.h>
+#include <gsmlib/gsm_sysdep.h>
 
 using namespace std;
 using namespace gsmlib;
@@ -30,8 +31,9 @@ Capabilities::Capabilities() :
   _omitsColon(true),            // FIXME
   _veryShortCOPSanswer(false),  // Falcom A2-1
   _wrongSMSStatusCode(false),   // Motorola Timeport 260
-  _CDSmeansCDSI(false)          // Nokia Cellular Card Phone RPE-1 GSM900 and
+  _CDSmeansCDSI(false),         // Nokia Cellular Card Phone RPE-1 GSM900 and
                                 // Nokia Card Phone RPM-1 GSM900/1800
+  _sendAck(false)               // send ack for directly routed SMS
 {
 }
 
@@ -83,6 +85,10 @@ void MeTa::init() throw(GsmException)
     _capabilities._CDSmeansCDSI = true;
   } 
 
+  // find out whether we are supposed to send an acknowledgment
+  Parser p(_at->chat("+CSMS?", "+CSMS:"));
+  _capabilities._sendAck = p.parseInt() >= 1;
+      
   // set GSM default character set
   try
   {
@@ -112,6 +118,17 @@ MeTa::MeTa(Ref<Port> port) throw(GsmException) : _port(port)
 // {
 //   init();
 // }
+
+void MeTa::setPIN(string pin) throw(GsmException)
+{
+  _at->chat("+CPIN=\"" + pin + "\"");
+}
+
+string MeTa::getPINStatus() throw(GsmException)
+{
+  Parser p(_at->chat("+CPIN?", "+CPIN:"));
+  return p.parseString();
+}
 
 void MeTa::setPhonebook(string phonebookName) throw(GsmException)
 {
@@ -152,6 +169,31 @@ string MeTa::setSMSStore(string smsStore, int storeTypes, bool needResultCode)
     return _at->chat(chatString, "+CPMS:");
   }
   return "";
+}
+
+void MeTa::getSMSStore(string &readDeleteStore,
+                       string &writeSendStore,
+                       string &receiveStore) throw(GsmException)
+{
+  Parser p(_at->chat("+CPMS?", "+CPMS:"));
+  writeSendStore = receiveStore = "";
+  readDeleteStore = p.parseString();
+  p.parseComma();
+  p.parseInt();
+  p.parseComma();
+  p.parseInt();
+  if (p.parseComma(true))
+  {
+    writeSendStore = p.parseString();
+    p.parseComma();
+    p.parseInt();
+    p.parseComma();
+    p.parseInt();
+    if (p.parseComma(true))
+    {
+      receiveStore = p.parseString();
+    }
+  }
 }
 
 void MeTa::waitEvent(GsmTime timeout) throw(GsmException)
@@ -234,6 +276,17 @@ string MeTa::getExtendedErrorReport() throw(GsmException)
 void MeTa::dial(string number) throw(GsmException)
 {
   _at->chat("D" + number + ";");
+}
+
+void MeTa::answer() throw(GsmException)
+{
+  _at->chat("A");
+}
+
+void MeTa::hangup() throw(GsmException)
+{
+  _at->chat("H");
+
 }
 
 vector<OPInfo> MeTa::getAvailableOPInfo() throw(GsmException)
@@ -733,6 +786,40 @@ int MeTa::getBatteryCharge() throw(GsmException)
   return p.parseInt();
 }
 
+int MeTa::getFunctionalityLevel() throw(GsmException)
+{
+  try {
+    Parser p(_at->chat("+CFUN?", "+CFUN:"));
+    return p.parseInt();
+  } catch (GsmException &x) {
+    if (x.getErrorClass() == ChatError)
+    {
+      throw GsmException(_("Functionality Level commands not supported by ME"),
+			 MeTaCapabilityError);
+    } else {
+      throw;
+    }
+  }
+}
+
+void MeTa::setFunctionalityLevel(int level) throw(GsmException)
+{
+  try {
+    Parser p(_at->chat("+CFUN="  + intToStr(level)));
+  } catch (GsmException &x) {
+    if (x.getErrorClass() == ChatError)
+    {
+      // If the command AT+CFUN commands really aren't supported by the ME,
+      // then this will throw an appropriate exception for us.
+      getFunctionalityLevel();
+      // If the number was just out of range, we get here.
+      throw GsmException(_("Requested Functionality Level out of range"),
+			 ParameterError);
+    }
+    throw;
+  }
+}
+
 int MeTa::getSignalStrength() throw(GsmException)
 {
   Parser p(_at->chat("+CSQ", "+CSQ:"));
@@ -1024,5 +1111,49 @@ void MeTa::setSMSRoutingToTA(bool enableSMS, bool enableCBS,
       chatString += ",0";
 
   _at->chat("+CNMI=" + chatString);
+}
+
+bool MeTa::getCallWaitingLockStatus(FacilityClass cl)
+  throw(GsmException)
+{
+  // some TA return always multiline response with all classes
+  // (Option FirstFone)
+  // !!! errors handling is correct (responses.empty() true) ?
+  vector<string> responses = 
+    _at->chatv("+CCWA=0,2," + intToStr((int)cl),"+CCWA:",true);
+  for (vector<string>::iterator i = responses.begin();
+       i != responses.end(); ++i)
+  {
+    Parser p(*i);
+    int enabled = p.parseInt();
+
+    // if the first time and there is no comma this 
+    // return direct state of classes
+    // else return all classes
+    if (i == responses.begin())
+    {
+      if (! p.parseComma(true))
+        return enabled == 1;
+    }
+    else
+      p.parseComma();
+
+    if (p.parseInt() == (int)cl)
+      return enabled == 1;
+  }
+  return false;
+
+}
+
+void MeTa::lockCallWaiting(FacilityClass cl)
+  throw(GsmException)
+{
+  _at->chat("+CCWA=0,1," + intToStr((int)cl));
+}
+
+void MeTa::unlockCallWaiting(FacilityClass cl)
+  throw(GsmException)
+{
+  _at->chat("+CCWA=0,0," + intToStr((int)cl));
 }
 
