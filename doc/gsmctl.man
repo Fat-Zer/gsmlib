@@ -382,6 +382,17 @@ can be in the range 1..30.
 .RE
 .PP
 .TP
+.BI off
+Sets functionality level of the phone to 0 (low functionality). The
+effects of this command depend on the phone (eg. sets low power
+consumption).
+.PP
+.TP
+.BI on
+Sets functionality level of the phone to 1 (high functionality). The
+effects of this command depend on the phone.
+.PP
+.TP
 .BI pin\  pin
 Sets PIN code. Use
 .BI gsmctl\ pin

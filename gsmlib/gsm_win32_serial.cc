@@ -75,7 +75,7 @@ void Win32SerialPort::throwModemException(string message) throw(GsmException)
   throw GsmException(s, OSError, errno);
 }
 
-void Win32SerialPort::putBack(char c)
+void Win32SerialPort::putBack(unsigned char c)
 {
   assert(_oldChar == -1);
   _oldChar = c;
@@ -90,7 +90,7 @@ int Win32SerialPort::readByte() throw(GsmException)
     return result;
   }
 
-  char c;
+  unsigned char c;
   int timeElapsed = 0;
   bool readDone = true;
   ExceptionSafeOverlapped  over;

@@ -13,11 +13,9 @@ dnl *************************************************************************
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(gsmlib/gsm_error.h)
 
-dnl national language support (NLS)
-ALL_LINGUAS="de"
-dnl install all available linguas by default
-unset LINGUAS
-AM_GNU_GETTEXT
+dnl Other
+AC_CONFIG_AUX_DIR(scripts)
+AC_PROG_INSTALL
 
 dnl check for libintl
 AC_CHECK_LIB(intl, textdomain)
@@ -25,12 +23,8 @@ AC_CHECK_LIB(intl, textdomain)
 dnl use config header
 AM_CONFIG_HEADER(gsm_config.h)
 
-dnl Other
-AC_CONFIG_AUX_DIR(scripts)
-AC_PROG_INSTALL
-
 dnl use automake
-AM_INIT_AUTOMAKE(gsmlib, 1.9)
+AM_INIT_AUTOMAKE(gsmlib, 1.10)
 
 dnl change to no if you want no shared libraries for debugging purposes
 AM_ENABLE_SHARED(yes)
@@ -108,8 +102,13 @@ AC_CHECK_SIZEOF(unsigned long int, 4)
 AC_CHECK_SIZEOF(unsigned int, 4)
 
 dnl Project-specific settings
-GSM_VERSION="1:3:0"
+GSM_VERSION="1:4:0"
 AC_SUBST(GSM_VERSION)
+
+dnl national language support (NLS)
+LINGUAS="de"
+ALL_LINGUAS=$LINGUAS
+AM_GNU_GETTEXT
 
 dnl set locale dir (FIXME there must be a better way)
 _localedir=`eval "echo $datadir/locale"`
@@ -129,4 +128,4 @@ AC_OUTPUT(Makefile gsmlib/Makefile tests/Makefile apps/Makefile win32/Makefile
           echo timestamp > stamp-h)
 
 dnl repair Makefile in po subdir
-sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile
+dnl sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile

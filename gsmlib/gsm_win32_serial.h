@@ -42,7 +42,7 @@ namespace gsmlib
       throw(GsmException);
 
     // inherited from Port
-    void putBack(char c);
+    void putBack(unsigned char c);
     int readByte() throw(GsmException);
     string getLine() throw(GsmException);
     void putLine(string line,

@@ -93,7 +93,7 @@ void UnixSerialPort::throwModemException(string message) throw(GsmException)
   throw GsmException(s, OSError, errno);
 }
 
-void UnixSerialPort::putBack(char c)
+void UnixSerialPort::putBack(unsigned char c)
 {
   assert(_oldChar == -1);
   _oldChar = c;
@@ -253,8 +253,10 @@ UnixSerialPort::UnixSerialPort(string device, speed_t lineSpeed,
             s.find("CABLE: GSM") != string::npos)
         {
           foundOK = true;
-          readTries = 0;           // found OK, exit loop
+          readTries = 0;        // found OK, exit loop
         }
+        else if (s.find("ERROR") != string::npos)
+          readTries = 0;        // error, exit loop
       }
 
       // set getLine/putLine timeout back to old value

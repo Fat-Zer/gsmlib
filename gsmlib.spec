@@ -1,7 +1,7 @@
-%define LIBVER 1.0.3
+%define LIBVER 1.0.4
 Summary: Library to access GSM mobile phones through GSM modems
 Name: gsmlib
-Version: 1.9
+Version: 1.10
 Release: 1
 Source: gsmlib-%{version}.tar.gz
 Group: System Environment/Libraries
@@ -67,7 +67,12 @@ rm -rf $RPM_BUILD_ROOT
 /usr/bin/gsmsmsd
 /usr/bin/gsmpb
 /usr/bin/gsmsendsms
-/usr/man
+/usr/man/man1/gsmctl.1.gz
+/usr/man/man7/gsminfo.7.gz
+/usr/man/man1/gsmpb.1.gz
+/usr/man/man1/gsmsendsms.1.gz
+/usr/man/man8/gsmsmsd.8.gz
+/usr/man/man1/gsmsmsstore.1.gz
 /usr/share/locale/de/LC_MESSAGES/gsmlib.mo
 
 %doc README INSTALL ABOUT-NLS AUTHORS COPYING NEWS TODO
@@ -82,6 +87,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/bin/gsmsiectl
 /usr/bin/gsmsiexfer
 /usr/lib/libgsmext.so
-/usr/lib/libgsmext.so.1.0.3
+/usr/lib/libgsmext.so.%{LIBVER}
 
 %doc ext/README.sieme

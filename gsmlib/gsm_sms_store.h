@@ -60,7 +60,10 @@ namespace gsmlib
     SMSStoreEntry(SMSMessageRef message, int index) :
       _message(message), _status(Unknown), _cached(true), _mySMSStore(NULL),
       _index(index) {}
-    
+   
+    // clear cached flag
+    void clearCached() { _cached = false; }
+
     // return SMS message stored in the entry
     SMSMessageRef message() const throw(GsmException);
 
@@ -142,6 +145,8 @@ namespace gsmlib
       {return _index < i._index;}
     bool operator==(const SMSStoreIterator &i) const
       {return _index == i._index;}
+    bool operator!=(const SMSStoreIterator &i) const
+      {return _index != i._index;}
 
     friend class SMSStore;
   };

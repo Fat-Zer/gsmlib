@@ -21,6 +21,8 @@ gsmsmsd \- SMS message reception daemon
 [ \fB--action\fP \fIaction\fP ]
 [ \fB-b\fP \fIbaudrate\fP ]
 [ \fB--baudrate\fP \fIbaudrate\fP ]
+[ \fB-c\fP \fIconcatenatedID\fP ]
+[ \fB--concatenate\fP \fIconcatenatedID\fP ]
 [ \fB-C\fP \fIservice centre address\fP ]
 [ \fB--sca\fP \fIservice centre address\fP ]
 [ \fB-d\fP \fIdevice\fP ]
@@ -93,6 +95,18 @@ is given the SMS is written to the standard output.
 .TP
 \fB-b\fP \fIbaudrate\fP, \fB--baudrate\fP \fIbaudrate\fP
 The baud rate to use.
+.TP
+\fB-c\fP \fIconcatenatedID\fP, \fB--concatenate\fP \fIconcatenatedID\fP
+If an ID is given, large SMSs are split into several, concatenated
+SMSs. All SMSs have the same ID and are numbered consecutively so that 
+the receiving phone can assemble them in the correct order. IDs must
+be in the range 0..255. This number is increased by one for every
+outgoing concatenated SMS and wraps around after 255.
+Not all receiving phones will support
+concatenated SMSs (and display them as separate SMSs),
+since all the numbering and ID information is
+carried in the user data header element at the beginning of the SMS
+user data. This information may show up as garbage in such phones.
 .TP
 \fB-C\fP \fIservice centre address\fP, \fB--sca\fP \fIservice centre address\fP
 Sets the service centre address to use for all SUBMIT SMSs (may not

@@ -321,7 +321,11 @@ vector<OPInfo> MeTa::getAvailableOPInfo() throw(GsmException)
     //                    "(3,\"ORANGE\",\"ORANGE\",\"23433\")");
     //responses.push_back("(2,\"D1-TELEKOM\",,26201),"
     //                    "(3,\"D2  PRIVAT\",,26202),,(0,1,3,4),(0,2)");
-    
+    // some phones arbitrarily split the response into several lines
+    //responses.push_back("(1,\"AMENA\",,\"21403\"),"
+    //                    "(3,\"MOVISTAR\",,\"21407\"),");
+    //responses.push_back("(3,\"E VODAFONE\",,\"21401\"),,(0,1),(2)");
+
     // GSM modems might return
     // 1. quadruplets of info enclosed in brackets separated by comma
     // 2. several lines of quadruplets of info enclosed in brackets
@@ -330,6 +334,9 @@ vector<OPInfo> MeTa::getAvailableOPInfo() throw(GsmException)
     for (vector<string>::iterator i = responses.begin();
          i != responses.end(); ++i)
     {
+//       while (i->length() > 0 && ! isprint((*i)[i->length() - 1]))
+//         i->erase(i->length() - 1, 1);
+
       bool expectClosingBracket = false;
       Parser p(*i);
       while (1)
@@ -362,7 +369,7 @@ vector<OPInfo> MeTa::getAvailableOPInfo() throw(GsmException)
         result.push_back(opi);
         if (! p.parseComma(true)) break;
         // two commas ",," mean the list is finished
-        if (p.parseComma(true)) break;
+        if (p.getEol() == "" || p.parseComma(true)) break;
       }
       // without brackets, the ME/TA must use format 3.
       if (! expectClosingBracket) break;
@@ -790,8 +797,15 @@ int MeTa::getFunctionalityLevel() throw(GsmException)
 {
   try {
     Parser p(_at->chat("+CFUN?", "+CFUN:"));
-    return p.parseInt();
-  } catch (GsmException &x) {
+    // some phones return functionality level like "(2)"
+    bool expectClosingParen = p.parseChar('(', true);
+    int result = p.parseInt();
+    if (expectClosingParen)
+      p.parseChar(')');
+    return result;
+  }
+  catch (GsmException &x)
+  {
     if (x.getErrorClass() == ChatError)
     {
       throw GsmException(_("Functionality Level commands not supported by ME"),
@@ -894,10 +908,76 @@ SMSStoreRef MeTa::getSMSStore(string storeName) throw(GsmException)
   return newSs;
 }
 
-void MeTa::sendSMS(SMSMessageRef smsMessage) throw(GsmException)
+void MeTa::sendSMS(Ref<SMSSubmitMessage> smsMessage) throw(GsmException)
 {
   smsMessage->setAt(_at);
   smsMessage->send();
+}
+
+void MeTa::sendSMSs(Ref<SMSSubmitMessage> smsTemplate, string text,
+                    bool oneSMS,
+                    int concatenatedMessageId)
+  throw(GsmException)
+{
+  assert(! smsTemplate.isnull());
+
+  // compute maximum text length for normal SMSs and concatenated SMSs
+  unsigned int maxTextLength, concMaxTextLength;
+  switch (smsTemplate->dataCodingScheme().getAlphabet())
+  {
+  case DCS_DEFAULT_ALPHABET:
+    maxTextLength = 160;
+    concMaxTextLength = 152;
+    break;
+  case DCS_EIGHT_BIT_ALPHABET:
+    maxTextLength = 140;
+    concMaxTextLength = 134;
+    break;
+  case DCS_SIXTEEN_BIT_ALPHABET:
+    maxTextLength = 70;
+    concMaxTextLength = 67;
+    break;
+  default:
+    throw GsmException(_("unsupported alphabet for SMS"),
+                       ParameterError);
+    break;
+  }
+
+  // simple case, only send one SMS
+  if (oneSMS || text.length() <= maxTextLength)
+  {
+    if (text.length() > maxTextLength)
+      throw GsmException(_("SMS text is larger than allowed"),
+                         ParameterError);
+    smsTemplate->setUserData(text);
+    sendSMS(smsTemplate);
+  }
+  else                          // send multiple SMSs
+  {
+    if (concatenatedMessageId != -1)
+      maxTextLength = concMaxTextLength;
+
+    int numMessages = (text.length() + maxTextLength - 1) / maxTextLength;
+    if (numMessages > 255)
+      throw GsmException(_("not more than 255 concatenated SMSs allowed"),
+                         ParameterError);
+    unsigned char numMessage = 0;
+    while (true)
+    {
+      if (concatenatedMessageId != -1)
+      {
+        unsigned char udhs[] = {0x00, 0x03, concatenatedMessageId,
+                                numMessages, ++numMessage};
+        UserDataHeader udh(string((char*)udhs, 5));
+        smsTemplate->setUserDataHeader(udh);
+      }
+      smsTemplate->setUserData(text.substr(0, maxTextLength));
+      sendSMS(smsTemplate);
+      if (text.length() < maxTextLength)
+        break;
+      text.erase(0, maxTextLength);
+    }
+  }
 }
 
 void MeTa::setMessageService(int serviceLevel) throw(GsmException)
@@ -1144,16 +1224,29 @@ bool MeTa::getCallWaitingLockStatus(FacilityClass cl)
   return false;
 
 }
-
-void MeTa::lockCallWaiting(FacilityClass cl)
+void MeTa::setCallWaitingLockStatus(FacilityClass cl, bool lock)
   throw(GsmException)
 {
-  _at->chat("+CCWA=0,1," + intToStr((int)cl));
+  if(lock)
+    _at->chat("+CCWA=0,1," + intToStr((int)cl));
+  else
+    _at->chat("+CCWA=0,0," + intToStr((int)cl));
 }
 
-void MeTa::unlockCallWaiting(FacilityClass cl)
-  throw(GsmException)
+void MeTa::setCLIRPresentation(bool enable) throw(GsmException)
 {
-  _at->chat("+CCWA=0,0," + intToStr((int)cl));
+  if (enable)
+    _at->chat("+CLIR=1");
+  else
+    _at->chat("+CLIR=0");
+}
+
+int MeTa::getCLIRPresentation() throw(GsmException)
+{
+  // 0:according to the subscription of the CLIR service
+  // 1:CLIR invocation
+  // 2:CLIR suppression
+  Parser p(_at->chat("+CLIR?", "+CLIR:"));
+  return p.parseInt();
 }
 

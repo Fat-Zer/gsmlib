@@ -341,7 +341,7 @@ SMSStore::SMSStore(string storeName, Ref<GsmAt> at, MeTa &meTa)
   _storeName(storeName), _at(at), _meTa(meTa), _useCache(true)
 {
   // select SMS store
-  Parser p(_meTa.setSMSStore(_storeName, true));
+  Parser p(_meTa.setSMSStore(_storeName, true, true));
   
   p.parseInt();                 // skip number of used mems
   p.parseComma();

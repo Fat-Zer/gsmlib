@@ -42,7 +42,7 @@ namespace gsmlib
     virtual bool wait(GsmTime timeout) throw(GsmException) =0;
 
     // put back one byte that can be read by a subsequent call to readByte()
-    virtual void putBack(char c) =0;
+    virtual void putBack(unsigned char c) =0;
 
     // read a single byte, return -1 if error or file closed
     virtual int readByte() throw(GsmException) =0;

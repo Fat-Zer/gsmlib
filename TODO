@@ -3,11 +3,37 @@ necessarily in order of importance):
 
 ("+" = DONE)
 
-- make update po
++ handle:
+  > --> AT+COPS=?
+  > <-- 
+  > <-- +COPS: (1,"AMENA",,"21403"),(3,"MOVISTAR",,"21407"),
+  > <-- (3,"E VODAFONE",,"21401"),,(0,1),(2)
+  > <-- 
+  > <-- OK
+  > gsmctl[ERROR]: expected comma (at position 45 of string '(1,"AMENA",,"21403"),(3,"MOVISTAR",,"21407"),')
+
++ extend README and web site with names of working phones (Siemens S45,...)
+
++ add workaround:
+  > <ME0>  Manufacturer: Nokia Mobile Phones
+  > <ME1>  Model: 8290
+  > <ME2>  Revision: SW5.22
+  > <ME3>  Serial Number: 010070303406434
+  > <FUN>  Functionality Level: 1
+  > gsmctl[ERROR]: expected number, got '(2)'
+
+- add fork to gsmsmsd
+
++ document "on" and "off" operations of gsmctl
+
+- Just assume full functionality and issue AT+CGMF=0 if we haven't already 
+  done so for this MeTa.
+
++ make update po
 
 + add find function
 
-- specify exact location of manual files in /usr/man/man* in spec
++ specify exact location of manual files in /usr/man/man* in spec
   file, so that erase does not try to delete these directories
 
 + update PO

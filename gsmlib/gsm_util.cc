@@ -181,8 +181,8 @@ static bool isCom(string filename)
 {
   filename = removeWhiteSpace(lowercase(filename));
   // remove UNC begin
-  if ( filename.compare(0,4,"\\\\.\\") == 0 )
-    filename.erase(0,4);
+  if ( filename.compare(0, 4, "\\\\.\\") == 0 )
+    filename.erase(0, 4);
   return filename.length() < 3 || filename.substr(0, 3) == "com";
 }
 #endif

@@ -1,3 +1,36 @@
+gsmlib-1.10
+     - reactivated code in gsm_at to retry sending PDU after
+       unsolicited result code 
+
+     - added description of unicode handling to FAQ
+
+     - compilation fixes for gcc-3.0.4
+
+     - added quick exit for ATZ in UnixSerialPort constructor
+       if phone gives ERROR
+
+     - added fix for phones that return +CLIP: "Number not available."
+       instead of giving caller ID
+
+     - added get/setCLIRPresentation() functions to MeTa (contribution by
+       ivan)
+
+     - added "NO CARRIER" event to the event mechanism (contribution by
+       clock)
+
+     - added Win32 port of gsmsmsd (thanks to Konstantin Forostyan)
+
+     - further extented Win32 port of gsmsmsd to handle outgoing messages
+
+     - fixed problem with Ericsson T39m SMS sending (zero bytes in handshake)
+
+     - added capability to send concatenated SMSs in gsmsmsd and gsmsendsms
+
+     - fixed unsigned/signed char problems in Unix/Win32 serial port
+       implementations
+
+     - added capability to send multiple SMSs to gsmsendsms/gsmsmsd
+
 gsmlib-1.9
      - fixed decoding of alphanumeric addresses in gsm_sms_codec.
 

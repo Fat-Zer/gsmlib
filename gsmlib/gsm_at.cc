@@ -269,49 +269,47 @@ string GsmAt::sendPdu(string atCommand, string response, string pdu,
                       bool acceptEmptyResponse) throw(GsmException)
 {
   string s;
-  bool errorCondition = false;
+  bool errorCondition;
   bool retry = false;
+  int tries = 5;                // How many error conditions do we accept
 
   int c;
   do
   {
+    errorCondition = false;
     putLine("AT" + atCommand);
-    // read first of two bytes "> "
-    c = readByte();
-    
-    // there have been reports that some phones give spurious CRs
-    if (c == CR)
-      c = readByte();
-
-    if (c == '+' || c == 'E')   // error or unsolicited result code
+    do
     {
-      _port->putBack(c);
-      s = normalize(getLine());
-      errorCondition = (s != "");
+      retry = false;
+      try
+      {
+        do
+        {
+          // read first of two bytes "> "
+          c = readByte();
+	}
+        // there have been reports that some phones give spurious CRs
+	// LF separates CDSI messages if there are more than one
+	while (c == CR || c == LF);
+      }
+      catch (GsmException &e)
+      {
+        c = '-';
+        errorCondition = true;  // TA does not expect PDU anymore, retry
+      }
+
+      if (c == '+' || c == 'E') // error or unsolicited result code
+      {
+        _port->putBack(c);
+        s = normalize(getLine());
+        errorCondition = (s != "");
       
-      retry = ! errorCondition;
-      // The following code is for the unlikely case that the TA wants
-      // to resume PDU sending after an unsolicited result code.
-      // For the time being I have decided that it is better to retry
-      // in this case.
-//       if (! errorCondition)
-//       {
-//         // readByte() times out after TIMEOUT_SECS (gsm_port.h) seconds 
-//         try
-//         {
-//           c = readByte();
-//           retry = c != '>';     // TA still expects PDU if c == '>'
-//           if (retry)
-//              _port->putBack(c);
-//         }
-//         catch (GsmException &e)
-//         {
-//           retry = true;         // TA does not expect PDU anymore, retry
-//         }
-//       }
+        retry = ! errorCondition;
+      }
     }
+    while (retry);
   }
-  while (retry);
+  while (errorCondition && tries--);
 
   if (! errorCondition)
   {
@@ -321,11 +319,22 @@ string GsmAt::sendPdu(string atCommand, string response, string pdu,
                          ChatError);
     
     putLine(pdu + "\032", false); // write pdu followed by CTRL-Z
+
+    // some phones (Ericcson T68, T39) send spurious zero characters after
+    // accepting the PDU
+    c = readByte();
+    if (c != 0)
+      _port->putBack(c);
+
+    // loop while empty lines (maybe with a zero, Ericsson T39m)
+    // or an echo of the pdu (with or without CTRL-Z)
+    // is read
     do
     {
       s = normalize(getLine());
     }
-    while (s.length() == 0 || s == pdu);
+    while (s.length() == 0 || s == pdu || s == (pdu + "\032") ||
+           (s.length() == 1 && s[0] == 0));
   }
 
   // handle errors
@@ -378,6 +387,7 @@ string GsmAt::getLine() throw(GsmException)
           matchResponse(s, "+CBMI:") ||
           matchResponse(s, "+CDSI:") ||
           matchResponse(s, "RING") ||
+	  matchResponse(s, "NO CARRIER") ||
           // hack: the +CLIP? sequence returns +CLIP: n,m
           // which is NOT an unsolicited result code
           (matchResponse(s, "+CLIP:") && s.length() > 10))

@@ -20,6 +20,7 @@
 #include <gsmlib/gsm_parser.h>
 #include <gsmlib/gsm_util.h>
 #include <gsm_sie_me.h>
+#include <iostream>
 
 using namespace std;
 using namespace gsmlib;

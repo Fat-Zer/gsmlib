@@ -65,8 +65,11 @@ HARDWARE
      - Siemens S10D/Dr Neuhaus Gipsy Card GSM
      - Siemens S25/- (Linux IrDA serial device)
      - Siemens S35i/- (Linux IrDA serial device)
+     - Siemens S45
      - Ericcson SH888/- (Linux IrDA serial device)
      - Ericsson 6050102/GM 12 GSM module
+     - Ericsson T28s (firmware 000809 1106)
+     - Ericsson T20e (firmware R3A007)
      - -/Siemens M20T (stand-alone GSM module)
      - -/Wavecom WM02 GSM (stand-alone GSM module)
      - Nokia 7110 (firware rev 4.80)/- (Linux IrDA serial device)
@@ -83,6 +86,7 @@ HARDWARE
      - Ericsson T28 (but one firmware revision is reported to have problems)
      - Ericcson T65
      - Ericcson T39m/Bluetooth
+     - Option International GlobeTrotter PCMCIA
 
      Note 1: Some of the mobile phones have an integrated GSM modem
      that can be accessed via the Linux IrDA drivers.

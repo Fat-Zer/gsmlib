@@ -9,9 +9,10 @@ rm -f sms.sms || errorexit "could not delete sms.sms"
 touch sms.sms || errorexit "could not create sms.sms"
 
 # prepare locales to make date format reproducible
-export LC_ALL=en_US
-export LANG=en
-export LINGUAS=en
+LC_ALL=en_US
+LANG=en
+LINGUAS=en
+export LC_ALL LANG LINGUAS
 
 # run the test
 ./testssms > testssms.log

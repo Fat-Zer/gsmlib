@@ -13,4 +13,5 @@
 
 EXTRA_DIST =	getopt.c gsmctl.dsp gsmpb.dsp testgsmlib.dsp \
 		getopt.h gsmlib.dsp gsmsendsms.dsp testsms.dsp \
-		README.win gsm_config.h gsmlib.dsw gsmsmsstore.dsp testsms2.dsp
+		README.win gsm_config.h gsmlib.dsw gsmsmsstore.dsp \
+		gsmsmsd.dsp testsms2.dsp

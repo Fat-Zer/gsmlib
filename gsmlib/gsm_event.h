@@ -40,6 +40,9 @@ namespace gsmlib
     // only called if setCLIPEvent(true) is set
     virtual void callerLineID(string number, string subAddr, string alpha);
 
+    // called if the string NO CARRIER is read
+    virtual void noAnswer();
+
     // SMS reception
     // only called if setSMSReceptionEvent(...true...) is set
     virtual void SMSReception(SMSMessageRef newMessage,

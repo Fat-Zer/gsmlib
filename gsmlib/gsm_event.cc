@@ -58,20 +58,28 @@ void GsmEvent::dispatch(string s, GsmAt &at) throw(GsmException)
     ringIndication();
     return;
   }
+  // handling  NO CARRIER
+  else if (s.substr(0, 10) == "NO CARRIER")
+  {
+    noAnswer();
+    return;
+  }
+  
   else if (s.substr(0, 6) == "+CLIP:")
   {
     //    <number>,<type>[,<subaddr>,<satype>[,<alpha>]]
     s = s.substr(6);
     Parser p(s);
     string num = p.parseString();
-    p.parseComma();
-    unsigned int numberFormat;
-    if ((numberFormat = p.parseInt()) == InternationalNumberFormat)
-      num = "+" + num;
-    else if (numberFormat != UnknownNumberFormat)
-      throw GsmException(stringPrintf(_("unexpected number format %d"),
-                                      numberFormat), OtherError);
-
+    if (p.parseComma(true))
+    {
+      unsigned int numberFormat;
+      if ((numberFormat = p.parseInt()) == InternationalNumberFormat)
+        num = "+" + num;
+      else if (numberFormat != UnknownNumberFormat)
+        throw GsmException(stringPrintf(_("unexpected number format %d"),
+                                        numberFormat), OtherError);
+    }
     string subAddr;
     string alpha;
     if (p.parseComma(true))
@@ -156,6 +164,11 @@ void GsmEvent::SMSReceptionIndication(string storeName, unsigned int index,
 }
 
 void GsmEvent::ringIndication()
+{
+  // ignore event
+}
+
+void GsmEvent::noAnswer()
 {
   // ignore event
 }

@@ -44,6 +44,7 @@ static struct option longOpts[] =
   {"sca", required_argument, (int*)NULL, 'C'},
   {"device", required_argument, (int*)NULL, 'd'},
   {"init", required_argument, (int*)NULL, 'I'},
+  {"concatenate", required_argument, (int*)NULL, 'c'},
   {"baudrate", required_argument, (int*)NULL, 'b'},
   {"test", no_argument, (int*)NULL, 't'},
   {"help", no_argument, (int*)NULL, 'h'},
@@ -105,13 +106,19 @@ int main(int argc, char *argv[])
     bool requestStatusReport = false;
     // service centre address (set on command line)
     string serviceCentreAddress;
+    MeTa *m = NULL;
+    string concatenatedMessageIdStr;
+    int concatenatedMessageId = -1;
 
     int opt;
     int dummy;
-    while((opt = getopt_long(argc, argv, "C:I:d:b:thvXr", longOpts, &dummy))
+    while((opt = getopt_long(argc, argv, "c:C:I:d:b:thvXr", longOpts, &dummy))
           != -1)
       switch (opt)
       {
+      case 'c':
+        concatenatedMessageIdStr = optarg;
+        break;
       case 'C':
         serviceCentreAddress = optarg;
         break;
@@ -139,12 +146,14 @@ int main(int argc, char *argv[])
         exit(0);
         break;
       case 'h':
-        cerr << argv[0] << _(": [-b baudrate][-C sca][-d device][-h]"
-                             "[-I init string]\n"
+        cerr << argv[0] << _(": [-b baudrate][-c concatenatedID]"
+                             "[-C sca][-d device][-h][-I init string]\n"
                              "  [-t][-v][-X] phonenumber [text]") << endl
              << endl
              << _("  -b, --baudrate    baudrate to use for device "
                   "(default: 38400)")
+             << endl
+             << _("  -c, --concatenate ID for concatenated SMS messages")
              << endl
              << _("  -C, --sca         SMS service centre address") << endl
              << _("  -d, --device      sets the destination device to connect "
@@ -185,10 +194,10 @@ int main(int argc, char *argv[])
          initString, swHandshake);
       // switch message service level to 1
       // this enables acknowledgement PDUs
-      MeTa m(port);
-      m.setMessageService(1);
+      m = new MeTa(port);
+      m->setMessageService(1);
 
-      at = new GsmAt(m);
+      at = new GsmAt(*m);
     }
 
     // check parameters
@@ -197,7 +206,10 @@ int main(int argc, char *argv[])
 
     if (optind + 2 < argc)
       throw GsmException(_("more than two parameters given"), ParameterError);
-      
+    
+    if (concatenatedMessageIdStr != "")
+      concatenatedMessageId = checkNumber(concatenatedMessageIdStr);
+
     // get phone number
     string phoneNumber = argv[optind];
 
@@ -220,8 +232,7 @@ int main(int argc, char *argv[])
     else
     {
       // send SMS
-      Ref<SMSSubmitMessage> submitSMS =
-        new SMSSubmitMessage(text, phoneNumber);
+      Ref<SMSSubmitMessage> submitSMS = new SMSSubmitMessage();
       // set service centre address in new submit PDU if requested by user
       if (serviceCentreAddress != "")
       {
@@ -229,13 +240,12 @@ int main(int argc, char *argv[])
         submitSMS->setServiceCentreAddress(sca);
       }
       submitSMS->setStatusReportRequest(requestStatusReport);
-      submitSMS->setAt(at);
-      Ref<SMSMessage> ackPDU;
-      submitSMS->send(ackPDU);
-
-      // print acknowledgement if available
-      if (! ackPDU.isnull())
-      cout << ackPDU->toString();
+      Address destAddr(phoneNumber);
+      submitSMS->setDestinationAddress(destAddr);
+      if (concatenatedMessageId == -1)
+        m->sendSMSs(submitSMS, text, true);
+      else
+        m->sendSMSs(submitSMS, text, false, concatenatedMessageId);
     }
   }
   catch (GsmException &ge)

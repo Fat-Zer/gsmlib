@@ -340,7 +340,19 @@ namespace gsmlib
     SMSStoreRef getSMSStore(string storeName) throw(GsmException);
 
     // send a single SMS message
-    void sendSMS(SMSMessageRef smsMessage) throw(GsmException);
+    void sendSMS(Ref<SMSSubmitMessage> smsMessage) throw(GsmException);
+
+    // send one or several (concatenated) SMS messages
+    // The SUBMIT message template must have all options set, only
+    // the userData and the userDataHeader are changed.
+    // If oneSMS is true, only one SMS is sent. Otherwise several SMSs
+    // are sent. If concatenatedMessageId is != -1 this is used as the message
+    // ID for concatenated SMS (for this a user data header as defined in
+    // GSM GTS 3.40 is used, the old UDH in the template is overwritten).
+    void sendSMSs(Ref<SMSSubmitMessage> smsTemplate, string text,
+                  bool oneSMS = false,
+                  int concatenatedMessageId = -1)
+      throw(GsmException);
 
     // set SMS service level
     // if set to 1 send commands return ACK PDU, 0 is the default
@@ -368,15 +380,19 @@ namespace gsmlib
       throw(GsmException);
     // (+CNMI=)
 
-    // functions to handle call waiting status
     bool getCallWaitingLockStatus(FacilityClass cl)
       throw(GsmException);
 	
-    void lockCallWaiting(FacilityClass cl)
-      throw(GsmException);
-	
-    void unlockCallWaiting(FacilityClass cl)
-      throw(GsmException);
+    void setCallWaitingLockStatus(FacilityClass cl,
+                                  bool lock)throw(GsmException);
+
+    void MeTa::setCLIRPresentation(bool enable) throw(GsmException);
+    //(+CLIR)
+    
+    // 0:according to the subscription of the CLIR service
+    // 1:CLIR invocation
+    // 2:CLIR suppression
+    int MeTa::getCLIRPresentation() throw(GsmException);
 
     friend class Phonebook;
     friend class SMSStore;

@@ -687,15 +687,15 @@ void UserDataHeader::decode(SMSDecoder &d)
 
 string UserDataHeader::getIE(unsigned char id)
 {
-	int udhl, pos = 0;
+  int udhl, pos = 0;
 	
-	udhl = _udh.length();
-	while (pos < udhl)
-	{
-		unsigned char iei = _udh[pos++];
-		unsigned char ieidl = _udh[pos++];
-		if (iei == id) return _udh.substr(pos, ieidl);
-		pos += ieidl;
-	}
-	return "";
+  udhl = _udh.length();
+  while (pos < udhl)
+  {
+    unsigned char iei = _udh[pos++];
+    unsigned char ieidl = _udh[pos++];
+    if (iei == id) return _udh.substr(pos, ieidl);
+    pos += ieidl;
+  }
+  return "";
 }

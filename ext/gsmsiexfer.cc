@@ -64,7 +64,7 @@ BinaryObject readBinaryFile(istream &ifs, string filename)
   size_t size = 10000; // Bad coder, no biscuits!
   BinaryObject bnr;
   bnr._data = new unsigned char[size];
-  ifs.read(bnr._data, size);
+  ifs.read((char*)bnr._data, size);
   bnr._size = ifs.gcount();
   return bnr;
 }
@@ -94,7 +94,7 @@ BinaryObject readFile(bool fromStdin)
 void writeBinaryFile(ostream &ofs, string filename, BinaryObject bnw)
 {
   // well just dump the data
-  ofs.write(bnw._data, bnw._size);
+  ofs.write((char*)bnw._data, bnw._size);
 }
 
 // write binary object

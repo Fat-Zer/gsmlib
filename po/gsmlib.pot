@@ -1,215 +1,224 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Free Software Foundation, Inc.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-05-09 09:03+0200\n"
+"POT-Creation-Date: 2002-10-22 22:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
-"Content-Transfer-Encoding: ENCODING\n"
+"Content-Transfer-Encoding: 8bit\n"
 
-#: apps/gsmsmsd.cc:149
+#: apps/gsmsmsd.cc:164
 #, c-format
 msgid "could not execute '%s'"
 msgstr ""
 
-#: apps/gsmsmsd.cc:153
+#: apps/gsmsmsd.cc:168
 #, c-format
 msgid "error writing to '%s'"
 msgstr ""
 
-#: apps/gsmsmsd.cc:174
+#: apps/gsmsmsd.cc:196
 #, c-format
 msgid "error when calling opendir('%s')(errno: %d/%s)"
 msgstr ""
 
-#: apps/gsmsmsd.cc:190
+#: apps/gsmsmsd.cc:225
 #, c-format
 msgid "count not open SMS spool file %s"
 msgstr ""
 
-#: apps/gsmctl.cc:380 apps/gsmpb.cc:311 apps/gsmsendsms.cc:137
-#: apps/gsmsmsd.cc:285 apps/gsmsmsstore.cc:179
+#: apps/gsmsmsd.cc:341 apps/gsmsendsms.cc:144 apps/gsmpb.cc:311
+#: apps/gsmctl.cc:380 apps/gsmsmsstore.cc:179
 #, c-format
 msgid ": version %s [compiled %s]"
 msgstr ""
 
-#: apps/gsmsmsd.cc:290
+#: apps/gsmsmsd.cc:346
 msgid ""
 ": [-a action][-b baudrate][-C sca][-d device][-f][-h][-I init string]\n"
 "  [-s spool dir][-t][-v]{sms_type}"
 msgstr ""
 
-#: apps/gsmsmsd.cc:294
+#: apps/gsmsmsd.cc:350
 msgid ""
 "  -a, --action      the action to execute when an SMS arrives\n"
 "                    (SMS is send to stdin of action)"
 msgstr ""
 
-#: apps/gsmctl.cc:389 apps/gsmpb.cc:322 apps/gsmsendsms.cc:146
-#: apps/gsmsmsd.cc:298 apps/gsmsmsstore.cc:194
+#: apps/gsmsmsd.cc:354 apps/gsmsendsms.cc:153 apps/gsmpb.cc:322
+#: apps/gsmctl.cc:389 apps/gsmsmsstore.cc:194
 msgid "  -b, --baudrate    baudrate to use for device (default: 38400)"
 msgstr ""
 
-#: apps/gsmsendsms.cc:149 apps/gsmsmsd.cc:301 apps/gsmsmsstore.cc:200
+#: apps/gsmsmsd.cc:357
+msgid "  -c, --concatenate start ID for concatenated SMS messages"
+msgstr ""
+
+#: apps/gsmsmsd.cc:359 apps/gsmsendsms.cc:158 apps/gsmsmsstore.cc:200
 msgid "  -C, --sca         SMS service centre address"
 msgstr ""
 
-#: apps/gsmsmsd.cc:302
+#: apps/gsmsmsd.cc:360
 msgid "  -d, --device      sets the device to connect to"
 msgstr ""
 
-#: apps/gsmsmsd.cc:303
+#: apps/gsmsmsd.cc:361
 msgid "  -D, --direct      enable direct routing of SMSs"
 msgstr ""
 
-#: apps/gsmsmsd.cc:304
+#: apps/gsmsmsd.cc:362
 msgid "  -f, --flush       flush SMS from store"
 msgstr ""
 
-#: apps/gsmctl.cc:394 apps/gsmpb.cc:332 apps/gsmsendsms.cc:152
-#: apps/gsmsmsd.cc:305 apps/gsmsmsstore.cc:204
+#: apps/gsmsmsd.cc:363 apps/gsmsendsms.cc:161 apps/gsmpb.cc:332
+#: apps/gsmctl.cc:394 apps/gsmsmsstore.cc:204
 msgid "  -h, --help        prints this message"
 msgstr ""
 
-#: apps/gsmctl.cc:395 apps/gsmpb.cc:335 apps/gsmsendsms.cc:153
-#: apps/gsmsmsd.cc:306 apps/gsmsmsstore.cc:205
+#: apps/gsmsmsd.cc:364 apps/gsmsendsms.cc:162 apps/gsmpb.cc:335
+#: apps/gsmctl.cc:395 apps/gsmsmsstore.cc:205
 msgid "  -I, --init        device AT init sequence"
 msgstr ""
 
-#: apps/gsmsendsms.cc:154 apps/gsmsmsd.cc:307
+#: apps/gsmsmsd.cc:365 apps/gsmsendsms.cc:163
 msgid "  -r, --requeststat request SMS status report"
 msgstr ""
 
-#: apps/gsmsmsd.cc:308
+#: apps/gsmsmsd.cc:366
 msgid "  -s, --spool       spool directory for outgoing SMS"
 msgstr ""
 
-#: apps/gsmsmsd.cc:310
+#: apps/gsmsmsd.cc:368
 msgid ""
 "  -t, --store       name of SMS store to use for flush\n"
 "                    and/or temporary SMS storage"
 msgstr ""
 
-#: apps/gsmctl.cc:399 apps/gsmpb.cc:343 apps/gsmsendsms.cc:158
-#: apps/gsmsmsd.cc:313 apps/gsmsmsstore.cc:213
+#: apps/gsmsmsd.cc:371 apps/gsmsendsms.cc:167 apps/gsmpb.cc:343
+#: apps/gsmctl.cc:399 apps/gsmsmsstore.cc:213
 msgid "  -v, --version     prints version and exits"
 msgstr ""
 
-#: apps/gsmctl.cc:400 apps/gsmpb.cc:346 apps/gsmsendsms.cc:160
-#: apps/gsmsmsd.cc:314 apps/gsmsmsstore.cc:218
+#: apps/gsmsmsd.cc:372 apps/gsmsendsms.cc:169 apps/gsmpb.cc:346
+#: apps/gsmctl.cc:400 apps/gsmsmsstore.cc:218
 msgid "  -X, --xonxoff     switch on software handshake"
 msgstr ""
 
-#: apps/gsmsmsd.cc:316
+#: apps/gsmsmsd.cc:374
 msgid "  sms_type may be any combination of"
 msgstr ""
 
-#: apps/gsmsmsd.cc:317
+#: apps/gsmsmsd.cc:375
 msgid "    sms, no_sms     controls reception of normal SMS"
 msgstr ""
 
-#: apps/gsmsmsd.cc:319
+#: apps/gsmsmsd.cc:377
 msgid "    cb, no_cb       controls reception of cell broadcast messages"
 msgstr ""
 
-#: apps/gsmsmsd.cc:321
+#: apps/gsmsmsd.cc:379
 msgid "    stat, no_stat   controls reception of status reports"
 msgstr ""
 
-#: apps/gsmsmsd.cc:323
+#: apps/gsmsmsd.cc:381
 msgid "  default is \"sms cb stat\""
 msgstr ""
 
-#: apps/gsmsmsd.cc:324
+#: apps/gsmsmsd.cc:382
 msgid "If no action is given, the SMS is printed to stdout"
 msgstr ""
 
-#: apps/gsmctl.cc:414 apps/gsmpb.cc:354 apps/gsmsendsms.cc:169
-#: apps/gsmsmsd.cc:329 apps/gsmsmsstore.cc:223
+#: apps/gsmsmsd.cc:387 apps/gsmsendsms.cc:178 apps/gsmpb.cc:354
+#: apps/gsmctl.cc:414 apps/gsmsmsstore.cc:223
 msgid "unknown option"
 msgstr ""
 
-#: apps/gsmsmsd.cc:359
+#: apps/gsmsmsd.cc:426
 #, c-format
 msgid "error when calling sigaction() (errno: %d/%s)"
 msgstr ""
 
-#: apps/gsmsmsd.cc:374
+#: apps/gsmsmsd.cc:446
 msgid "store name must be given for flush option"
 msgstr ""
 
 #. process the new message
-#: apps/gsmsmsd.cc:381 apps/gsmsmsd.cc:443
+#: apps/gsmsmsd.cc:454 apps/gsmsmsd.cc:522
 msgid "Type of message: "
 msgstr ""
 
-#: apps/gsmsmsd.cc:385 apps/gsmsmsd.cc:447
+#: apps/gsmsmsd.cc:458 apps/gsmsmsd.cc:526
 msgid "SMS message\n"
 msgstr ""
 
-#: apps/gsmsmsd.cc:388
+#: apps/gsmsmsd.cc:461
 msgid "submit report message\n"
 msgstr ""
 
-#: apps/gsmsmsd.cc:391 apps/gsmsmsd.cc:453
+#: apps/gsmsmsd.cc:464 apps/gsmsmsd.cc:532
 msgid "status report message\n"
 msgstr ""
 
-#: apps/gsmsmsd.cc:450
+#: apps/gsmsmsd.cc:529
 msgid "cell broadcast message\n"
 msgstr ""
 
-#: apps/gsmctl.cc:631 apps/gsmpb.cc:503 apps/gsmsendsms.cc:243
-#: apps/gsmsmsd.cc:505 apps/gsmsmsd.cc:507 apps/gsmsmsstore.cc:435
+#: apps/gsmsmsd.cc:585 apps/gsmsmsd.cc:587 apps/gsmsendsms.cc:253
+#: apps/gsmpb.cc:503 apps/gsmctl.cc:631 apps/gsmsmsstore.cc:435
 msgid "[ERROR]: "
 msgstr ""
 
-#: apps/gsmsmsd.cc:508
+#: apps/gsmsmsd.cc:588
 msgid "(try setting sms_type, please refer to gsmsmsd manpage)"
 msgstr ""
 
-#: apps/gsmsendsms.cc:142
+#: apps/gsmsendsms.cc:149
 msgid ""
-": [-b baudrate][-C sca][-d device][-h][-I init string]\n"
+": [-b baudrate][-c concatenatedID][-C sca][-d device][-h][-I init string]\n"
 "  [-t][-v][-X] phonenumber [text]"
 msgstr ""
 
-#: apps/gsmctl.cc:392 apps/gsmsendsms.cc:150
+#: apps/gsmsendsms.cc:156
+msgid "  -c, --concatenate ID for concatenated SMS messages"
+msgstr ""
+
+#: apps/gsmsendsms.cc:159 apps/gsmctl.cc:392
 msgid "  -d, --device      sets the destination device to connect to"
 msgstr ""
 
-#: apps/gsmsendsms.cc:155
+#: apps/gsmsendsms.cc:164
 msgid ""
 "  -t, --test        convert text to GSM alphabet and vice\n"
 "                    versa, no SMS message is sent"
 msgstr ""
 
-#: apps/gsmsendsms.cc:162
+#: apps/gsmsendsms.cc:171
 msgid "  phonenumber       recipient's phone number"
 msgstr ""
 
-#: apps/gsmsendsms.cc:163
+#: apps/gsmsendsms.cc:172
 msgid ""
 "  text              optional text of the SMS message\n"
 "                    if omitted: read from stdin"
 msgstr ""
 
-#: apps/gsmsendsms.cc:196
+#: apps/gsmsendsms.cc:205
 msgid "phone number and text missing"
 msgstr ""
 
-#: apps/gsmsendsms.cc:199 apps/gsmsmsstore.cc:261
+#: apps/gsmsendsms.cc:208 apps/gsmsmsstore.cc:261
 msgid "more than two parameters given"
 msgstr ""
 
-#: apps/gsmsendsms.cc:212
+#: apps/gsmsendsms.cc:224
 msgid "text is larger than 160 characters"
 msgstr ""
 
@@ -663,16 +672,16 @@ msgstr ""
 msgid "(code %s)"
 msgstr ""
 
-#: gsmlib/gsm_at.cc:125 gsmlib/gsm_at.cc:215 gsmlib/gsm_at.cc:335
+#: gsmlib/gsm_at.cc:125 gsmlib/gsm_at.cc:215 gsmlib/gsm_at.cc:344
 msgid "ME/TA error '<unspecified>' (code not known)"
 msgstr ""
 
-#: gsmlib/gsm_at.cc:184 gsmlib/gsm_at.cc:356
+#: gsmlib/gsm_at.cc:184 gsmlib/gsm_at.cc:365
 #, c-format
 msgid "unexpected response '%s' when sending 'AT%s'"
 msgstr ""
 
-#: gsmlib/gsm_at.cc:320
+#: gsmlib/gsm_at.cc:318
 msgid "unexpected character in PDU handshake"
 msgstr ""
 
@@ -1088,50 +1097,62 @@ msgstr ""
 msgid " (Permanent Error, SC is not making any more transfer attempts)"
 msgstr ""
 
-#: gsmlib/gsm_event.cc:72
+#: gsmlib/gsm_event.cc:80
 #, c-format
 msgid "unexpected number format %d"
 msgstr ""
 
-#: gsmlib/gsm_event.cc:92
+#: gsmlib/gsm_event.cc:100
 #, c-format
 msgid "unexpected unsolicited event '%s'"
 msgstr ""
 
-#: gsmlib/gsm_me_ta.cc:529
+#: gsmlib/gsm_me_ta.cc:536
 msgid "unable to set operator"
 msgstr ""
 
-#: gsmlib/gsm_me_ta.cc:656
+#: gsmlib/gsm_me_ta.cc:663
 msgid "call forward time must be in the range 0..30"
 msgstr ""
 
-#: gsmlib/gsm_me_ta.cc:797
+#: gsmlib/gsm_me_ta.cc:811
 msgid "Functionality Level commands not supported by ME"
 msgstr ""
 
 #. If the number was just out of range, we get here.
-#: gsmlib/gsm_me_ta.cc:816
+#: gsmlib/gsm_me_ta.cc:830
 msgid "Requested Functionality Level out of range"
 msgstr ""
 
-#: gsmlib/gsm_me_ta.cc:915
+#: gsmlib/gsm_me_ta.cc:941
+msgid "unsupported alphabet for SMS"
+msgstr ""
+
+#: gsmlib/gsm_me_ta.cc:950
+msgid "SMS text is larger than allowed"
+msgstr ""
+
+#: gsmlib/gsm_me_ta.cc:962
+msgid "not more than 255 concatenated SMSs allowed"
+msgstr ""
+
+#: gsmlib/gsm_me_ta.cc:995
 msgid "only serviceLevel 0 or 1 supported"
 msgstr ""
 
-#: gsmlib/gsm_me_ta.cc:1028 gsmlib/gsm_me_ta.cc:1070
+#: gsmlib/gsm_me_ta.cc:1108 gsmlib/gsm_me_ta.cc:1150
 msgid "cannot route SMS messages to TE"
 msgstr ""
 
-#: gsmlib/gsm_me_ta.cc:1042 gsmlib/gsm_me_ta.cc:1084
+#: gsmlib/gsm_me_ta.cc:1122 gsmlib/gsm_me_ta.cc:1164
 msgid "cannot route cell broadcast messages to TE"
 msgstr ""
 
-#: gsmlib/gsm_me_ta.cc:1054
+#: gsmlib/gsm_me_ta.cc:1134
 msgid "cannot route status reports messages to TE"
 msgstr ""
 
-#: gsmlib/gsm_me_ta.cc:1098
+#: gsmlib/gsm_me_ta.cc:1178
 msgid "cannot route status report messages to TE"
 msgstr ""
 
@@ -1488,24 +1509,24 @@ msgid "tcsetattr device '%s'"
 msgstr ""
 
 #. no response after 3 tries
-#: gsmlib/gsm_unix_serial.cc:285
+#: gsmlib/gsm_unix_serial.cc:287
 #, c-format
 msgid "reset modem failed '%s'"
 msgstr ""
 
-#: gsmlib/gsm_unix_serial.cc:330 gsmlib/gsm_unix_serial.cc:362
+#: gsmlib/gsm_unix_serial.cc:332 gsmlib/gsm_unix_serial.cc:364
 msgid "interrupted when writing to TA"
 msgstr ""
 
-#: gsmlib/gsm_unix_serial.cc:345 gsmlib/gsm_unix_serial.cc:354
+#: gsmlib/gsm_unix_serial.cc:347 gsmlib/gsm_unix_serial.cc:356
 msgid "writing to TA"
 msgstr ""
 
-#: gsmlib/gsm_unix_serial.cc:375
+#: gsmlib/gsm_unix_serial.cc:377
 msgid "timeout when writing to TA"
 msgstr ""
 
-#: gsmlib/gsm_unix_serial.cc:436
+#: gsmlib/gsm_unix_serial.cc:438
 #, c-format
 msgid "unknown baudrate '%s'"
 msgstr ""

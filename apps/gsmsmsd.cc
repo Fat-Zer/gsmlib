@@ -15,20 +15,30 @@
 #endif
 #include <gsmlib/gsm_nls.h>
 #include <string>
+
+#ifdef WIN32
+#include <io.h>
+#include <gsmlib/gsm_util.h>
+#include <gsmlib/gsm_win32_serial.h>
+#define popen _popen
+#define pclose _pclose
+#else
+#include <gsmlib/gsm_unix_serial.h>
 #include <unistd.h>
-#ifdef HAVE_GETOPT_LONG
+#include <dirent.h>
+#endif
+#if defined(HAVE_GETOPT_LONG) || defined(WIN32)
 #include <getopt.h>
 #endif
+
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
-#include <dirent.h>
 #include <signal.h>
 #include <fstream>
 #include <iostream>
 #include <gsmlib/gsm_me_ta.h>
 #include <gsmlib/gsm_event.h>
-#include <gsmlib/gsm_unix_serial.h>
 
 using namespace std;
 using namespace gsmlib;
@@ -45,6 +55,7 @@ static struct option longOpts[] =
   {"spool", required_argument, (int*)NULL, 's'},
   {"sca", required_argument, (int*)NULL, 'C'},
   {"flush", no_argument, (int*)NULL, 'f'},
+  {"concatenate", required_argument, (int*)NULL, 'c'},
   {"action", required_argument, (int*)NULL, 'a'},
   {"baudrate", required_argument, (int*)NULL, 'b'},
   {"help", no_argument, (int*)NULL, 'h'},
@@ -58,12 +69,16 @@ static struct option longOpts[] =
 
 // my ME
 
-static MeTa *me;
+static MeTa *me = NULL;
 string receiveStoreName;        // store name for received SMSs
 
 // service centre address (set on command line)
 
 static string serviceCentreAddress;
+
+// ID if concatenated messages should be sent
+
+static int concatenatedMessageId = -1;
 
 // signal handler for terminate signal
 
@@ -168,6 +183,13 @@ void sendSMS(string spoolDir, Ref<GsmAt> at)
   if (spoolDir != "")
   {
     // look into spoolDir for any outgoing SMS that should be sent
+#ifdef WIN32
+    struct _finddata_t fileInfo;
+	long fileHandle;
+	string pattern = spoolDir + "\\*";
+    fileHandle = _findfirst(pattern.c_str(), &fileInfo);
+	bool moreFiles = fileHandle != -1L;
+#else
     DIR *dir = opendir(spoolDir.c_str());
     if (dir == (DIR*)NULL)
       throw GsmException(
@@ -175,15 +197,28 @@ void sendSMS(string spoolDir, Ref<GsmAt> at)
                        "(errno: %d/%s)"), 
                      spoolDir.c_str(), errno, strerror(errno)),
         OSError);
+#endif
+
+#ifdef WIN32
+    while (moreFiles)
+	{
+      if (strcmp(fileInfo.name, ".") != 0 &&
+          strcmp(fileInfo.name, "..") != 0)
+#else
     struct dirent *entry;
     while ((entry = readdir(dir)) != (struct dirent*)NULL)
       if (strcmp(entry->d_name, ".") != 0 &&
-          strcmp(entry->d_name, ".."))
+          strcmp(entry->d_name, "..") != 0)
+#endif
       {
         // read in file
         // the first line is interpreted as the phone number
         // the rest is the message
+#ifdef WIN32
+        string filename = spoolDir + "\\" + fileInfo.name;
+#else
         string filename = spoolDir + "/" + entry->d_name;
+#endif
         ifstream ifs(filename.c_str());
         if (! ifs)
           throw GsmException(
@@ -207,8 +242,7 @@ void sendSMS(string spoolDir, Ref<GsmAt> at)
 
         // send the message
         string phoneNumber(phoneBuf);
-        Ref<SMSSubmitMessage> submitSMS =
-          new SMSSubmitMessage(text, phoneNumber);
+        Ref<SMSSubmitMessage> submitSMS = new SMSSubmitMessage();
         // set service centre address in new submit PDU if requested by user
         if (serviceCentreAddress != "")
         {
@@ -216,11 +250,29 @@ void sendSMS(string spoolDir, Ref<GsmAt> at)
           submitSMS->setServiceCentreAddress(sca);
         }
         submitSMS->setStatusReportRequest(requestStatusReport);
-        submitSMS->setAt(at);
-        submitSMS->send();
+        Address destAddr(phoneNumber);
+        submitSMS->setDestinationAddress(destAddr);
+        if (concatenatedMessageId == -1)
+          me->sendSMSs(submitSMS, text, true);
+        else
+        {
+          // maximum for concatenatedMessageId is 255
+          if (concatenatedMessageId > 256)
+            concatenatedMessageId = 0;
+          me->sendSMSs(submitSMS, text, false, concatenatedMessageId++);
+        }
+        
         unlink(filename.c_str());
+#ifdef WIN32
       }
+      moreFiles = _findnext(fileHandle, &fileInfo) == 0; 
+#endif
+    }
+#ifdef WIN32
+    _findclose(fileHandle);
+#else
     closedir(dir);
+#endif
   }
 }
 
@@ -241,13 +293,17 @@ int main(int argc, char *argv[])
     string spoolDir;
     string initString = DEFAULT_INIT_STRING;
     bool swHandshake = false;
+    string concatenatedMessageIdStr;
 
     int opt;
     int dummy;
-    while((opt = getopt_long(argc, argv, "C:I:t:fd:a:b:hvs:XDr",
+    while((opt = getopt_long(argc, argv, "c:C:I:t:fd:a:b:hvs:XDr",
                              longOpts, &dummy)) != -1)
       switch (opt)
       {
+      case 'c':
+        concatenatedMessageIdStr = optarg;
+        break;
       case 'r':
         requestStatusReport = true;
         break;
@@ -297,6 +353,8 @@ int main(int argc, char *argv[])
              << endl
              << _("  -b, --baudrate    baudrate to use for device "
                   "(default: 38400)")
+             << endl
+             << _("  -c, --concatenate start ID for concatenated SMS messages")
              << endl
              << _("  -C, --sca         SMS service centre address") << endl
              << _("  -d, --device      sets the device to connect to") << endl
@@ -348,24 +406,38 @@ int main(int argc, char *argv[])
         enableStat = false;
     }
 
+    // check parameters
+    if (concatenatedMessageIdStr != "")
+      concatenatedMessageId = checkNumber(concatenatedMessageIdStr);
+    
     // register signal handler for terminate signal
+#ifndef WIN32
     struct sigaction terminateAction;
     terminateAction.sa_handler = terminateHandler;
     sigemptyset(&terminateAction.sa_mask);
     terminateAction.sa_flags = SA_RESTART;
     if (sigaction(SIGINT, &terminateAction, NULL) != 0 ||
         sigaction(SIGTERM, &terminateAction, NULL) != 0)
+#else
+    if(signal(SIGINT, terminateHandler) == SIG_ERR ||
+        signal(SIGTERM, terminateHandler) == SIG_ERR)
+#endif
       throw GsmException(
         stringPrintf(_("error when calling sigaction() (errno: %d/%s)"), 
                      errno, strerror(errno)),
         OSError);
 
     // open GSM device
-    MeTa m(new UnixSerialPort(device,
-                              baudrate == "" ? DEFAULT_BAUD_RATE :
-                              baudRateStrToSpeed(baudrate), initString,
-                              swHandshake));
-    me = &m;
+    me = new MeTa(new
+#ifdef WIN32
+                  Win32SerialPort
+#else
+                  UnixSerialPort
+#endif
+                  (device,
+                   baudrate == "" ? DEFAULT_BAUD_RATE :
+                   baudRateStrToSpeed(baudrate), initString,
+                   swHandshake));
 
     // if flush option is given get all SMS from store and dispatch them
     if (flushSMS)
@@ -375,10 +447,11 @@ int main(int argc, char *argv[])
                            ParameterError);
       
       SMSStoreRef store = me->getSMSStore(receiveStoreName);
+
       for (SMSStore::iterator s = store->begin(); s != store->end(); ++s)
         if (! s->empty())
         {
-          string result =  _("Type of message: ");
+          string result = _("Type of message: ");
           switch (s->message()->messageType())
           {
           case SMSMessage::SMS_DELIVER:
@@ -402,31 +475,37 @@ int main(int argc, char *argv[])
     if (receiveStoreName == "")
     {
       string dummy1, dummy2;
-      m.getSMSStore(dummy1, dummy2, receiveStoreName );
+      me->getSMSStore(dummy1, dummy2, receiveStoreName );
     }
     else
-      m.setSMSStore(receiveStoreName, 3);
+      me->setSMSStore(receiveStoreName, 3);
 
     // switch message service level to 1
     // this enables SMS routing to TA
-    m.setMessageService(1);
+    me->setMessageService(1);
 
     // switch on SMS routing
-    m.setSMSRoutingToTA(enableSMS, enableCB, enableStat,
+    me->setSMSRoutingToTA(enableSMS, enableCB, enableStat,
                         onlyReceptionIndication);
 
-    // register event handler
-    m.setEventHandler(new EventHandler());
+    // register event handler to handle routed SMSs, CBMs, and status reports
+    me->setEventHandler(new EventHandler());
     
     // wait for new messages
     bool exitScheduled = false;
     while (1)
     {
+#ifdef WIN32
+      ::timeval timeoutVal;
+      timeoutVal.tv_sec = 5;
+      timeoutVal.tv_usec = 0;
+      me->waitEvent((gsmlib::timeval *)&timeoutVal);
+#else
       struct timeval timeoutVal;
       timeoutVal.tv_sec = 5;
       timeoutVal.tv_usec = 0;
-      m.waitEvent(&timeoutVal);
-
+      me->waitEvent(&timeoutVal);
+#endif
       // if it returns, there was an event or a timeout
       while (newMessages.size() > 0)
       {
@@ -460,6 +539,7 @@ int main(int argc, char *argv[])
         else
         {
           SMSStoreRef store = me->getSMSStore(storeName);
+          store->setCaching(false);
 
           if (messageType == GsmEvent::CellBroadcastSMS)
             result += (*store.getptr())[index].cbMessage()->toString();
@@ -484,7 +564,7 @@ int main(int argc, char *argv[])
         // switch off SMS routing
         try
         {
-          m.setSMSRoutingToTA(false, false, false);
+          me->setSMSRoutingToTA(false, false, false);
         }
         catch (GsmException &ge)
         {
@@ -497,7 +577,7 @@ int main(int argc, char *argv[])
 
       // send spooled SMS
       if (! terminateSent)
-        sendSMS(spoolDir, m.getAt());
+        sendSMS(spoolDir, me->getAt());
     }
   }
   catch (GsmException &ge)
@@ -507,6 +587,20 @@ int main(int argc, char *argv[])
       cerr << argv[0] << _("[ERROR]: ")
            << _("(try setting sms_type, please refer to gsmsmsd manpage)")
            << endl;
+    // switch off message routing, so that following invocations of gsmsmd
+    // are not swamped with message deliveries while they start up
+    if (me != NULL)
+    {
+      try
+      {
+        me->setSMSRoutingToTA(false, false, false);
+      }
+      catch (GsmException &ge)
+      {
+        // some phones (e.g. Motorola Timeport 260) don't allow to switch
+        // off SMS routing which results in an error. Just ignore this.
+      }
+    }
     return 1;
   }
   return 0;
