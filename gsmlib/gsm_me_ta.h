@@ -38,6 +38,7 @@ namespace gsmlib
     bool _omitsColon;           // omits trailing ':' in AT responses
     bool _veryShortCOPSanswer;  // Falcom A2-1
     bool _wrongSMSStatusCode;   // Motorola Timeport 260
+    bool _CDSmeansCDSI;         // Nokia Cellular Card Phone RPE-1 GSM900
     Capabilities();             // constructor, set default behaviours
   };
   
@@ -116,7 +117,7 @@ namespace gsmlib
   // (Mobile equipment = ME, terminal adapter = TA)
   class MeTa : public RefBase
   {
-  private:
+  protected:
     Ref<Port> _port;            // port the ME/TA is connected to
     Ref<GsmAt> _at;             // chat object for the port
     PhonebookVector _phonebookCache; // cache of all used phonebooks

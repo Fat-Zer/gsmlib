@@ -64,3 +64,15 @@ device name. If this doesn't work use "\\.\COMx:".
 Windows 2000 users should follow the instructions in
 support.microsoft.com article Q252795 in order to connect with their
 mobile.
+
+*** 8. gcc-compiled shared C++ libraries do not work properly on some
+       commercial UNIX systems and with older version of gcc.
+
+The symptoms may be that the program dumps core on exceptions (AIX) or that
+global constructors are not called (Solaris).
+
+Try to compile gsmlib with
+
+  ./configure --disable-shared --enable-static
+
+if you encounter strange problems.

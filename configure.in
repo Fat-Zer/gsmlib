@@ -30,7 +30,7 @@ AC_CONFIG_AUX_DIR(scripts)
 AC_PROG_INSTALL
 
 dnl use automake
-AM_INIT_AUTOMAKE(gsmlib, 1.7)
+AM_INIT_AUTOMAKE(gsmlib, 1.8)
 
 dnl change to no if you want no shared libraries for debugging purposes
 AM_ENABLE_SHARED(yes)
@@ -62,7 +62,7 @@ dnl Checks for programs.
 AC_PROG_CPP
 AC_PROG_CXX
 
-dnl check for gcc 2.95.2
+dnl check for gcc 2.95.x
 AC_TRY_RUN([
 #include <unistd.h>
 main()
@@ -74,7 +74,7 @@ main()
   return 0;
 }
 ],,
-[echo "need at least gcc 2.95.2 to compile correctly"
+[echo "need at least gcc 2.95 to compile correctly"
 exit 1])
 
 dnl check for alloca
@@ -108,7 +108,7 @@ AC_CHECK_SIZEOF(unsigned long int, 4)
 AC_CHECK_SIZEOF(unsigned int, 4)
 
 dnl Project-specific settings
-GSM_VERSION="1:1:0"
+GSM_VERSION="1:2:0"
 AC_SUBST(GSM_VERSION)
 
 dnl set locale dir (FIXME there must be a better way)
@@ -124,7 +124,8 @@ dnl whether to compile the intl directory
 AM_CONDITIONAL(COMPILE_INTL, test x$USE_INCLUDED_LIBINTL = xyes)
 
 AC_OUTPUT(Makefile gsmlib/Makefile tests/Makefile apps/Makefile win32/Makefile
-          doc/Makefile scripts/Makefile intl/Makefile po/Makefile.in,
+          doc/Makefile scripts/Makefile intl/Makefile po/Makefile.in
+          ext/Makefile,
           echo timestamp > stamp-h)
 
 dnl repair Makefile in po subdir

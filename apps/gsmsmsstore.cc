@@ -293,12 +293,15 @@ int main(int argc, char *argv[])
       }
       
     // make sure destination file exists
-    try
+    if (destination != "")
     {
-      ofstream f(destination.c_str(), ios::out | ios::app | ios::binary);
-    }
-    catch (exception)
-    {
+      try
+      {
+        ofstream f(destination.c_str(), ios::out | ios::app | ios::binary);
+      }
+      catch (exception)
+      {
+      }
     }
 
     // start accessing destination destination store or file

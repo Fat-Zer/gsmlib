@@ -3,6 +3,13 @@ necessarily in order of importance):
 
 ("+" = DONE)
 
+- make update po
+
+- add find function
+
+- specify exact location of manual files in /usr/man/man* in spec
+  file, so that erase does not try to delete these directories
+
 + update PO
 
 + add option to gsmsendsms/gsmsmsd to request delivery reports

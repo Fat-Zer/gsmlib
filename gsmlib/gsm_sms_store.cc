@@ -271,7 +271,13 @@ void SMSStore::writeEntry(int &index, SMSMessageRef message)
 
   // set message status to "RECEIVED READ" for SMS_DELIVER, SMS_STATUS_REPORT
   string statusString;
-  if (message->messageType() != SMSMessage::SMS_SUBMIT)
+
+  // Normally the ",1" sets the message status to "REC READ" (received read)
+  // which is appropriate for all non-submit messages
+  // Motorola Timeport 260 does not like this code, though
+  // DELIVER messages are magically recognized anyway
+  if (message->messageType() != SMSMessage::SMS_SUBMIT &&
+      ! _at->getMeTa().getCapabilities()._wrongSMSStatusCode)
     statusString = ",1";
 
   Parser p(_at->sendPdu("+CMGW=" +

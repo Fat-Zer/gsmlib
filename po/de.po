@@ -13,7 +13,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gsmlib 1.5\n"
-"POT-Creation-Date: 2001-10-15 12:55+0200\n"
+"POT-Creation-Date: 2001-12-07 23:40+0100\n"
 "PO-Revision-Date: 2001-10-15 11:39+02:00\n"
 "Last-Translator: Peter Hofmann <software@pxh.de>\n"
 "MIME-Version: 1.0\n"
@@ -193,7 +193,7 @@ msgid "cell broadcast message\n"
 msgstr "Zellen-weite Nachricht\n"
 
 #: apps/gsmctl.cc:594 apps/gsmpb.cc:503 apps/gsmsendsms.cc:243
-#: apps/gsmsmsd.cc:494 apps/gsmsmsd.cc:496 apps/gsmsmsstore.cc:432
+#: apps/gsmsmsd.cc:494 apps/gsmsmsd.cc:496 apps/gsmsmsstore.cc:435
 msgid "[ERROR]: "
 msgstr "[FEHLER]: "
 
@@ -590,7 +590,7 @@ msgid "unknown operation '%s'"
 msgstr "unbekannte Operation '%s'"
 
 # , c-format
-#: apps/gsmsmsstore.cc:91 apps/gsmsmsstore.cc:360 apps/gsmsmsstore.cc:377
+#: apps/gsmsmsstore.cc:91 apps/gsmsmsstore.cc:363 apps/gsmsmsstore.cc:380
 #, c-format
 msgid "inserting entry #%d from source into destination"
 msgstr "füge Eintrag #%d von Quellgerät/-datei in Zielgerät/-datei ein"
@@ -693,34 +693,34 @@ msgstr "nicht genügend Parameter angegeben"
 msgid "unexpected parameters"
 msgstr "unerwartete Parameter"
 
-#: apps/gsmsmsstore.cc:280 apps/gsmsmsstore.cc:314
+#: apps/gsmsmsstore.cc:280 apps/gsmsmsstore.cc:317
 msgid "store name must be given"
 msgstr "Speichername muß angegeben werden"
 
 # , c-format
-#: apps/gsmsmsstore.cc:341 apps/gsmsmsstore.cc:374
+#: apps/gsmsmsstore.cc:344 apps/gsmsmsstore.cc:377
 #, c-format
 msgid "no index '%s' in source"
 msgstr "kein Index '%s' in der Quelldatei/-gerät"
 
 # , c-format
-#: apps/gsmsmsstore.cc:389
+#: apps/gsmsmsstore.cc:392
 #, c-format
 msgid "index #%d"
 msgstr "Index #%d"
 
-#: apps/gsmsmsstore.cc:403
+#: apps/gsmsmsstore.cc:406
 msgid "inserting new entry into destination"
 msgstr "füge neuen Eintrag in das Zielgerät/-datei ein"
 
 # , c-format
-#: apps/gsmsmsstore.cc:418
+#: apps/gsmsmsstore.cc:421
 #, c-format
 msgid "deleting entry #%d from destination"
 msgstr "lösche Eintrag #%d von Zielgerät/-datei"
 
 # , c-format
-#: apps/gsmsmsstore.cc:423
+#: apps/gsmsmsstore.cc:426
 #, c-format
 msgid "no index '%s' in destination"
 msgstr "kein Index '%s' in Zielgerät/-datei"
@@ -739,17 +739,17 @@ msgstr "ME/TA-Fehler '"
 msgid "(code %s)"
 msgstr "(Code %s)"
 
-#: gsmlib/gsm_at.cc:125 gsmlib/gsm_at.cc:215 gsmlib/gsm_at.cc:330
+#: gsmlib/gsm_at.cc:125 gsmlib/gsm_at.cc:215 gsmlib/gsm_at.cc:335
 msgid "ME/TA error '<unspecified>' (code not known)"
 msgstr "ME/TA-Fehler '<unspezifiziert>' (Code nicht bekannt)"
 
 # , c-format
-#: gsmlib/gsm_at.cc:184 gsmlib/gsm_at.cc:347
+#: gsmlib/gsm_at.cc:184 gsmlib/gsm_at.cc:352
 #, c-format
 msgid "unexpected response '%s' when sending 'AT%s'"
 msgstr "unerwartete Antwort '%s' beim Senden von 'AT%s'"
 
-#: gsmlib/gsm_at.cc:315
+#: gsmlib/gsm_at.cc:320
 msgid "unexpected character in PDU handshake"
 msgstr "unerwartetes Zeichen im PDU-Handshake"
 
@@ -1170,42 +1170,42 @@ msgid " (Permanent Error, SC is not making any more transfer attempts)"
 msgstr " (permanenter Fehler, SC macht keine weiteren Übertragungsversuche)"
 
 # , c-format
-#: gsmlib/gsm_event.cc:68
+#: gsmlib/gsm_event.cc:72
 #, c-format
 msgid "unexpected number format %d"
 msgstr "unerwartetes Telefonnummernformat %d"
 
 # , c-format
-#: gsmlib/gsm_event.cc:88
+#: gsmlib/gsm_event.cc:92
 #, c-format
 msgid "unexpected unsolicited event '%s'"
 msgstr "unerwartetes asynchrones Ereignis '%s'"
 
-#: gsmlib/gsm_me_ta.cc:465
+#: gsmlib/gsm_me_ta.cc:476
 msgid "unable to set operator"
 msgstr "kann den Netzbetreiber nicht setzen"
 
-#: gsmlib/gsm_me_ta.cc:592
+#: gsmlib/gsm_me_ta.cc:603
 msgid "call forward time must be in the range 0..30"
 msgstr "Rufumleitungszeit muss im Bereich 0..30 sein"
 
-#: gsmlib/gsm_me_ta.cc:817
+#: gsmlib/gsm_me_ta.cc:828
 msgid "only serviceLevel 0 or 1 supported"
 msgstr "nur Dienst-Level 0 oder 1 unterstützt"
 
-#: gsmlib/gsm_me_ta.cc:930 gsmlib/gsm_me_ta.cc:972
+#: gsmlib/gsm_me_ta.cc:941 gsmlib/gsm_me_ta.cc:983
 msgid "cannot route SMS messages to TE"
 msgstr "kann keine Kurznachrichten zum TE weiterleiten"
 
-#: gsmlib/gsm_me_ta.cc:944 gsmlib/gsm_me_ta.cc:986
+#: gsmlib/gsm_me_ta.cc:955 gsmlib/gsm_me_ta.cc:997
 msgid "cannot route cell broadcast messages to TE"
 msgstr "kann keine Zellen-weiten Nachrichten zum TE weiterleiten"
 
-#: gsmlib/gsm_me_ta.cc:956
+#: gsmlib/gsm_me_ta.cc:967
 msgid "cannot route status reports messages to TE"
 msgstr "kann keine Status-Report-Nachrichten zum TE weiterleiten"
 
-#: gsmlib/gsm_me_ta.cc:1000
+#: gsmlib/gsm_me_ta.cc:1011
 msgid "cannot route status report messages to TE"
 msgstr "kann keine Status-Report-Nachrichten zum TE weiterleiten"
 
@@ -1283,13 +1283,17 @@ msgstr ""
 "die Länge der Telefonnummer '%s' überschreitet die maximale "
 "Telefonnummernlänge (%d Zeichen) des Telefonbuchs '%s'"
 
-#: gsmlib/gsm_phonebook.cc:247
+#: gsmlib/gsm_phonebook.cc:275
 msgid "phonebook full"
 msgstr "Telefonbuch voll"
 
-#: gsmlib/gsm_phonebook.cc:263
+#: gsmlib/gsm_phonebook.cc:291
 msgid "attempt to overwrite phonebook entry"
 msgstr "Versuch, einen Telefonbucheintrag zu überschreiben"
+
+#: gsmlib/gsm_phonebook.cc:567
+msgid "SIM card changed while accessing phonebook"
+msgstr ""
 
 #: gsmlib/gsm_sms.cc:66 gsmlib/gsm_sms.cc:85 gsmlib/gsm_sms.cc:175
 msgid "unhandled SMS TPDU type"
@@ -1617,13 +1621,13 @@ msgid "error renaming '%s' to '%s'"
 msgstr "Fehler beim Umbenennen von '%s' zu '%s'"
 
 # , c-format
-#: gsmlib/gsm_util.cc:347
+#: gsmlib/gsm_util.cc:348
 #, c-format
 msgid "text '%s' contains illegal character '\"'"
 msgstr "der Text '%s' enthält das illegale Zeichen '\"'"
 
 # , c-format
-#: gsmlib/gsm_util.cc:357
+#: gsmlib/gsm_util.cc:358
 #, c-format
 msgid "illegal character in telephone number '%s'"
 msgstr "ungültiges Zeichen in der Telefonnummer '%s'"
@@ -1647,13 +1651,13 @@ msgid "line '%s' has invalid format"
 msgstr "Zeile '%s' hat ungültiges Format"
 
 # , c-format
-#: gsmlib/gsm_sorted_phonebook.cc:173 gsmlib/gsm_sorted_sms_store.cc:163
+#: gsmlib/gsm_sorted_phonebook.cc:173 gsmlib/gsm_sorted_sms_store.cc:159
 #, c-format
 msgid "error opening file '%s' for writing"
 msgstr "Fehler beim Öffnen der Datei '%s' zum Schreiben"
 
 #: gsmlib/gsm_sorted_phonebook.cc:174 gsmlib/gsm_sorted_phonebook.cc:193
-#: gsmlib/gsm_sorted_sms_store.cc:67 gsmlib/gsm_sorted_sms_store.cc:164
+#: gsmlib/gsm_sorted_sms_store.cc:67 gsmlib/gsm_sorted_sms_store.cc:160
 msgid "<STDOUT>"
 msgstr "<Standardausgabe>"
 
@@ -1668,17 +1672,17 @@ msgid "attempt to change phonebook read from <STDIN>"
 msgstr "Versuch, von der Standardeingabe gelesenes Telefonbuch zu verändern"
 
 # , c-format
-#: gsmlib/gsm_sorted_phonebook.cc:229 gsmlib/gsm_sorted_sms_store.cc:219
+#: gsmlib/gsm_sorted_phonebook.cc:229 gsmlib/gsm_sorted_sms_store.cc:215
 #, c-format
 msgid "cannot open file '%s'"
 msgstr "kann Datei '%s' nicht öffnen"
 
 #: gsmlib/gsm_sorted_phonebook.cc:244 gsmlib/gsm_sorted_sms_store.cc:55
-#: gsmlib/gsm_sorted_sms_store.cc:232
+#: gsmlib/gsm_sorted_sms_store.cc:228
 msgid "<STDIN>"
 msgstr "<Standardeingabe>"
 
-#: gsmlib/gsm_sorted_phonebook.cc:356
+#: gsmlib/gsm_sorted_phonebook.cc:361
 msgid "indices must be unique in phonebook"
 msgstr "Indices im Telefonbuch müssen eindeutig sein"
 
@@ -1700,7 +1704,7 @@ msgstr "Datei '%s' hat die falsche Version"
 msgid "corrupt SMS store file '%s'"
 msgstr "beschädigte SMS-Speicherdatei '%s'"
 
-#: gsmlib/gsm_sorted_sms_store.cc:208
+#: gsmlib/gsm_sorted_sms_store.cc:204
 msgid "attempt to change SMS store read from <STDIN>"
 msgstr ""
 "Versuch, SMS-Speicher zu verändern, der von der Standardeingabe gelesen wurde"

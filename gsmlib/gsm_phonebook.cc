@@ -188,6 +188,34 @@ void Phonebook::readEntry(int index, string &telephone, string &text)
 #endif
 }
 
+void Phonebook::findEntry(string text, int &index, string &telephone)
+  throw(GsmException)
+{
+  // select phonebook
+  _myMeTa.setPhonebook(_phonebookName);
+
+  // read entry
+  string response = _at->chat("+CPBF=\"" + text + "\"", "+CPBF:",
+                              false, // dont't ignore errors
+                              true); // but accept empty responses
+  // (the latter is necessary for some mobile phones that return nothing
+  // if the entry is empty)
+
+  if (response.length() == 0)   // OK phone returned empty response
+  {
+    telephone = "";      // then the entry is empty as well
+    index = 0;
+  }
+  else
+    index=parsePhonebookEntry(response, telephone, text);
+
+#ifndef NDEBUG
+  if (debugLevel() >= 1)
+    cerr << "*** Finding PB entry " << text << " number " << telephone 
+         << " index " << index << endl;
+#endif
+}
+
 void Phonebook::writeEntry(int index, string telephone, string text)
   throw(GsmException)
 {
@@ -330,23 +358,33 @@ Phonebook::Phonebook(string phonebookName, Ref<GsmAt> at, MeTa &myMeTa,
     meToPhonebookIndexMap[nextAvailableIndex++] = i;
   }
 
+  // find out first index number of phonebook
+  int firstIndex;
+  for (int i = 0; i < _maxSize; i++)
+    if (availablePositions[i])
+    {
+      firstIndex = i;
+      break;
+    }
+
   // preload phonebook
   // Note: this contains a workaround for the bug that
   // some MEs can not return the entire phonebook with one AT command
   // To detect this condition, _size must be known
   // also, this code only handles non-sparse phonebooks
   if (preload && _size != -1 && 
-      ! availablePositions[0] &&
-      (int)availablePositions.size() == _size + 1)
+      (int)availablePositions.size() == _maxSize + firstIndex)
   {
     int entriesRead = 0;
-    int startIndex = 1;
+    int startIndex = firstIndex;
 
     while (entriesRead < _size)
     {
-      vector<string> responses = _at->chatv("+CPBR=" + intToStr(startIndex) +
-                                            "," + intToStr(_size + 1),
-                                            "+CPBR:", true);
+      reportProgress(0, _maxSize); // chatv also calls reportProgress()
+      vector<string> responses =
+        _at->chatv("+CPBR=" + intToStr(startIndex) +
+                   "," + intToStr(_maxSize + firstIndex - 1),
+                   "+CPBR:", true);
 
       // this means that we have read nothing even though not all
       // entries have been retrieved (entriesRead < _size)
@@ -369,7 +407,9 @@ Phonebook::Phonebook(string phonebookName, Ref<GsmAt> at, MeTa &myMeTa,
         int meIndex = parsePhonebookEntry(*i, telephone, text);
         _phonebook[meToPhonebookIndexMap[meIndex]]._cached = true;
         _phonebook[meToPhonebookIndexMap[meIndex]]._telephone = telephone;
-        _phonebook[meToPhonebookIndexMap[meIndex]]._text = text;        
+        _phonebook[meToPhonebookIndexMap[meIndex]]._text = text;
+        assert(_phonebook[meToPhonebookIndexMap[meIndex]]._index == meIndex);
+
         ++entriesRead;
         startIndex = meIndex + 1;
 #ifndef NDEBUG
@@ -503,6 +543,38 @@ void Phonebook::clear() throw(GsmException)
 {
   for (iterator i = begin(); i != end(); ++i)
     erase(i);
+}
+
+Phonebook::iterator Phonebook::find(string text) throw(GsmException)
+{
+  int index;
+  string telephone;
+
+  for (int i = 0; i < _maxSize; i++)
+    if (_phonebook[i].text() == text)
+      return begin() + i;
+
+  findEntry(text, index, telephone);
+  
+  for (int i = 0; i < _maxSize; i++)
+    if (_phonebook[i].index() == index)
+      if (_phonebook[i].cached())
+      {
+        // if entry was already (= cached) and is now different
+        // the SIM card or it's contents were changed
+        if (_phonebook[i]._telephone != telephone ||
+            _phonebook[i]._text != text)
+          throw GsmException(_("SIM card changed while accessing phonebook"),
+                             OtherError);
+      }
+      else
+      {
+        _phonebook[i]._cached = true;
+        _phonebook[i]._telephone = telephone;
+        _phonebook[i]._text = text;
+        return begin() + i;
+      }
+  return end();
 }
 
 Phonebook::~Phonebook()

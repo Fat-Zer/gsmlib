@@ -327,8 +327,9 @@ int gsmlib::debugLevel()
 
 namespace gsmlib
 {
-  static InterruptBase *interruptObject;
+  static InterruptBase *interruptObject = NULL;
 }
+
 void gsmlib::setInterruptObject(InterruptBase *intObject)
 {
   interruptObject = intObject;
@@ -356,4 +357,22 @@ void gsmlib::checkTextAndTelephone(string text, string telephone)
       throw GsmException(
         stringPrintf(_("illegal character in telephone number '%s'"),
                      telephone.c_str()), ParameterError);
+}
+
+// progress interface
+
+namespace gsmlib
+{
+  static ProgressBase *progressObject = NULL;
+}
+
+void gsmlib::setProgressObject(ProgressBase *progObject)
+{
+  progressObject = progObject;
+}
+
+void gsmlib::reportProgress(int part, int total)
+{
+  if (progressObject != NULL)
+    progressObject->reportProgress(part, total);
 }

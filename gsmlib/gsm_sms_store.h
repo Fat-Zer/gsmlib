@@ -106,8 +106,13 @@ namespace gsmlib
 
   // iterator for the SMSStore class
 
+#if __GNUC__ == 2 && __GNUC_MINOR__ == 95
+  class SMSStoreIterator : public random_access_iterator<SMSStoreEntry,
+                           int>
+#else
   class SMSStoreIterator : public iterator<random_access_iterator_tag,
                            SMSStoreEntry, int>
+#endif
   {
     int _index;
     SMSStore *_store;
@@ -141,8 +146,13 @@ namespace gsmlib
     friend class SMSStore;
   };
 
+#if __GNUC__ == 2 && __GNUC_MINOR__ == 95
+  class SMSStoreConstIterator : public random_access_iterator<SMSStoreEntry,
+                                int>
+#else
   class SMSStoreConstIterator : public iterator<random_access_iterator_tag,
                                 SMSStoreEntry, int>
+#endif
   {
     int _index;
     const SMSStore *_store;

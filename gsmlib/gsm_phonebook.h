@@ -94,10 +94,12 @@ namespace gsmlib
     int parsePhonebookEntry(string response, string &telephone, string &text);
 
     // internal access functions
-    // read/write entry from/to ME
+    // read/write/find entry from/to ME
     void readEntry(int index, string &telephone, string &text)
       throw(GsmException);
     void writeEntry(int index, string telephone, string text)
+      throw(GsmException);
+    void findEntry(string text, int &index, string &telephone)
       throw(GsmException);
 
     // adjust size only if it was set once
@@ -175,8 +177,11 @@ namespace gsmlib
     iterator erase(iterator first, iterator last) throw(GsmException);
     void clear() throw(GsmException);
 
+    // finds an entry given the text
+    iterator find(string text) throw(GsmException);
+    
     // destructor
-    ~Phonebook();
+    virtual ~Phonebook();
 
     friend class PhonebookEntry;
     friend class MeTa;

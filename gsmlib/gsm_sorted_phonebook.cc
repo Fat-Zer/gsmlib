@@ -250,8 +250,11 @@ SortedPhonebook::SortedPhonebook(PhonebookRef mePhonebook)
   _sortOrder(ByIndex), _readonly(false), _mePhonebook(mePhonebook)
 {
   int entriesRead = 0;
+  reportProgress(0, _mePhonebook->end() - _mePhonebook->begin());
+
   for (Phonebook::iterator i = _mePhonebook->begin();
        i != _mePhonebook->end(); ++i)
+  {
     if (! i->empty())
     {
       _sortedPhonebook.insert(
@@ -260,6 +263,8 @@ SortedPhonebook::SortedPhonebook(PhonebookRef mePhonebook)
       if (entriesRead == _mePhonebook->size())
         return;                 // ready
     }
+    reportProgress(i - _mePhonebook->begin());
+  }
 }
 
 void SortedPhonebook::setSortOrder(SortOrder newOrder)

@@ -1,6 +1,7 @@
-#include <gsmlib/gsm_unix_serial.h>
+#ifdef HAVE_CONFIG_H
+#include <gsm_config.h>
+#endif
 #include <gsmlib/gsm_sorted_phonebook.h>
-#include <gsmlib/gsm_phonebook.h>
 #include <algorithm>
 #include <strstream>
 #include <iostream>

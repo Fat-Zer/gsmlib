@@ -3013,7 +3013,7 @@ test "$program_transform_name" = "" && program_transform_name="s,x,x,"
 
 PACKAGE=gsmlib
 
-VERSION=1.7
+VERSION=1.8
 
 if test "`cd $srcdir && pwd`" != "`pwd`" && test -f $srcdir/config.status; then
   { echo "configure: error: source directory already configured; run "make distclean" there first" 1>&2; exit 1; }
@@ -3624,7 +3624,7 @@ else
   echo "configure: failed program was:" >&5
   cat conftest.$ac_ext >&5
   rm -fr conftest*
-  echo "need at least gcc 2.95.2 to compile correctly"
+  echo "need at least gcc 2.95 to compile correctly"
 exit 1
 fi
 rm -fr conftest*
@@ -4287,7 +4287,7 @@ EOF
 
 
 
-GSM_VERSION="1:1:0"
+GSM_VERSION="1:2:0"
 
 
 _localedir=`eval "echo $datadir/locale"`
@@ -4416,7 +4416,8 @@ ac_given_srcdir=$srcdir
 ac_given_INSTALL="$INSTALL"
 
 trap 'rm -fr `echo "Makefile gsmlib/Makefile tests/Makefile apps/Makefile win32/Makefile
-          doc/Makefile scripts/Makefile intl/Makefile po/Makefile.in gsm_config.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
+          doc/Makefile scripts/Makefile intl/Makefile po/Makefile.in
+          ext/Makefile gsm_config.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
 cat >> $CONFIG_STATUS <<EOF
 
@@ -4539,7 +4540,8 @@ EOF
 cat >> $CONFIG_STATUS <<EOF
 
 CONFIG_FILES=\${CONFIG_FILES-"Makefile gsmlib/Makefile tests/Makefile apps/Makefile win32/Makefile
-          doc/Makefile scripts/Makefile intl/Makefile po/Makefile.in"}
+          doc/Makefile scripts/Makefile intl/Makefile po/Makefile.in
+          ext/Makefile"}
 EOF
 cat >> $CONFIG_STATUS <<\EOF
 for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then

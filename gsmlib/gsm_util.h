@@ -196,6 +196,26 @@ namespace gsmlib
   // return true if interrupted
   extern bool interrupted();
 
+  // interface for reporting progress
+  
+  class ProgressBase
+  {
+  public:
+    // override this to receive progress reports
+    virtual void reportProgress(int part, int total) = 0;
+  };
+
+  // set global progress object
+  extern void setProgressObject(ProgressBase *progObject);
+
+  // report progress (part/total * 100 is meant to be the percentage)
+  // this function is called by
+  // - GsmAt::chatv() without arguments, used by Phonebook::Phonebook()
+  // - Phonebook::Phonebook()
+  // - SortedPhonebook::SortedPhonebook()
+  // - SortedSMSStore::SortedSMSStore()
+  extern void reportProgress(int part = -1, int total = -1);
+
   // check for valid text and telephone number
   // throw exception if error
   extern void checkTextAndTelephone(string text, string telephone)

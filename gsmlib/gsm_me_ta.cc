@@ -29,7 +29,9 @@ Capabilities::Capabilities() :
                                 // setSMSStore() function
   _omitsColon(true),            // FIXME
   _veryShortCOPSanswer(false),  // Falcom A2-1
-  _wrongSMSStatusCode(false)    // Motorola Timeport 260
+  _wrongSMSStatusCode(false),   // Motorola Timeport 260
+  _CDSmeansCDSI(false)          // Nokia Cellular Card Phone RPE-1 GSM900 and
+                                // Nokia Card Phone RPM-1 GSM900/1800
 {
 }
 
@@ -72,6 +74,15 @@ void MeTa::init() throw(GsmException)
     _capabilities._wrongSMSStatusCode = true;
   } 
  
+  // handle Nokia Cellular Card Phone RPE-1 GSM900 and
+  // Nokia Card Phone RPM-1 GSM900/1800 bug - CDS means CDSI
+  if ((info._manufacturer == "Nokia Mobile Phones" &&
+       (info._model == "Nokia Cellular Card Phone RPE-1 GSM900" ||
+        info._model == "Nokia Card Phone RPM-1 GSM900/1800")))
+  {
+    _capabilities._CDSmeansCDSI = true;
+  } 
+
   // set GSM default character set
   try
   {

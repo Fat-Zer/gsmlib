@@ -110,7 +110,7 @@ string GsmAt::chat(string atCommand, string response, string &pdu,
   {
     s = normalize(getLine());
   }
-  while (s.length() == 0);
+  while (s.length() == 0 || s == "AT" + atCommand);
 
   // handle errors
   if (matchResponse(s, "+CME ERROR:") || matchResponse(s, "+CMS ERROR:"))
@@ -200,7 +200,7 @@ vector<string> GsmAt::chatv(string atCommand, string response,
   {
     s = normalize(getLine());
   }
-  while (s.length() == 0);
+  while (s.length() == 0 || s == "AT" + atCommand);
 
   // handle errors
   if (matchResponse(s, "+CME ERROR:") || matchResponse(s, "+CMS ERROR:"))
@@ -234,6 +234,7 @@ vector<string> GsmAt::chatv(string atCommand, string response,
       s = normalize(getLine());
     }
     while (s.length() == 0);
+    reportProgress();
   }
 
   // never reached
@@ -278,6 +279,10 @@ string GsmAt::sendPdu(string atCommand, string response,
     // read first of two bytes "> "
     c = readByte();
     
+    // there have been reports that some phones give spurious CRs
+    if (c == CR)
+      c = readByte();
+
     if (c == '+' || c == 'E')   // error or unsolicited result code
     {
       _port->putBack(c);

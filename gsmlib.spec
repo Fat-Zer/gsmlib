@@ -1,7 +1,7 @@
-%define LIBVER 1.0.1
+%define LIBVER 1.0.2
 Summary: Library to access GSM mobile phones through GSM modems
 Name: gsmlib
-Version: 1.7
+Version: 1.8
 Release: 1
 Source: gsmlib-%{version}.tar.gz
 Group: System Environment/Libraries

@@ -1,3 +1,28 @@
+gsmlib-1.8
+     - added workaround for Nokia Cellular Card Phone RPE-1 GSM900
+       that reports a CDS event that actually is an CDSI and sends a spurious
+       CR when waiting for a PDU
+
+     - SMS are stored without index in files now
+
+     - tested compilation with gcc-3.0.2
+
+     - added workaround for gsmlib getting confused when receiving SMS
+       and echo cannot be switched off - echos of the AT command are
+       filtered out in chat() now
+
+     - extended gsm_phonebook preload mechanism to batch-load phonebooks
+       where the index does not start with 1
+     
+     - Added workaround for Motorola Timeport 260 to write back
+       deliver messages to the ME
+
+     - added workaround for compilation with libstdc++-v2
+
+     - private members of MeTa made protected
+
+     - new ext directory for phone-specific extensions
+
 gsmlib-1.7
      - fixed bug with calculation of userData length if userDataHeader
        is present (octet count was subtracted, not septet count)

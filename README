@@ -75,6 +75,9 @@ HARDWARE
      - Ericsson R320s/- (Linux IrDA serial device)
      - Motorola Timeport 260/- (Serial cable and Linux IrDA serial device)
      - Motorola Timeport 250/- (Linux IrDA serial device)
+     - Nokia Cellular Card Phone RPE-1 GSM900 and
+     - Nokia Card Phone RPM-1 GSM900/1800
+
 
      Note 1: Some of the mobile phones have an integrated GSM modem
      that can be accessed via the Linux IrDA drivers.

@@ -99,9 +99,9 @@ void SortedSMSStore::readSMSFile(istream &pbs, string filename)
       throw GsmException(stringPrintf(_("corrupt SMS store file '%s'"),
                                       filename.c_str()), ParameterError);
 
-    // read index of message
+    // read reserved integer field of message (was formerly index)
     readnbytes(filename, pbs, 4, numberBuf);
-    unsigned_int_4 index = ntohl(*((unsigned_int_4*)numberBuf));
+    //unsigned_int_4 reserved = ntohl(*((unsigned_int_4*)numberBuf));
     
     // read message type
     readnbytes(filename, pbs, 1, numberBuf);
@@ -119,16 +119,12 @@ void SortedSMSStore::readSMSFile(istream &pbs, string filename)
       SMSMessage::decode(string(pduBuf, pduLen),
                          (messageType != SMSMessage::SMS_SUBMIT));
     
-    SMSStoreEntry *newEntry = new SMSStoreEntry(message, index);
+    SMSStoreEntry *newEntry = new SMSStoreEntry(message, _nextIndex++);
     _sortedSMSStore.insert(
       SMSStoreMap::value_type(
         SMSMapKey(*this, message->serviceCentreTimestamp()),
         newEntry)
       );
-
-    // update next index (that way only unique indices are generated)
-    if (index >= _nextIndex)
-      _nextIndex = index + 1;
   }
 }
 
@@ -178,9 +174,9 @@ void SortedSMSStore::sync(bool fromDestructor) throw(GsmException)
         unsigned_int_2 pduLen = htons(pdu.length());
         writenbytes(_filename, *pbs, 2, (char*)&pduLen);
 
-        // write index
-        unsigned_int_4 index = htonl(i->second->index());
-        writenbytes(_filename, *pbs, 4, (char*)&index);
+        // write reserved field (was formerly index)
+        unsigned_int_4 reserved = htonl(0);
+        writenbytes(_filename, *pbs, 4, (char*)&reserved);
         
         // write message type
         char messageType = i->second->message()->messageType();
@@ -240,6 +236,8 @@ SortedSMSStore::SortedSMSStore(SMSStoreRef meSMSStore)
   // It is necessary to count the entries read because
   // the maximum index into the SMS store may be larger than smsStore.size()
   int entriesRead = 0;
+  reportProgress(0, _meSMSStore->size());
+
   for (int i = 0;; ++i)
   {
     if (entriesRead == _meSMSStore->size())
@@ -253,6 +251,7 @@ SortedSMSStore::SortedSMSStore(SMSStoreRef meSMSStore)
           &_meSMSStore()[i])
         );
       ++entriesRead;
+      reportProgress(entriesRead);
     }
   }
 }

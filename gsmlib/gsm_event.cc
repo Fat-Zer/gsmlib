@@ -33,7 +33,11 @@ void GsmEvent::dispatch(string s, GsmAt &at) throw(GsmException)
   else if (s.substr(0, 5) == "+CBM:")
     messageType = CellBroadcastSMS;
   else if (s.substr(0, 5) == "+CDS:")
+  {
+    // workaround for phones that report CDS when they actually mean CDSI
+    indication = at.getMeTa().getCapabilities()._CDSmeansCDSI;
     messageType = StatusReportSMS;
+  }
   else if (s.substr(0, 6) == "+CMTI:")
   {
     indication = true;

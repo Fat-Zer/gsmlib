@@ -377,12 +377,11 @@ testsms2.o: testsms2.cc ../gsm_config.h ../gsmlib/gsm_unix_serial.h \
 	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_at.h ../gsmlib/gsm_cb.h \
 	../gsmlib/gsm_phonebook.h ../gsmlib/gsm_sorted_phonebook_base.h \
 	../gsmlib/gsm_map_key.h ../gsmlib/gsm_sms_store.h
-testspb.o: testspb.cc ../gsmlib/gsm_unix_serial.h ../gsmlib/gsm_error.h \
-	../gsmlib/gsm_port.h ../gsmlib/gsm_util.h \
-	../gsmlib/gsm_sorted_phonebook.h \
-	../gsmlib/gsm_sorted_phonebook_base.h ../gsmlib/gsm_map_key.h \
+testspb.o: testspb.cc ../gsm_config.h ../gsmlib/gsm_sorted_phonebook.h \
+	../gsmlib/gsm_sorted_phonebook_base.h ../gsmlib/gsm_util.h \
+	../gsmlib/gsm_error.h ../gsmlib/gsm_map_key.h \
 	../gsmlib/gsm_sms_codec.h ../gsmlib/gsm_phonebook.h \
-	../gsmlib/gsm_at.h
+	../gsmlib/gsm_at.h ../gsmlib/gsm_port.h
 testssms.o: testssms.cc ../gsmlib/gsm_unix_serial.h \
 	../gsmlib/gsm_error.h ../gsmlib/gsm_port.h ../gsmlib/gsm_util.h \
 	../gsmlib/gsm_sorted_sms_store.h ../gsmlib/gsm_sms_store.h \
