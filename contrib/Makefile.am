@@ -4,21 +4,13 @@
 # *
 # * File:    Makefile.am
 # *
-# * Purpose: Toplevel Makefile
+# * Purpose: contrib Makefile
 # *
 # * Author:  Peter Hofmann (software@pxh.de)
 # *
-# * Created: 21.5.1999
+# * Created: 02.11.2003
 # *************************************************************************
 
-SUBDIRS_ =	po gsmlib apps tests doc scripts win32 ext contrib
+EXTRA_DIST = 	gsmsmsrequeue gsm-utils.cron.d gsm-utils.init README \
+		gsmsmsq gsmsmsspool gsm-utils.default
 
-EXTRA_DIST =	gsmlib.spec
-
-if COMPILE_INTL
-SUBDIRS =	intl $(SUBDIRS_) # po - make automake happy
-else
-SUBDIRS =	$(SUBDIRS_) # po intl - make automake happy
-endif
-
-all:

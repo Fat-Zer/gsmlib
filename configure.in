@@ -124,7 +124,7 @@ AM_CONDITIONAL(COMPILE_INTL, test x$USE_INCLUDED_LIBINTL = xyes)
 
 AC_OUTPUT(Makefile gsmlib/Makefile tests/Makefile apps/Makefile win32/Makefile
           doc/Makefile scripts/Makefile intl/Makefile po/Makefile.in
-          ext/Makefile,
+          ext/Makefile contrib/Makefile,
           echo timestamp > stamp-h)
 
 dnl repair Makefile in po subdir

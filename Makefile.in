@@ -121,7 +121,7 @@ am__include = @am__include@
 am__quote = @am__quote@
 install_sh = @install_sh@
 
-SUBDIRS_ = po gsmlib apps tests doc scripts win32 ext
+SUBDIRS_ = po gsmlib apps tests doc scripts win32 ext contrib
 
 EXTRA_DIST = gsmlib.spec
 
@@ -141,7 +141,7 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 DIST_COMMON = README ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL \
 	Makefile.am Makefile.in NEWS TODO acconfig.h acinclude.m4 \
 	aclocal.m4 configure configure.in gsm_config.h.in
-DIST_SUBDIRS = po gsmlib apps tests doc scripts win32 ext intl
+DIST_SUBDIRS = po gsmlib apps tests doc scripts win32 ext contrib intl
 all: gsm_config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
