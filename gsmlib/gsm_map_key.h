@@ -27,6 +27,7 @@ namespace gsmlib
 
   template <class SortedStore> class MapKey
   {
+  public:
     SortedStore &_myStore;   // my store
     // different type keys
     Address _addressKey;
@@ -45,6 +46,7 @@ namespace gsmlib
     MapKey(SortedStore &myStore, string key) :
       _myStore(myStore), _strKey(key) {}
 
+/*
     friend
     bool operator< 
 #ifndef WIN32
@@ -59,6 +61,7 @@ namespace gsmlib
 #endif
 	                  (const MapKey<SortedStore> &x,
                        const MapKey<SortedStore> &y);
+*/
   };
 
   // compare two keys
@@ -72,7 +75,7 @@ namespace gsmlib
   // MapKey members
   
   template <class SortedStore>
-    bool gsmlib::operator<(const MapKey<SortedStore> &x,
+    bool operator<(const MapKey<SortedStore> &x,
                            const MapKey<SortedStore> &y)
     {
       assert(&x._myStore == &y._myStore);
@@ -97,7 +100,7 @@ namespace gsmlib
     }
 
   template <class SortedStore>
-    bool gsmlib::operator==(const MapKey<SortedStore> &x,
+    bool operator==(const MapKey<SortedStore> &x,
                             const MapKey<SortedStore> &y)
     {
       assert(&x._myStore == &y._myStore);

@@ -26,6 +26,7 @@
 #include <gsmlib/gsm_unix_serial.h>
 #include <unistd.h>
 #include <dirent.h>
+#include <syslog.h>
 #endif
 #if defined(HAVE_GETOPT_LONG) || defined(WIN32)
 #include <getopt.h>
@@ -53,6 +54,12 @@ static struct option longOpts[] =
   {"store", required_argument, (int*)NULL, 't'},
   {"device", required_argument, (int*)NULL, 'd'},
   {"spool", required_argument, (int*)NULL, 's'},
+  {"sent", required_argument, (int*)NULL, 'S'},
+  {"failed", required_argument, (int*)NULL, 'F'},
+  {"priorities", required_argument, (int*)NULL, 'P'},
+#ifndef WIN32
+  {"syslog", no_argument, (int*)NULL, 'L'},
+#endif
   {"sca", required_argument, (int*)NULL, 'C'},
   {"flush", no_argument, (int*)NULL, 'f'},
   {"concatenate", required_argument, (int*)NULL, 'c'},
@@ -178,9 +185,21 @@ void doAction(string action, string result)
 
 bool requestStatusReport = false;
 
-void sendSMS(string spoolDir, Ref<GsmAt> at)
+void sendSMS(string spoolDirBase, string sentDirBase, string failedDirBase,
+             unsigned int priority, bool enableSyslog, Ref<GsmAt> at)
 {
-  if (spoolDir != "")
+  string spoolDir = spoolDirBase;
+  string sentDir = sentDirBase;
+  string failedDir = failedDirBase;
+  if ( priority >= 1 )
+  {
+    spoolDir = spoolDirBase + stringPrintf(_("%d"),priority);
+    sentDir = sentDirBase + stringPrintf(_("%d"),priority);
+    failedDir = failedDirBase + stringPrintf(_("%d"),priority);
+  }
+  if ( priority > 1 )
+    sendSMS(spoolDirBase, sentDirBase, failedDirBase, priority-1, enableSyslog, at);
+  if (spoolDirBase != "")
   {
     // look into spoolDir for any outgoing SMS that should be sent
 #ifdef WIN32
@@ -211,6 +230,8 @@ void sendSMS(string spoolDir, Ref<GsmAt> at)
           strcmp(entry->d_name, "..") != 0)
 #endif
       {
+        if ( priority > 1 )
+          sendSMS(spoolDirBase, sentDirBase, failedDirBase, priority-1, enableSyslog, at);
         // read in file
         // the first line is interpreted as the phone number
         // the rest is the message
@@ -221,11 +242,30 @@ void sendSMS(string spoolDir, Ref<GsmAt> at)
 #endif
         ifstream ifs(filename.c_str());
         if (! ifs)
+#ifndef WIN32
+          if (enableSyslog)
+          {
+            syslog(LOG_WARNING, "Could not open SMS spool file %s",
+                   filename.c_str());
+            if (failedDirBase != "") {
+              string failedfilename = failedDir + "/" + entry->d_name;
+              rename(filename.c_str(),failedfilename.c_str());
+            }
+            continue;
+          }
+          else
+#endif
           throw GsmException(
             stringPrintf(_("count not open SMS spool file %s"),
                          filename.c_str()), ParameterError);
         char phoneBuf[1001];
         ifs.getline(phoneBuf, 1000);
+        for(int i=0;i<1000;i++)
+          if(phoneBuf[i]=='\t' || phoneBuf[i]==0)
+          { // ignore everything after a <TAB> in the phone number
+            phoneBuf[i]=0;
+            break;
+          }
         string text;
         while (! ifs.eof())
         {
@@ -252,17 +292,51 @@ void sendSMS(string spoolDir, Ref<GsmAt> at)
         submitSMS->setStatusReportRequest(requestStatusReport);
         Address destAddr(phoneNumber);
         submitSMS->setDestinationAddress(destAddr);
-        if (concatenatedMessageId == -1)
-          me->sendSMSs(submitSMS, text, true);
-        else
+        try
         {
-          // maximum for concatenatedMessageId is 255
-          if (concatenatedMessageId > 256)
-            concatenatedMessageId = 0;
-          me->sendSMSs(submitSMS, text, false, concatenatedMessageId++);
+          if (concatenatedMessageId == -1)
+            me->sendSMSs(submitSMS, text, true);
+          else
+          {
+            // maximum for concatenatedMessageId is 255
+            if (concatenatedMessageId > 256)
+              concatenatedMessageId = 0;
+            me->sendSMSs(submitSMS, text, false, concatenatedMessageId++);
+          }
+#ifndef WIN32
+          if (enableSyslog)
+            syslog(LOG_NOTICE, "Sent SMS to %s from file %s", phoneBuf, filename.c_str());
+#endif
+          if (sentDirBase != "") {
+#ifdef WIN32
+          string sentfilename = sentDir + "\\" + fileInfo.name;
+#else
+          string sentfilename = sentDir + "/" + entry->d_name;
+#endif
+            rename(filename.c_str(),sentfilename.c_str());
+          } else {
+            unlink(filename.c_str());
+          }
         }
-        
-        unlink(filename.c_str());
+        catch (GsmException &me)
+        {
+#ifndef WIN32
+          if (enableSyslog)
+            syslog(LOG_WARNING, "Failed sending SMS to %s from file %s: %s", phoneBuf,
+                   filename.c_str(), me.what());
+          else
+#endif
+            cerr << "Failed sending SMS to " << phoneBuf << " from "
+                 << filename << ": " << me.what() << endl;
+          if (failedDirBase != "") {
+#ifdef WIN32
+            string failedfilename = failedDir + "\\" + fileInfo.name;
+#else
+            string failedfilename = failedDir + "/" + entry->d_name;
+#endif
+            rename(filename.c_str(),failedfilename.c_str());
+          }
+        }
 #ifdef WIN32
       }
       moreFiles = _findnext(fileHandle, &fileInfo) == 0; 
@@ -276,10 +350,18 @@ void sendSMS(string spoolDir, Ref<GsmAt> at)
   }
 }
 
+#ifndef WIN32
+void syslogExit(int exitcode, int *dummy)
+{
+  syslog(LOG_NOTICE, "exited (exit %d)",exitcode);
+}
+#endif
+
 // *** main program
 
 int main(int argc, char *argv[])
 {
+  bool enableSyslog = false;
   try
   {
     string device = "/dev/mobilephone";
@@ -291,13 +373,16 @@ int main(int argc, char *argv[])
     bool flushSMS = false;
     bool onlyReceptionIndication = true;
     string spoolDir;
+    string sentDir = "";
+    string failedDir = "";
+    unsigned int priorities = 0;
     string initString = DEFAULT_INIT_STRING;
     bool swHandshake = false;
     string concatenatedMessageIdStr;
 
     int opt;
     int dummy;
-    while((opt = getopt_long(argc, argv, "c:C:I:t:fd:a:b:hvs:XDr",
+    while((opt = getopt_long(argc, argv, "c:C:I:t:fd:a:b:hvs:S:F:P:LXDr",
                              longOpts, &dummy)) != -1)
       switch (opt)
       {
@@ -327,6 +412,15 @@ int main(int argc, char *argv[])
         break;
       case 's':
         spoolDir = optarg;
+        break;
+      case 'S':
+        sentDir = optarg;
+        break;
+      case 'F':
+        failedDir = optarg;
+        break;
+      case 'P':
+        priorities = abs(atoi(optarg));
         break;
       case 'f':
         flushSMS = true;
@@ -360,11 +454,21 @@ int main(int argc, char *argv[])
              << _("  -d, --device      sets the device to connect to") << endl
              << _("  -D, --direct      enable direct routing of SMSs") << endl
              << _("  -f, --flush       flush SMS from store") << endl
+             << _("  -F, --failed      directory to move failed SMS to,") << endl
+             << _("                    if unset, the SMS will be deleted") << endl
              << _("  -h, --help        prints this message") << endl
              << _("  -I, --init        device AT init sequence") << endl
+#ifndef WIN32
+             << _("  -L, --syslog      log errors and information to syslog")
+             << endl
+#endif
+             << _("  -P, --priorities  number of priority levels to use,") << endl
+             << _("                    (default: none)") << endl
              << _("  -r, --requeststat request SMS status report") << endl
              << _("  -s, --spool       spool directory for outgoing SMS")
              << endl
+             << _("  -S, --sent        directory to move sent SMS to,") << endl
+             << _("                    if unset, the SMS will be deleted") << endl
              << _("  -t, --store       name of SMS store to use for flush\n"
                   "                    and/or temporary SMS storage") << endl
              << endl
@@ -380,6 +484,14 @@ int main(int argc, char *argv[])
              << endl << endl
              << _("  default is \"sms cb stat\"") << endl << endl
              << _("If no action is given, the SMS is printed to stdout")
+             << endl << endl
+             << _("If -P is given, it activates the priority system and sets the") << endl
+             << _("number or levels to use. For every level, there must be directories") << endl
+             << _("named <spool directory>+<priority level>.") << endl
+             << _("For example \"-P 2 -s queue -S send -F failed\" needs the following") <<endl
+             << _("directories: queue1/ queue2/ send1/ send2/ failed1/ failed2/") <<endl
+             << _("Before sending one SMS from queue2, all pending SMS from queue1") <<endl
+             << _("will be sent.") <<endl
              << endl << endl;
         exit(0);
         break;
@@ -577,7 +689,7 @@ int main(int argc, char *argv[])
 
       // send spooled SMS
       if (! terminateSent)
-        sendSMS(spoolDir, me->getAt());
+        sendSMS(spoolDir, sentDir, failedDir, priorities, enableSyslog, me->getAt());
     }
   }
   catch (GsmException &ge)

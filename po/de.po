@@ -233,7 +233,7 @@ msgstr ""
 
 #: apps/gsmsendsms.cc:171
 msgid "  phonenumber       recipient's phone number"
-msgstr "  Telefonummer      die Telefonnumer des Empfängers"
+msgstr "  Telefonummer      die Telefonnummer des Empfängers"
 
 #: apps/gsmsendsms.cc:172
 msgid ""
@@ -295,7 +295,7 @@ msgstr ""
 
 #: apps/gsmpb.cc:325
 msgid "  -c, --copy        copy source entries to destination"
-msgstr "  -c, --copy        kopiere Quell-Enträge zum Zielgerät/-datei"
+msgstr "  -c, --copy        kopiere Quell-Einträge zum Zielgerät/-datei"
 
 #: apps/gsmpb.cc:327
 msgid ""
@@ -626,14 +626,14 @@ msgid ""
 msgstr ""
 ": [-a][-b Baud-Rate][-c][-C sca][-d Gerät oder Datei]\n"
 "  [-h][-I Init String][-k][-l][-s Gerät oder Datei][-t SMS Speichername]\n"
-"  [-v][-V][-x][-X]{Indices}|[Telefonnumer Text]"
+"  [-v][-V][-x][-X]{Indices}|[Telefonnummer Text]"
 
 #: apps/gsmsmsstore.cc:191
 msgid ""
 "  -a, --add         add new SMS submit message\n"
 "                    (phonenumber and text) to destination"
 msgstr ""
-"  -a, --add         füge neue SMS-Submit-Nachricht (Telefonnumer und\n"
+"  -a, --add         füge neue SMS-Submit-Nachricht (Telefonnummer und\n"
 "                    Text) in das Zielgerät/-datei ein"
 
 #: apps/gsmsmsstore.cc:197
@@ -1437,7 +1437,7 @@ msgstr "Nachrichtenreferenz: "
 
 #: gsmlib/gsm_sms.cc:450 gsmlib/gsm_sms.cc:626
 msgid "Destination address: '"
-msgstr "Zieladdresse: '"
+msgstr "Zieladresse: '"
 
 #: gsmlib/gsm_sms.cc:455
 msgid "Validity period: "

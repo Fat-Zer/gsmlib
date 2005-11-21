@@ -132,7 +132,7 @@ int UnixSerialPort::readByte() throw(GsmException)
     {
       int res = read(_fd, &c, 1);
       if (res != 1)
-        return -1;
+        throwModemException(_("end of file when reading from TA"));
       else
         readDone = true;
       break;

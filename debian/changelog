@@ -1,3 +1,52 @@
+gsmlib (1.10-9) unstable; urgency=low
+
+  * library package needs to be renamed (libstdc++ allocator change)
+    (Closes: #339179)
+
+ -- Mark Purcell <msp@debian.org>  Mon, 21 Nov 2005 21:19:51 +0000
+
+gsmlib (1.10-8) unstable; urgency=low
+
+  * removal of automake1.6 (Closes: #335123)
+  * fails with dash [bashisms in scripts] (Closes: #309834)
+  * Update libtool Fixes: gsmlib(GNU/k*BSD): FTBFS: out of date libtool scripts (Closes:
+    #319688)
+  * [INTL:de] German PO file corrections (Closes: #314060)
+  * Fix: old-fsf-address-in-copyright-file
+
+ -- Mark Purcell <msp@debian.org>  Thu,  3 Nov 2005 22:40:19 +0000
+
+gsmlib (1.10-7) unstable; urgency=low
+
+  * C++ 4.0 transition
+  * Closes: #315864: Missing manpages
+  * gsm-utils: maintainer-script-needs-depends-on-adduser postinst
+
+ -- Mark Purcell <msp@debian.org>  Sat, 23 Jul 2005 00:46:31 +1000
+
+gsmlib (1.10-6) unstable; urgency=low
+
+  * Rebuild for invalid dependancies
+  * Closes: #258056: libgsmme 99% cpu usage
+    - Patch from Emard
+  * Closes: #274382: FTBFS with gcc-3.4: template-id `operator&lt;
+    &lt;&gt;' for `bool gsmlib::operator&lt;(const
+    gsmlib::MapKey&lt;gsmlib::SortedPhonebookBase&gt;&amp;, const
+    gsmlib::MapKey&lt;gsmlib::SortedPhonebookBase&gt;&amp;)' does not
+    match any template declaration
+    - Patch from Andreas Jochens
+  * Closes: #294251: FTBFS (amd64/gcc-4.0): explicit qualification in
+    declaration of `bool gsmlib::operator&lt;(const
+    gsmlib::MapKey&lt;SortedStore&gt;&amp;, const
+    gsmlib::MapKey&lt;SortedStore&gt;&amp;)'
+    - Patch from Andreas Jochens
+  * Closes: #200189: Patch and contribution 
+    +  Added multi-queue-priority-system and syslog patch (Matthias Goebl)
+    +  Included init, spool and requeue scripts for gsmsmsd (Matthias Goebl)
+    +  gsmsmsd runs with own user and group (gsmsms:gsmsms) (Matthias Goebl)
+
+ -- Mark Purcell <msp@debian.org>  Tue, 17 May 2005 11:34:45 +0100
+
 gsmlib (1.10-5) unstable; urgency=low
 
   * Change Section: libdevel
