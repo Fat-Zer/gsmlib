@@ -17,34 +17,34 @@ gsmsmsd \- SMS message reception daemon
 .PP
 .SH SYNOPSIS
 .B gsmsmsd
-[ \fB-a\fP \fIaction\fP ]
-[ \fB--action\fP \fIaction\fP ]
-[ \fB-b\fP \fIbaudrate\fP ]
-[ \fB--baudrate\fP \fIbaudrate\fP ]
-[ \fB-c\fP \fIconcatenatedID\fP ]
-[ \fB--concatenate\fP \fIconcatenatedID\fP ]
-[ \fB-C\fP \fIservice centre address\fP ]
-[ \fB--sca\fP \fIservice centre address\fP ]
-[ \fB-d\fP \fIdevice\fP ]
-[ \fB--device\fP \fIdevice\fP ]
-[ \fB-D\fP ]
-[ \fB--direct\fP ]
-[ \fB-f\fP ]
-[ \fB--flush\fP ]
-[ \fB-h\fP ]
-[ \fB--help\fP ]
-[ \fB-I\fP \fIinit string\fP ]
-[ \fB--init\fP \fIinit string\fP ]
-[ \fB-r\fP ]
-[ \fB--requeststat\fP ]
-[ \fB-s\fP \fIspool directory\fP ]
-[ \fB--spool\fP \fIspool directory\fP ]
-[ \fB-t\fP \fISMS store name\fP ]
-[ \fB--store\fP \fISMS store name\fP ]
-[ \fB-v\fP ]
-[ \fB--version\fP ]
-[ \fB-X\fP ]
-[ \fB--xonxoff\fP ]
+[ \fB\-a\fP \fIaction\fP ]
+[ \fB\-\-action\fP \fIaction\fP ]
+[ \fB\-b\fP \fIbaudrate\fP ]
+[ \fB\-\-baudrate\fP \fIbaudrate\fP ]
+[ \fB\-c\fP \fIconcatenatedID\fP ]
+[ \fB\-\-concatenate\fP \fIconcatenatedID\fP ]
+[ \fB\-C\fP \fIservice centre address\fP ]
+[ \fB\-\-sca\fP \fIservice centre address\fP ]
+[ \fB\-d\fP \fIdevice\fP ]
+[ \fB\-\-device\fP \fIdevice\fP ]
+[ \fB\-D\fP ]
+[ \fB\-\-direct\fP ]
+[ \fB\-f\fP ]
+[ \fB\-\-flush\fP ]
+[ \fB\-h\fP ]
+[ \fB\-\-help\fP ]
+[ \fB\-I\fP \fIinit string\fP ]
+[ \fB\-\-init\fP \fIinit string\fP ]
+[ \fB\-r\fP ]
+[ \fB\-\-requeststat\fP ]
+[ \fB\-s\fP \fIspool directory\fP ]
+[ \fB\-\-spool\fP \fIspool directory\fP ]
+[ \fB\-t\fP \fISMS store name\fP ]
+[ \fB\-\-store\fP \fISMS store name\fP ]
+[ \fB\-v\fP ]
+[ \fB\-\-version\fP ]
+[ \fB\-X\fP ]
+[ \fB\-\-xonxoff\fP ]
 { \fIsms_type\fP }
 .PP
 .SH DESCRIPTION
@@ -65,10 +65,10 @@ shell and the SMS message is written to the standard input of the action.
 \fIgsmsmsd\fP needs one empty storage slot for SMS messages in the
 mobile phone, otherwise SMS reception will not work. The SMS store to
 use for temporary storage of incoming SMS can be selected using the
-\fB--store\fP option, otherwise the ME default store is used.
+\fB\-\-store\fP option, otherwise the ME default store is used.
 .PP
 To terminate \fIgsmsmsd\fP cleanly (without losing SMS messages) one
-should send either SIGINT (CTRL-C on the command line) or SIGTERM to
+should send either SIGINT (CTRL\-C on the command line) or SIGTERM to
 the process.
 .PP
 Error messages are printed to the standard error output.  If the program
@@ -89,14 +89,14 @@ The default is \fIsms\fP, \fIcb\fP, and \fIstat\fP.
 .PP
 .SH OPTIONS
 .TP
-\fB-a\fP \fIaction\fP, \fB--action\fP \fIaction\fP
+\fB\-a\fP \fIaction\fP, \fB\-\-action\fP \fIaction\fP
 The action to execute for each incoming SMS message. If no action 
 is given the SMS is written to the standard output.
 .TP
-\fB-b\fP \fIbaudrate\fP, \fB--baudrate\fP \fIbaudrate\fP
+\fB\-b\fP \fIbaudrate\fP, \fB\-\-baudrate\fP \fIbaudrate\fP
 The baud rate to use.
 .TP
-\fB-c\fP \fIconcatenatedID\fP, \fB--concatenate\fP \fIconcatenatedID\fP
+\fB\-c\fP \fIconcatenatedID\fP, \fB\-\-concatenate\fP \fIconcatenatedID\fP
 If an ID is given, large SMSs are split into several, concatenated
 SMSs. All SMSs have the same ID and are numbered consecutively so that 
 the receiving phone can assemble them in the correct order. IDs must
@@ -108,43 +108,43 @@ since all the numbering and ID information is
 carried in the user data header element at the beginning of the SMS
 user data. This information may show up as garbage in such phones.
 .TP
-\fB-C\fP \fIservice centre address\fP, \fB--sca\fP \fIservice centre address\fP
+\fB\-C\fP \fIservice centre address\fP, \fB\-\-sca\fP \fIservice centre address\fP
 Sets the service centre address to use for all SUBMIT SMSs (may not
 work with some phones).
 .TP
-\fB-d\fP \fIdevice\fP, \fB--device\fP \fIdevice\fP
+\fB\-d\fP \fIdevice\fP, \fB\-\-device\fP \fIdevice\fP
 The device to which the GSM modem is connected. The default is
 \fI/dev/mobilephone\fP.
 .TP
-\fB-D\fP, \fB--direct\fP
+\fB\-D\fP, \fB\-\-direct\fP
 Enables direct routing of incoming SMS messages to the TE. This is not
 supported by many mobile phone/GSM modem combinations. Therefore, the
 default is to store incoming SMS temporarily before processing them in 
 the indicated store.
 .TP
-\fB-f\fP, \fB--flush\fP
+\fB\-f\fP, \fB\-\-flush\fP
 This option causes \fIgsmsmsd\fP to flush (ie. read and erase)
 existing SMS messages from
-the SMS store selected by the \fB--store\fP option. The action given
-by the \fB--action\fP option is executed on each of the flushed
+the SMS store selected by the \fB\-\-store\fP option. The action given
+by the \fB\-\-action\fP option is executed on each of the flushed
 SMS. This option should be used to ensure that enough space is
 available in the SMS store for temporary storage of incoming SMS,
 otherwise incoming SMS might be ignored silently by the ME.
 .TP
-\fB-h\fP, \fB--help\fP
+\fB\-h\fP, \fB\-\-help\fP
 Prints an option summary.
 .TP
-\fB-I\fP \fIinit string\fP, \fB--init\fP \fIinit string\fP
+\fB\-I\fP \fIinit string\fP, \fB\-\-init\fP \fIinit string\fP
 Initialization string to send to the TA (default: "E0"). Note that the
 sequence "ATZ" is sent first.
 .TP
-\fB-r\fP, \fB--requeststat\fP
+\fB\-r\fP, \fB\-\-requeststat\fP
 Request status reports for sent SMS. Note: This option only makes
 sense if the phone supports routing of status reports to the
 TE. Otherwise the status reports might show on the phone's display or
 get lost.
 .TP
-\fB-s\fP \fIspool directory\fP, \fB--spool\fP \fIspool directory\fP
+\fB\-s\fP \fIspool directory\fP, \fB\-\-spool\fP \fIspool directory\fP
 This option sets the spool directory where \fIgsmsmsd\fP expects SMS
 messages to send. The format of SMS files is very simple: The first
 line contains the phone number of the recipient. Everything else after 
@@ -154,18 +154,18 @@ for details on the SMS text character set and maximum length.
 \fIgsmsmsd\fP polls the spool directory every 5 seconds. Sent
 SMS message files are removed.
 .TP
-\fB-t\fP \fISMS store name\fP, \fB--store\fP \fISMS store name\fP
-The name of the SMS store to read from (for the \fB--flush\fP option)
+\fB\-t\fP \fISMS store name\fP, \fB\-\-store\fP \fISMS store name\fP
+The name of the SMS store to read from (for the \fB\-\-flush\fP option)
 or write to (for temporary SMS storage). This option must
-be must be used in conjunction with the \fB--flush\fP option. If this
+be must be used in conjunction with the \fB\-\-flush\fP option. If this
 option is omitted the ME uses it's default SMS store for temporary
 storage of incoming SMS. A commonly available message
 store is "SM" (SIM card).
 .TP
-\fB-v\fP, \fB--version\fP
+\fB\-v\fP, \fB\-\-version\fP
 Prints the program version.
 .TP
-\fB-X\fP, \fB--xonxoff\fP
+\fB\-X\fP, \fB\-\-xonxoff\fP
 Uses software handshaking (XON/XOFF) for accessing the device.
 .PP
 .SH EXAMPLES
@@ -173,14 +173,14 @@ The following invocation of \fIgsmsmsd\fP sends each incoming SMS message
 as a mail to the user "smsadmin":
 .PP
 .nf
-gsmsmsd -d /dev/ttyS2 -b 19200 -a "mail smsadmin"
+gsmsmsd \-d /dev/ttyS2 \-b 19200 \-a "mail smsadmin"
 .fi
 .PP
 This is the format of SMS deliver messages as output from \fIgsmsmsd\fP:
 .PP
 .nf
 ----------------------------------------------------------------
-Message type: SMS-DELIVER
+Message type: SMS\-DELIVER
 SC address: '491710762100'
 More messages to send: 1
 Reply path: 0
@@ -202,7 +202,7 @@ This is the format of SMS status report messages as output from \fIgsmsmsd\fP:
 .PP
 .nf
 ----------------------------------------------------------------
-Message type: SMS-STATUS-REPORT
+Message type: SMS\-STATUS\-REPORT
 SC address: ''
 More messages to send: 0
 Status report qualifier: 0
@@ -219,8 +219,8 @@ messages from the "SM" SMS store and looks in the "/tmp/spooldir"
 directory for SMS to send:
 .PP
 .nf
-gsmsmsd -d /dev/ttyS2 --spool /tmp/spooldir -f --store sm \\
---action 'mail smsadmin'
+gsmsmsd \-d /dev/ttyS2 \-\-spool /tmp/spooldir \-f \-\-store sm \\
+\-\-action 'mail smsadmin'
 .fi
 .PP
 .SH FILES

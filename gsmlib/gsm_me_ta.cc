@@ -19,6 +19,8 @@
 #include <gsmlib/gsm_parser.h>
 #include <gsmlib/gsm_sysdep.h>
 
+#include <cstdlib>
+
 using namespace std;
 using namespace gsmlib;
 

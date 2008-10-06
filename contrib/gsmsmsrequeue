@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 #
 # /usr/bin/gsmsmsrequeue: Re-queues failed SMS
 #
@@ -9,7 +9,8 @@ PRIORITIES=3
 SMSADMIN=root
 SUBJECT="SMS delivery report:"
 
-function send_notify {
+send_notify()
+{
   tmpfile="$SPOOLDIR/tmp/"`basename "$1"`
   status="$2"
   if mv "$1" "$tmpfile" 2>/dev/null; then
@@ -21,7 +22,10 @@ function send_notify {
     rm "$tmpfile"
   fi
 }
-function do_accounting { true; }
+do_accounting()
+{
+  true;
+}
 
 test -r /etc/default/gsm-utils && . /etc/default/gsm-utils
 

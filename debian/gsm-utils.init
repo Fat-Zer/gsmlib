@@ -1,4 +1,13 @@
 #! /bin/sh
+### BEGIN INIT INFO
+# Provides:          gsm-utils
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start daemon at boot time
+# Description:       Enable service provided by daemon.
+### END INIT INFO
 #
 # /etc/init.d/gsm-utils: Controls the GSM SMS send daemon
 #
@@ -10,6 +19,12 @@ NAME=gsmsmsd
 DESC="GSM SMS send daemon"
 
 test -x $DAEMON || exit 0
+
+if [ "$RUNGSMSMS" != "yes" ];then
+        echo "GSM SMS deamon not yet configured. Edit /etc/default/gsm-utils first."
+        exit 0
+fi
+
 
 PHONEDEV=/dev/mobilephone  # or /dev/ttyS0 or /dev/ircomm0
 BAUDRATE=9600
@@ -55,11 +70,11 @@ case "$1" in
 	;;
   restart|force-reload)
 	echo -n "Restarting $DESC: $NAME"
-	start-stop-daemon --start --quiet --pidfile /var/run/gsm-utils/$NAME.pid \
-		--make-pidfile --background $STARTOPTS --exec $DAEMON -- $OPTIONS
+	start-stop-daemon --stop --quiet --pidfile /var/run/gsm-utils/$NAME.pid \
+		--make-pidfile --background --exec $DAEMON -- $OPTIONS
 	sleep 5
 	start-stop-daemon --start --quiet --pidfile /var/run/gsm-utils/$NAME.pid \
-		--make-pidfile --background --exec $DAEMON -- $OPTIONS
+		--make-pidfile --background $STARTOPTS --exec $DAEMON -- $OPTIONS
 	echo "."
 	;;
   *)

@@ -27,6 +27,7 @@
 #include <sys/ioctl.h>
 #include <signal.h>
 #include <pthread.h>
+#include <cstring>
 
 using namespace std;
 using namespace gsmlib;

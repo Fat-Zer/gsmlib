@@ -10,4 +10,4 @@ SUBJECT="SMS delivery report:"
 
 SMSPROCESSOR=""  # or /usr/bin/gsmsmsprocessor
 
-function do_accounting { true; }  # it's your turn
+do_accounting () { true; }  # it's your turn

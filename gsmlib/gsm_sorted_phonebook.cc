@@ -20,6 +20,7 @@
 #include <iostream>
 #include <fstream>
 #include <limits.h>
+#include <cstring>
 
 const int MAX_LINE_SIZE = 1000;
 

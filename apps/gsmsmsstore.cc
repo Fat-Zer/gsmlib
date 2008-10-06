@@ -292,19 +292,14 @@ int main(int argc, char *argv[])
         sourceStore = new SortedSMSStore(sourceMeTa->getSMSStore(storeName));
       }
       
-    // make sure destination file exists
+    // make sure destination file exists if specified
+    // Use isFile() for its exception-throwing properties, and discard
+    // return value cos we don't care (yet) whether it's a device or a
+    // regular file.
     if (destination != "")
-    {
-      try
-      {
-        ofstream f(destination.c_str(), ios::out | ios::app | ios::binary);
-      }
-      catch (exception)
-      {
-      }
-    }
+      isFile(destination);
 
-    // start accessing destination destination store or file
+    // start accessing destination store or file
     if (operation == CopyOp || operation == BackupOp || operation == AddOp ||
         operation == DeleteOp)
       if (destination == "-")

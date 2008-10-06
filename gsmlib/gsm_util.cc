@@ -35,6 +35,7 @@
 #define __USE_GNU
 #define _GNU_SOURCE
 #endif
+#include <cstdlib>
 #include <stdio.h>
 #include <sys/stat.h>
 

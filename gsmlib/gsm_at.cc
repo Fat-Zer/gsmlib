@@ -106,11 +106,27 @@ string GsmAt::chat(string atCommand, string response, string &pdu,
   putLine("AT" + atCommand);
   // and gobble up CR/LF (and possibly echoed characters if echo can't be
   // switched off)
+  // Also, some mobiles (e.g., Sony Ericsson K800i) respond to commands
+  // like "at+cmgf=0" with "+CMGF: 0" on success as well as the "OK"
+  // status -- so gobble that (but not if that sort of response was expected)
+  // FIXME: this is a gross hack, should be done via capabilities or sth
+  #include <string>
+  string::size_type loc = atCommand.find( "=", 1 );
+  string expect;
+  if (loc != string::npos) {
+      expect = atCommand;
+      expect.replace(loc, 1, " ");
+      expect.insert(loc, ":");
+  } else {
+      expect = "";
+  }
   do
   {
     s = normalize(getLine());
   }
-  while (s.length() == 0 || s == "AT" + atCommand);
+  while (s.length() == 0 || s == "AT" + atCommand || 
+         ((response.length() == 0 || !matchResponse(s, response)) &&
+          (expect.length() > 0 && matchResponse(s, expect))));
 
   // handle errors
   if (matchResponse(s, "+CME ERROR:") || matchResponse(s, "+CMS ERROR:"))

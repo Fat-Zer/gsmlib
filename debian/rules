@@ -1,12 +1,7 @@
 #!/usr/bin/make -f
-# Sample debian/rules that uses debhelper.
-# GNU copyright 1997 to 1999 by Joey Hess.
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
-
-# This is the debhelper compatability version to use.
-export DH_COMPAT=3
 
 # shared library versions, option 1
 #version=2.0.5
@@ -42,7 +37,7 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
-	CFLAGS=$(CFLAGS) CXXFLAGS=$(CXXFLAGS) INSTALL_PROGRAM=$(INSTALL_PROGRAM) \
+	CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" INSTALL_PROGRAM=$(INSTALL_PROGRAM) \
 	./configure $(confflags) --prefix=/usr --mandir=\$${prefix}/share/man \
 	--infodir=\$${prefix}/share/info
 
@@ -62,9 +57,7 @@ clean:
 	dh_testroot
 
 	# Add here commands to clean up after the build process.
-	#-$(MAKE) clean
-	#-$(MAKE) -C intl distclean
-	-$(MAKE) distclean
+	[ ! -f Makefile ] || $(MAKE) distclean
 	rm -f build-stamp configure-stamp config.log config.status po/de.gmo
 
 	-test -r /usr/share/misc/config.sub && \
@@ -85,8 +78,6 @@ install: build
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
 	chrpath -d debian/tmp/usr/bin/*
 	cp contrib/gsmsmsspool contrib/gsmsmsrequeue debian/tmp/usr/bin
-	cp contrib/gsm-utils.init contrib/gsm-utils.default debian
-	cp contrib/gsm-utils.cron.d debian
 
 
 # Build architecture-independent files here.
@@ -115,12 +106,9 @@ binary-arch: build install
 	usr/bin
 
 
-#	dh_installdebconf	
 	dh_installdocs
 	dh_installexamples
 	dh_installmenu
-#	dh_installemacsen
-#	dh_installpam
 	dh_installinit
 	dh_installcron
 	dh_installman -pgsm-utils debian/*.1 debian/tmp/usr/share/man/man*/*
@@ -132,7 +120,6 @@ binary-arch: build install
 	dh_fixperms
 	dh_makeshlibs -V
 	dh_installdeb
-#	dh_perl
 	dh_shlibdeps -ldebian/libgsmme1c2a/usr/lib
 	dh_gencontrol
 	dh_md5sums

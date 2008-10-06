@@ -23,6 +23,7 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
+#include <climits>
 #include <string>
 using namespace std;
 using namespace gsmlib;

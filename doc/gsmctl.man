@@ -62,7 +62,7 @@ given on the command line (usually an GSM modem) using the specified
 If no
 .I device
 is given, the device
-.I/dev/mobilephone
+.I /dev/mobilephone
 is used. If no 
 .I baudrate
 is given, a default baud rate of 38400 is used.
@@ -282,14 +282,14 @@ ME is waiting SIM PIN to be given.
 .I SIM PUK
 ME is waiting SIM PUK to be given.
 .TP
-.I PH-SIM PIN
-ME is waiting phone-to-SIM card password to be given.
+.I PH\-SIM PIN
+ME is waiting phone/-to/-SIM card password to be given.
 .TP
-.I PH-FSIM PIN
-ME is waiting phone-to-very first SIM card password to be given.
+.I PH/-FSIM PIN
+ME is waiting phone/-to/-very first SIM card password to be given.
 .TP
-.I PH-FSIM PUK
-ME is waiting phone-to-very first SIM card unblocking password to be
+.I PH/-FSIM PUK
+ME is waiting phone/-to/-very first SIM card unblocking password to be
 given.
 .TP
 .I SIM PIN2
@@ -298,13 +298,13 @@ ME is waiting SIM PIN2 to be given.
 .I SIM PUK2
 ME is waiting SIM PUK2 to be given.
 .TP
-.I PH-NET PIN
+.I PH/-NET PIN
 ME is waiting network personalisation password to be given.
 .TP
-.I PH-NET PUK
+.I PH/-NET PUK
 ME is waiting network personalisation unblocking password to be given.
 .TP
-.I PH-NETSUB PIN
+.I PH/-NETSUB PIN
 ME is waiting network subset personalisation password to be given.
 .RE
 .TP 7
@@ -539,11 +539,11 @@ The output could look like (lines edited to fit):
 .HP
 <ME3>  Serial Number: 448058511817585
 .HP
-<OP0>  Status: available  Long name: 'D1-TELEKOM' Short name: '' Numeric name: 26201
+<OP0>  Status: available  Long name: 'D1/-TELEKOM' Short name: '' Numeric name: 26201
 .HP
 <OP1>  Status: forbidden  Long name: 'D2  PRIVAT' Short name: '' Numeric name: 26202
 .HP
-<CURROP0>  Long name: 'D1-TELEKOM'   Short name: '' Numeric name: 26201 Mode: automatic
+<CURROP0>  Long name: 'D1/-TELEKOM'   Short name: '' Numeric name: 26201 Mode: automatic
 .HP
 <FLSTAT0>  'CS'
 .HP

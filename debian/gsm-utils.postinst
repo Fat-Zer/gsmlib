@@ -3,7 +3,7 @@
 # create gsmsms group if necessary.
 if ! grep -q ^gsmsms: /etc/group; then
 #      echo Adding system group: gsmsms.
-       addgroup gsmsms 
+       addgroup --system gsmsms
 fi
 
 # create gsmsms user if necessary.

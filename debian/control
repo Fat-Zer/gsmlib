@@ -3,20 +3,19 @@ Section: comm
 Priority: extra
 Maintainer: Mark Purcell <msp@debian.org>
 Build-Depends: debhelper (>= 3.0.0), chrpath
-Standards-Version: 3.2.1
+Standards-Version: 3.7.3
+Homepage: http://www.pxh.de/fs/gsmlib/
 
 Package: libgsmme-dev
 Section: libdevel
 Architecture: any
-Depends: libgsmme1c2a (= ${Source-Version}), libc6-dev
+Depends: libgsmme1c2a (= ${binary:Version}), libc6-dev
 Description: Header files and static libraries for gsmlib
  Headers and static libraries for use when compiling programs with 
  gsmlib.  
  .
  gsmlib is a library for access to a GSM mobile phone using the
  standards ETSI GSM 07.07, ETSI GSM 07.05, and others. 
- .
- Website: http://www.pxh.de/fs/gsmlib/
 
 Package: libgsmme1c2a
 Conflicts: libgsmme1, libgsmme1c102, libgsmme1c2
@@ -34,8 +33,6 @@ Description: GSM mobile phone access library
   * sending and reception of SMS messages
  .
  gsmlib uses standard ETSI GSM 07.07, ETSI GSM 07.05, and others.
- .
- Website: http://www.pxh.de/fs/gsmlib/
 
 Package: gsm-utils
 Section: comm
@@ -46,6 +43,3 @@ Description: GSM mobile phone access applications
  GSM modem or IrDA.  Functions include: modification of phone books and
  reading, writing, sending and receiving SMS messages.  Uses the GSM
  standards ETSI GSM 07.07, ETSI GSM 07.05, and others.  
- .
- Website: http://www.pxh.de/fs/gsmlib/
-

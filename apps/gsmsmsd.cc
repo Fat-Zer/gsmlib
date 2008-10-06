@@ -40,6 +40,7 @@
 #include <iostream>
 #include <gsmlib/gsm_me_ta.h>
 #include <gsmlib/gsm_event.h>
+#include <cstring>
 
 using namespace std;
 using namespace gsmlib;
@@ -412,6 +413,9 @@ int main(int argc, char *argv[])
         break;
       case 's':
         spoolDir = optarg;
+        break;
+      case 'L':
+        enableSyslog = true;
         break;
       case 'S':
         sentDir = optarg;

@@ -1,4 +1,13 @@
 #! /bin/sh
+### BEGIN INIT INFO
+# Provides:          gsm-utils
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start daemon at boot time
+# Description:       Enable service provided by daemon.
+### END INIT INFO
 #
 # /etc/init.d/gsm-utils: Controls the GSM SMS send daemon
 #
@@ -55,7 +64,7 @@ case "$1" in
 	;;
   restart|force-reload)
 	echo -n "Restarting $DESC: $NAME"
-	start-stop-daemon --start --quiet --pidfile /var/run/gsm-utils/$NAME.pid \
+	start-stop-daemon --stop --quiet --pidfile /var/run/gsm-utils/$NAME.pid \
 		--make-pidfile --background $STARTOPTS --exec $DAEMON -- $OPTIONS
 	sleep 5
 	start-stop-daemon --start --quiet --pidfile /var/run/gsm-utils/$NAME.pid \

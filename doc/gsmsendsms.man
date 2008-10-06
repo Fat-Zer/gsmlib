@@ -17,26 +17,26 @@ gsmsendsms \- SMS message sender utility
 .PP
 .SH SYNOPSIS
 .B gsmsendsms
-[ \fB-b\fP \fIbaudrate\fP ]
-[ \fB--baudrate\fP \fIbaudrate\fP ]
-[ \fB-c\fP \fIconcatenatedID\fP ]
-[ \fB--concatenate\fP \fIconcatenatedID\fP ]
-[ \fB-C\fP \fIservice centre address\fP ]
-[ \fB--sca\fP \fIservice centre address\fP ]
-[ \fB-d\fP \fIdevice\fP ]
-[ \fB--device\fP \fIdevice\fP ]
-[ \fB-h\fP ]
-[ \fB--help\fP ]
-[ \fB-I\fP \fIinit string\fP ]
-[ \fB--init\fP \fIinit string\fP ]
-[ \fB-r\fP ]
-[ \fB--requeststat\fP ]
-[ \fB-t\fP ]
-[ \fB--test\fP ]
-[ \fB-v\fP ]
-[ \fB--version\fP ]
-[ \fB-X\fP ]
-[ \fB--xonxoff\fP ]
+[ \fB\-b\fP \fIbaudrate\fP ]
+[ \fB\-\-baudrate\fP \fIbaudrate\fP ]
+[ \fB\-c\fP \fIconcatenatedID\fP ]
+[ \fB\-\-concatenate\fP \fIconcatenatedID\fP ]
+[ \fB\-C\fP \fIservice centre address\fP ]
+[ \fB\-\-sca\fP \fIservice centre address\fP ]
+[ \fB\-d\fP \fIdevice\fP ]
+[ \fB\-\-device\fP \fIdevice\fP ]
+[ \fB\-h\fP ]
+[ \fB\-\-help\fP ]
+[ \fB\-I\fP \fIinit string\fP ]
+[ \fB\-\-init\fP \fIinit string\fP ]
+[ \fB\-r\fP ]
+[ \fB\-\-requeststat\fP ]
+[ \fB\-t\fP ]
+[ \fB\-\-test\fP ]
+[ \fB\-v\fP ]
+[ \fB\-\-version\fP ]
+[ \fB\-X\fP ]
+[ \fB\-\-xonxoff\fP ]
 \fIphonenumber\fP
 [ \fItext\fP ]
 .PP
@@ -51,7 +51,7 @@ no \fIbaudrate\fP is given, a default baud rate of 38400 is used.
 \fIgsmsendsms\fP accepts a phone number (recipient address) and the
 short message text as parameters. The text may have a maximum length
 of 160 characters which is the maximum SMS message length. The GSM
-default alphabet is used for encoding. ASCII and Latin-1 characters
+default alphabet is used for encoding. ASCII and Latin\-1 characters
 that can not be encoded using the GSM default alphabet are converted
 to the GSM delta character (GSM code 16).
 .PP
@@ -60,10 +60,10 @@ terminates on error the error code 1 is returned.
 .PP
 .SH OPTIONS
 .TP
-\fB-b\fP \fIbaudrate\fP, \fB--baudrate\fP \fIbaudrate\fP
+\fB\-b\fP \fIbaudrate\fP, \fB\-\-baudrate\fP \fIbaudrate\fP
 The baud rate to use.
 .TP
-\fB-c\fP \fIconcatenatedID\fP, \fB--concatenate\fP \fIconcatenatedID\fP
+\fB\-c\fP \fIconcatenatedID\fP, \fB\-\-concatenate\fP \fIconcatenatedID\fP
 If an ID is given, large SMSs are split into several, concatenated
 SMSs. All SMSs have the same ID and are numbered consecutively so that 
 the receiving phone can assemble them in the correct order. IDs must
@@ -73,37 +73,37 @@ since all the numbering and ID information is
 carried in the user data header element at the beginning of the SMS
 user data. This information may show up as garbage in such phones.
 .TP
-\fB-C\fP \fIservice centre address\fP, \fB--sca\fP \fIservice centre address\fP
+\fB\-C\fP \fIservice centre address\fP, \fB\-\-sca\fP \fIservice centre address\fP
 Sets the service centre address to use for all SUBMIT SMSs (may not
 work with some phones).
 .TP
-\fB-d\fP \fIdevice\fP, \fB--device\fP \fIdevice\fP
+\fB\-d\fP \fIdevice\fP, \fB\-\-device\fP \fIdevice\fP
 The device to which the GSM modem is connected. The default is
 \fI/dev/mobilephone\fP.
 .TP
-\fB-h\fP, \fB--help\fP
+\fB\-h\fP, \fB\-\-help\fP
 Prints an option summary.
 .TP
-\fB-I\fP \fIinit string\fP, \fB--init\fP \fIinit string\fP
+\fB-I\fP \fIinit string\fP, \fB\-\-init\fP \fIinit string\fP
 Initialization string to send to the TA (default: "E0"). Note that the
 sequence "ATZ" is sent first.
 .TP
-\fB-r\fP, \fB--requeststat\fP
+\fB\-r\fP, \fB\-\-requeststat\fP
 Request status reports for sent SMS.
 .TP
-\fB-t\fP, \fB--test\fP
+\fB\-t\fP, \fB\-\-test\fP
 If this option is given the text is converted
-to the GSM default alphabet and back to Latin-1. This option can be
-used to find out how ASCII or Latin-1 texts are converted to the GSM
+to the GSM default alphabet and back to Latin\-1. This option can be
+used to find out how ASCII or Latin\-1 texts are converted to the GSM
 default alphabet. Characters that can not be converted to the GSM default
-alphabet are reported as ASCII code 172 (Latin-1 boolean "not")
+alphabet are reported as ASCII code 172 (Latin\-1 boolean "not")
 after this double conversion. No SMS messages are sent, a connection
 to a mobile phone is not established.
 .TP
-\fB-v\fP, \fB--version\fP
+\fB\-v\fP, \fB\-\-version\fP
 Prints the program version.
 .TP
-\fB-X\fP, \fB--xonxoff\fP
+\fB\-X\fP, \fB\-\-xonxoff\fP
 Uses software handshaking (XON/XOFF) for accessing the device.
 .PP
 .SH EXAMPLES
@@ -111,8 +111,8 @@ The following two invocations of \fIgsmsendsms\fP each send the same
 SMS message to the number "1234":
 .PP
 .nf
-gsmsendsms -d /dev/ttyS2 -b 19200  1234 "This is a test."
-echo "This is a test." | gsmsendsms -d /dev/ttyS2 -b 19200  1234
+gsmsendsms \-d /dev/ttyS2 \-b 19200  1234 "This is a test."
+echo "This is a test." | gsmsendsms \-d /dev/ttyS2 \-b 19200  1234
 .fi
 .PP
 .SH FILES

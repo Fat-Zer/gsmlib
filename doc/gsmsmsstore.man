@@ -15,36 +15,36 @@
 gsmsmsstore \- SMS store manipulation program
 .SH SYNOPSIS
 .B gsmsmsstore
-[ \fB-a\fP ]
-[ \fB--add\fP ]
-[ \fB-b\fP \fIbaudrate\fP ]
-[ \fB--baudrate\fP \fIbaudrate\fP ]
-[ \fB-c\fP ]
-[ \fB--copy\fP ]
-[ \fB-C\fP \fIservice centre address\fP ]
-[ \fB--sca\fP \fIservice centre address\fP ]
-[ \fB-d\fP \fIdestination device or file\fP ]
-[ \fB--destination\fP \fIdestination device or file\fP ]
-[ \fB-h\fP ]
-[ \fB--help\fP ]
-[ \fB-I\fP \fIinit string\fP ]
-[ \fB--init\fP \fIinit string\fP ]
-[ \fB-k\fP ]
-[ \fB--backup\fP ]
-[ \fB-l\fP ]
-[ \fB--list\fP ]
-[ \fB-s\fP \fIsource device or file\fP ]
-[ \fB--source\fP \fIsource device or file\fP ]
-[ \fB-t\fP \fISMS store name\fP ]
-[ \fB--store\fP \fISMS store name\fP ]
-[ \fB-v\fP ]
-[ \fB--version\fP ]
-[ \fB-V\fP ]
-[ \fB--verbose\fP ]
-[ \fB-x\fP ]
-[ \fB--delete\fP ]
-[ \fB-X\fP ]
-[ \fB--xonxoff\fP ]
+[ \fB\-a\fP ]
+[ \fB\-\-add\fP ]
+[ \fB\-b\fP \fIbaudrate\fP ]
+[ \fB\-\-baudrate\fP \fIbaudrate\fP ]
+[ \fB\-c\fP ]
+[ \fB\-\-copy\fP ]
+[ \fB\-C\fP \fIservice centre address\fP ]
+[ \fB\-\-sca\fP \fIservice centre address\fP ]
+[ \fB\-d\fP \fIdestination device or file\fP ]
+[ \fB\-\-destination\fP \fIdestination device or file\fP ]
+[ \fB\-h\fP ]
+[ \fB\-\-help\fP ]
+[ \fB\-I\fP \fIinit string\fP ]
+[ \fB\-\-init\fP \fIinit string\fP ]
+[ \fB\-k\fP ]
+[ \fB\-\-backup\fP ]
+[ \fB\-l\fP ]
+[ \fB\-\-list\fP ]
+[ \fB\-s\fP \fIsource device or file\fP ]
+[ \fB\-\-source\fP \fIsource device or file\fP ]
+[ \fB\-t\fP \fISMS store name\fP ]
+[ \fB\-\-store\fP \fISMS store name\fP ]
+[ \fB\-v\fP ]
+[ \fB\-\-version\fP ]
+[ \fB\-V\fP ]
+[ \fB\-\-verbose\fP ]
+[ \fB\-x\fP ]
+[ \fB\-\-delete\fP ]
+[ \fB\-X\fP ]
+[ \fB\-\-xonxoff\fP ]
 { \fIindices\fP }
 [ \fIphonenumber\fP \fItext\fP ]
 .PP
@@ -57,19 +57,19 @@ to add SMS submit messages to a store.
 \fIgsmsmsstore\fP reads entries from the source which can be a mobile
 phone (if a serial device file is given) or a file (if a file name is
 given). The source is never modified. \fIgsmsmsstore\fP writes SMS
-messages to a destination file or device in the case of \fB--copy\fP,
-\fB--backup\fP, and \fB--add\fP.
+messages to a destination file or device in the case of \fB\-\-copy\fP,
+\fB\-\-backup\fP, and \fB\-\-add\fP.
 .PP
-The \fB--list\fP option does not change any file but just lists the
+The \fB\-\-list\fP option does not change any file but just lists the
 contents to standard output.
 .PP
-The \fB--backup\fP and \fB--copy\fP options require both source and
-destination files or devices. The \fB--list\fP option requires a
-source. The \fB--add\fP and \fB--delete\fP options require a
+The \fB\-\-backup\fP and \fB\-\-copy\fP options require both source and
+destination files or devices. The \fB\-\-list\fP option requires a
+source. The \fB\-\-add\fP and \fB\-\-delete\fP options require a
 destination file or device.
 .PP
-If "-" is given as the parameter for the \fB--source\fP or
-\fB--destination\fP options, the SMS store is read from standard input 
+If "\-" is given as the parameter for the \fB\-\-source\fP or
+\fB\-\-destination\fP options, the SMS store is read from standard input 
 and/or written to standard output, respectively.
 .PP
 SMS message files are not human-readable.
@@ -79,61 +79,61 @@ terminates on error the error code 1 is returned.
 .PP
 .SH OPTIONS
 .TP
-\fB-a\fP, \fB--add\fP
+\fB\-a\fP, \fB\-\-add\fP
 Adds an SMS submit message with recipient address \fIphonenumber\fP and 
 text \fItext\fP to the destination.
 .TP
-\fB-b\fP \fIbaudrate\fP, \fB--baudrate\fP \fIbaudrate\fP
+\fB\-b\fP \fIbaudrate\fP, \fB\-\-baudrate\fP \fIbaudrate\fP
 The baud rate to use. The default baudrate is 38400.
 .TP
-\fB-c\fP, \fB--copy\fP
+\fB\-c\fP, \fB\-\-copy\fP
 This causes the contents of the source to be copied to the
 destination. After this operation the destination has exactly the same
 contents as the source.  If \fIindices\fP are given on the command
 line only those SMS messages denoted by the indices are copied to the
 destination.
 .TP
-\fB-C\fP \fIservice centre address\fP, \fB--sca\fP \fIservice centre address\fP
+\fB\-C\fP \fIservice centre address\fP, \fB\-\-sca\fP \fIservice centre address\fP
 Sets the service centre address to use for all SUBMIT SMSs (may not
 work with some phones).
 .TP
-\fB-d\fP \fIdestination\fP, \fB--destination\fP \fIdestination\fP
+\fB\-d\fP \fIdestination\fP, \fB\-\-destination\fP \fIdestination\fP
 The destination device or file.
 .TP
-\fB-h\fP, \fB--help\fP
+\fB\-h\fP, \fB\-\-help\fP
 Prints an option summary.
 .TP
-\fB-I\fP \fIinit string\fP, \fB--init\fP \fIinit string\fP
+\fB\-I\fP \fIinit string\fP, \fB\-\-init\fP \fIinit string\fP
 Initialization string to send to the TA (default: "E0"). Note that the
 sequence "ATZ" is sent first.
 .TP
-\fB-k\fP, \fB--backup\fP
+\fB\-k\fP, \fB\-\-backup\fP
 This causes those entries to be added from the source to the
 destination that are not already present in the destination.  If
 \fIindices\fP are given on the command line only those SMS messages
 denoted by the indices are backed up (ie. added) to the destination.
 .TP
-\fB-l\fP, \fB--list\fP
+\fB\-l\fP, \fB\-\-list\fP
 Prints out the entire contents of the source in human-readable form.
 .TP
-\fB-s\fP \fIsource\fP, \fB--source\fP \fIsource\fP
+\fB\-s\fP \fIsource\fP, \fB\-\-source\fP \fIsource\fP
 The source device or file.
 .TP
-\fB-t\fP \fISMS store name\fP, \fB--store\fP \fISMS store name\fP
+\fB\-t\fP \fISMS store name\fP, \fB\-\-store\fP \fISMS store name\fP
 The name of the SMS store to read from or write to. This information is
 only used for device sources and destinations. A commonly available message
 store is "SM" (SIM card).
 .TP
-\fB-v\fP, \fB--version\fP
+\fB\-v\fP, \fB\-\-version\fP
 Prints the program version.
 .TP
-\fB-V\fP, \fB--verbose\fP
+\fB\-V\fP, \fB\-\-verbose\fP
 Prints out a detailed progress report.
 .TP
-\fB-x\fP, \fB--delete\fP
+\fB\-x\fP, \fB\-\-delete\fP
 Delete the SMS messages as denoted by the \fIindices\fP from the destination.
 .TP
-\fB-X\fP, \fB--xonxoff\fP
+\fB\-X\fP, \fB\-\-xonxoff\fP
 Uses software handshaking (XON/XOFF) for accessing the device.
 .PP
 .SH EXAMPLES
@@ -141,15 +141,15 @@ The following command lists all entries in the mobile phone connected
 to \fI/dev/mobilephone\fP to the standard output:
 .PP
 .nf
-gsmsmsstore -b 19200 -s /dev/mobilephone -t SM -l
+gsmsmsstore \-b 19200 \-s /dev/mobilephone \-t SM \-l
 .fi
 .PP
 The following adds entries 4, 7, and 10 from the device
 \fI/dev/mobilephone\fP to the file \fIsmsstore\fP:
 .PP
 .nf
-gsmsmsstore -s /dev/mobilephone -d /home/fred/smsstore
-    -t SM -b 4 7 10
+gsmsmsstore \-s /dev/mobilephone \-d /home/fred/smsstore
+    \-t SM \-b 4 7 10
 .fi
 .PP
 .SH AUTHOR
