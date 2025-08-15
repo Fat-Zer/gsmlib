@@ -27,7 +27,8 @@ gsmincludedir =		$(includedir)/gsmlib
 gsminclude_HEADERS =	gsm_sie_me.h
 
 # build programs
-bin_PROGRAMS =		gsmsiectl gsmsiexfer gsmsstk
+bin_PROGRAMS =		gsmsiectl gsmsiexfer # gsmsstk
+# NOTE: the source for gsmsstk was missing from the original tarball
 
 # build gsmsiectl from gsmsiectl.cc and libgsmme.la
 gsmsiectl_SOURCES =	gsmsiectl.cc
@@ -37,8 +38,8 @@ gsmsiectl_LDADD =	libgsmext.la ../gsmlib/libgsmme.la $(INTLLIBS)
 gsmsiexfer_SOURCES =	gsmsiexfer.cc
 gsmsiexfer_LDADD =	libgsmext.la ../gsmlib/libgsmme.la $(INTLLIBS)
 
-# build gsmsstk from gsmsstk.cc and libgsmme.la
-gsmsstk_SOURCES =	gsmsstk.cc
-gsmsstk_LDADD =	../gsmlib/libgsmme.la libgsmext.la $(INTLLIBS)
+# # build gsmsstk from gsmsstk.cc and libgsmme.la
+# gsmsstk_SOURCES =	gsmsstk.cc
+# gsmsstk_LDADD =	../gsmlib/libgsmme.la libgsmext.la $(INTLLIBS)
 
 
