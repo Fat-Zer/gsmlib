@@ -60,7 +60,7 @@ std::string Parser::parseString2(bool stringWithQuotationMarks)
 {
   int c;
   std::string result;
-  if (parseChar('"', true))  // OK, std::string starts and ends with quotation mark
+  if (parseChar('"', true))  // OK, string starts and ends with quotation mark
     if (stringWithQuotationMarks)
     {
       // read till end of line
@@ -117,11 +117,11 @@ int Parser::parseInt2() throw(GsmException)
 void Parser::throwParseException(std::string message) throw(GsmException)
 {
   if (message.length() == 0)
-    throw GsmException(stringPrintf(_("unexpected end of std::string '%s'"),
+    throw GsmException(stringPrintf(_("unexpected end of string '%s'"),
                                     _s.c_str()), ParserError);
   else
     throw GsmException(message +
-                       stringPrintf(_(" (at position %d of std::string '%s')"), _i,
+                       stringPrintf(_(" (at position %d of string '%s')"), _i,
                                     _s.c_str()), ParserError);
 }
 

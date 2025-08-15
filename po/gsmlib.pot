@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-15 07:25+0300\n"
+"POT-Creation-Date: 2025-08-15 18:40+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1255,12 +1255,12 @@ msgstr ""
 
 #: gsmlib/gsm_parser.cc:120
 #, c-format
-msgid "unexpected end of std::string '%s'"
+msgid "unexpected end of string '%s'"
 msgstr ""
 
 #: gsmlib/gsm_parser.cc:124
 #, c-format
-msgid " (at position %d of std::string '%s')"
+msgid " (at position %d of string '%s')"
 msgstr ""
 
 #: gsmlib/gsm_parser.cc:142
