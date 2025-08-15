@@ -239,14 +239,14 @@ void SieMe::setBinary(std::string type, int subtype, BinaryObject obj)
     p += size;
 
     std::cout << "processing " << i << " of " << numberOfPDUs
-        << " of " << size << " bytes." << std::endl;
+              << " of " << size << " bytes." << std::endl;
     std::cout << "^SBNW=\"" + type + "\"," + intToStr(subtype) + ","
-       + intToStr(i) + "," + intToStr(numberOfPDUs) << std::endl;
+                 + intToStr(i) + "," + intToStr(numberOfPDUs) << std::endl;
     std::cout << pdu << std::endl;
 
     _at->sendPdu("^SBNW=\"" + type + "\"," + intToStr(subtype) + ","
-                + intToStr(i) + "," + intToStr(numberOfPDUs), "",
-                pdu, true);
+                   + intToStr(i) + "," + intToStr(numberOfPDUs), "",
+                 pdu, true);
     std::cout << "OK" << std::endl;
   }
 }

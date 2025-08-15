@@ -353,31 +353,31 @@ unsigned long SMSDecoder::getTimeZone(bool &negativeTimeZone)
   unsigned long result = 0;
   alignOctet();
   for (unsigned short i = 0; i < 2; ++i)
+  {
+    if (_bi == 0)
     {
-      if (_bi == 0)
-	{
-	  if (_op >= _maxop)
-	    throw GsmException(_("premature end of PDU"), SMSFormatError);
-	  // bits 0..3 are most significant
-	  if (i == 0)
-	    {                         // get sign
-	      result = result * 10 + (*_op & 0x7);
-	      negativeTimeZone = ((*_op & 0x8) == 0);
-	    }
-	  else
-	    result = result * 10 + (*_op & 0xf);
-	  _bi = 4;
-	}
+      if (_op >= _maxop)
+        throw GsmException(_("premature end of PDU"), SMSFormatError);
+      // bits 0..3 are most significant
+      if (i == 0)
+      {                         // get sign
+        result = result * 10 + (*_op & 0x7);
+        negativeTimeZone = ((*_op & 0x8) == 0);
+      }
       else
-	{
-	  if (_op >= _maxop)
-	    throw GsmException(_("premature end of PDU"), SMSFormatError);
-	  // bits 4..7 are least significant
-	  result = result * 10 + (*_op >> 4);
-	  _bi = 0;
-	  ++_op;
-	}
+        result = result * 10 + (*_op & 0xf);
+      _bi = 4;
     }
+    else
+    {
+      if (_op >= _maxop)
+        throw GsmException(_("premature end of PDU"), SMSFormatError);
+      // bits 4..7 are least significant
+      result = result * 10 + (*_op >> 4);
+      _bi = 0;
+      ++_op;
+    }
+  }
   alignOctet();
   return result * 15;           // compute minutes
 }
@@ -577,10 +577,10 @@ void SMSEncoder::setAddress(Address &address, bool scAddressFormat)
     {
       unsigned int numberLen = address._number.length();
       if (numberLen == 0)
-	{
-	  setOctet(0);              // special case: use default SC address
-	  return;                   // (set by +CSCA=)
-	}
+      {
+        setOctet(0);              // special case: use default SC address
+        return;                   // (set by +CSCA=)
+      }
       setOctet(numberLen / 2 + numberLen % 2 + 1);
       // not supported for SCA format
       assert(address._type != Address::Alphanumeric);
@@ -599,12 +599,12 @@ void SMSEncoder::setAddress(Address &address, bool scAddressFormat)
   if (address._number.length() > 0)
     {
       if (address._type == Address::Alphanumeric)
-	{
-	  markSeptet();
-	  setString(latin1ToGsm(address._number));
-	}
+      {
+        markSeptet();
+        setString(latin1ToGsm(address._number));
+      }
       else
-	setSemiOctets(address._number);
+        setSemiOctets(address._number);
     }
   alignOctet();
 }
