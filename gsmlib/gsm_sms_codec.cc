@@ -362,7 +362,7 @@ unsigned long SMSDecoder::getTimeZone(bool &negativeTimeZone)
       if (i == 0)
       {                         // get sign
         result = result * 10 + (*_op & 0x7);
-        negativeTimeZone = ((*_op & 0x8) == 0);
+        negativeTimeZone = !!(*_op & 0x8);
       }
       else
         result = result * 10 + (*_op & 0xf);
@@ -549,7 +549,7 @@ void SMSEncoder::setSemiOctetsInteger(unsigned long intValue,
 void SMSEncoder::setTimeZone(bool negativeTimeZone, unsigned long timeZone)
 {
   setSemiOctetsInteger(timeZone / 15, 2);
-  if (!negativeTimeZone)
+  if (negativeTimeZone)
     *(_op - 1) |= 8;
 }
 
