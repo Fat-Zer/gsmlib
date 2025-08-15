@@ -109,23 +109,23 @@ std::string Timestamp::toString(bool appendTimeZone) const
   t.tm_isdst = -1;
   t.tm_yday = 0;
   t.tm_wday = 0;
-  
+  const char* fmt = "%Y-%m-%dT%H:%M:%S";
 #ifdef BROKEN_STRFTIME
   char formattedTime[1024];
-  strftime(formattedTime, 1024, "%x %X", &t);
+  strftime(formattedTime, 1024, fmt, &t);
 #else
-  int formattedTimeSize = strftime(NULL, INT_MAX, "%x %X", &t) + 1;
+  int formattedTimeSize = strftime(NULL, INT_MAX, fmt, &t) + 1;
   char *formattedTime = (char*)alloca(sizeof(char) * formattedTimeSize);
-  strftime(formattedTime, formattedTimeSize, "%x %X", &t);
+  strftime(formattedTime, formattedTimeSize, fmt, &t);
 #endif
 
   if (! appendTimeZone)
     return formattedTime;
 
   std::ostringstream os;
-  os << formattedTime << " (" << (_negativeTimeZone ? '-' : '+')
+  os << formattedTime << (_negativeTimeZone ? '-' : '+')
      << std::setfill('0') << std::setw(2) << timeZoneHours 
-     << std::setw(2) << timeZoneMinutes << ')';
+     << std::setw(2) << timeZoneMinutes;
   return os.str();
 }
 
