@@ -10,8 +10,8 @@ dnl *
 dnl * Created: 11.11.1999
 dnl *************************************************************************
 
-dnl Process this file with autoconf to produce a configure script.
-AC_INIT(gsmlib/gsm_error.h)
+dnl project name and version
+AC_INIT(gsmlib, 1.11)
 
 dnl Other
 AC_CONFIG_AUX_DIR(scripts)
@@ -23,8 +23,8 @@ AC_CHECK_LIB(intl, textdomain)
 dnl use config header
 AM_CONFIG_HEADER(gsm_config.h)
 
-dnl use automake
-AM_INIT_AUTOMAKE(gsmlib, 1.11)
+dnl automake options; foreign to prevent autotools from rewriting INSTALL
+AM_INIT_AUTOMAKE([foreign])
 
 dnl change to no if you want no shared libraries for debugging purposes
 AM_ENABLE_SHARED(yes)

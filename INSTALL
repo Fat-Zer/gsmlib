@@ -12,6 +12,11 @@ GSMLIB Installation
      directory. For questions regarding the internationalization of this
      package refer to doc/README.NLS and ./ABOUT-NLS.
 
+     To generate the ./configure script itself when building directly from a
+     source code repository use:
+
+       ./bootstrap.sh
+
      Developers: See also the file doc/README.developers.
 
 Basic Installation

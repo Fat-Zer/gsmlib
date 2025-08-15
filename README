@@ -42,6 +42,11 @@ INSTALLATION
      If there are any problems you can generate a debug version. See
      doc/README.developers for details.
 
+     To generate the ./configure script itself when building directly from a
+     source code repository use:
+
+       ./bootstrap.sh
+
 
 AVAILABLE DOCUMENTATION
 

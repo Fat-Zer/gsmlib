@@ -24,10 +24,14 @@ Makefile.in
 *.Po
 *.Plo
 Makefile
+/config.guess
 /config.log
 /config.status
+/config.sub
 /gsm_config.h
+/install-sh
 /libtool
+/ltmain.sh
 /po/POTFILES
 /stamp-h
 /stamp-h1
