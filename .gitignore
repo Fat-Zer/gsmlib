@@ -3,11 +3,13 @@
 .#*
 
 # autotools artifacts
-ABOUT-NLS
-Makefile.in
+/autom4te.cache/
 /.cache/
 /m4/
-/autom4te.cache/
+
+# autotools configuration
+ABOUT-NLS
+Makefile.in
 /aclocal.m4
 /configure
 /gsm_config.h.in

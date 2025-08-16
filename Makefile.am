@@ -13,4 +13,6 @@
 
 SUBDIRS =	po gsmlib apps tests doc scripts win32 ext contrib
 
+EXTRA_DIST = bootstrap.sh gsmlib.spec debian
+
 all:
