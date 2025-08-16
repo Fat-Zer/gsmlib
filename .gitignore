@@ -7,20 +7,20 @@
 /.cache/
 /m4/
 
-# autotools configuration
-ABOUT-NLS
-Makefile.in
-/aclocal.m4
-/configure
-/gsm_config.h.in
-/po/**
-!/po/*.po
-!/po/gsmlib.pot
-!/po/Makevars
-!/po/POTFILES.in
-/scripts/**
-!/scripts/Makefile.am
-!/scripts/debugconfig.sh
+# # autotools configuration
+# ABOUT-NLS
+# Makefile.in
+# /aclocal.m4
+# /configure
+# /gsm_config.h.in
+# /po/**
+# !/po/*.po
+# !/po/gsmlib.pot
+# !/po/Makevars
+# !/po/POTFILES.in
+# /scripts/**
+# !/scripts/Makefile.am
+# !/scripts/debugconfig.sh
 
 # ./configure artifacts
 *.Plo
