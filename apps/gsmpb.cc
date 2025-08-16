@@ -26,7 +26,6 @@
 #endif
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <gsmlib/gsm_me_ta.h>
 #include <gsmlib/gsm_util.h>
 #include <gsmlib/gsm_sorted_phonebook.h>

@@ -160,15 +160,16 @@ std::vector<std::string> Parser::parseStringList(bool allowNoList,
     {
       result.push_back(parseString());
       int c = nextChar();
-      if (c == ')')
+      if (c == ')') {
         break;
-      if (c == -1)
+      } else if (c == -1) {
         if (expectClosingParenthesis)
           throwParseException();
         else
           break;
-      if (c != ',')
+      } else if (c != ',') {
         throwParseException(_("expected ')' or ','"));
+      }
     }
   }
 

@@ -26,7 +26,6 @@
 #endif
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <gsmlib/gsm_me_ta.h>
 #include <gsm_sie_me.h>
 #include <gsmlib/gsm_util.h>
@@ -253,7 +252,7 @@ int main(int argc, char *argv[])
       {
         ofstream f(destination.c_str(), ios::out | ios::app);
       }
-      catch (exception)
+      catch (exception&)
       {
       }
     }

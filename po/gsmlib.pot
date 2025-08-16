@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-15 18:40+0300\n"
+"POT-Creation-Date: 2025-08-16 06:21+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -232,7 +232,7 @@ msgid "cell broadcast message\n"
 msgstr ""
 
 #: apps/gsmsmsd.cc:717 apps/gsmsmsd.cc:719 apps/gsmsendsms.cc:250
-#: apps/gsmpb.cc:499 apps/gsmctl.cc:653 apps/gsmsmsstore.cc:431
+#: apps/gsmpb.cc:501 apps/gsmctl.cc:653 apps/gsmsmsstore.cc:431
 msgid "[ERROR]: "
 msgstr ""
 
@@ -282,22 +282,22 @@ msgstr ""
 msgid "text is larger than 160 characters"
 msgstr ""
 
-#: apps/gsmpb.cc:99 apps/gsmpb.cc:487
+#: apps/gsmpb.cc:98 apps/gsmpb.cc:489
 #, c-format
 msgid "inserting '%s' tel# %s"
 msgstr ""
 
-#: apps/gsmpb.cc:102 apps/gsmpb.cc:226 apps/gsmpb.cc:490
+#: apps/gsmpb.cc:101 apps/gsmpb.cc:226 apps/gsmpb.cc:492
 #, c-format
 msgid " (index #%d)"
 msgstr ""
 
-#: apps/gsmpb.cc:141
+#: apps/gsmpb.cc:140
 #, c-format
 msgid "updating '%s' tel# %s to new tel# %s"
 msgstr ""
 
-#: apps/gsmpb.cc:174
+#: apps/gsmpb.cc:173
 #, c-format
 msgid "updating '%s' tel# %s to new tel# %s(index %d)"
 msgstr ""
@@ -1272,23 +1272,23 @@ msgstr ""
 msgid "expected ')' or ','"
 msgstr ""
 
-#: gsmlib/gsm_parser.cc:268
+#: gsmlib/gsm_parser.cc:269
 msgid "expected ')', ',' or '-'"
 msgstr ""
 
-#: gsmlib/gsm_parser.cc:274
+#: gsmlib/gsm_parser.cc:275
 msgid "range of the form a-b-c not allowed"
 msgstr ""
 
-#: gsmlib/gsm_parser.cc:281
+#: gsmlib/gsm_parser.cc:282
 msgid "range of the form a- no allowed"
 msgstr ""
 
-#: gsmlib/gsm_parser.cc:378
+#: gsmlib/gsm_parser.cc:379
 msgid "expected comma"
 msgstr ""
 
-#: gsmlib/gsm_parser.cc:397
+#: gsmlib/gsm_parser.cc:398
 msgid "expected end of line"
 msgstr ""
 

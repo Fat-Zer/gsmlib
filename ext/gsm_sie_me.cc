@@ -225,14 +225,14 @@ void SieMe::setBinary(std::string type, int subtype, BinaryObject obj)
 
   // Limitation: The maximum pdu size is 176 bytes (or 352 characters)
   // this should be a configurable field
-  int maxPDUsize = 176;
+  const size_t maxPDUsize = 176;
   int numberOfPDUs = (obj._size + maxPDUsize - 1) / maxPDUsize;
   unsigned char *p = obj._data;
 
   for (int i = 1; i <= numberOfPDUs; ++i)
   {
     // construct pdu
-    int size = maxPDUsize;
+    size_t size = maxPDUsize;
     if (i == numberOfPDUs)
       size = obj._size - (numberOfPDUs - 1) * maxPDUsize;
     std::string pdu = bufToHex(p, size);
@@ -255,7 +255,7 @@ void SieMe::setSSTK(string pdu)
   throw(GsmException)
 {
   // Limitation: The maximum pdu size is 176 bytes (or 352 characters)
-  int maxPDUsize = 176;
+  const size_t maxPDUsize = 176;
   if (pdu.length() > maxPDUsize*2)
     throw GsmException(_("pdu too large"), ParameterError);
 

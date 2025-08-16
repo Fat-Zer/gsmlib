@@ -63,7 +63,7 @@ void MeTa::init() throw(GsmException)
       _at->getLine();             // consume +MBAN: ... <CR><LF>
     }
   }
-  catch (GsmException)
+  catch (GsmException&)
   {
     // ignore, may not work on all phones
   }
@@ -77,7 +77,7 @@ void MeTa::init() throw(GsmException)
   {
     _at->chat("+CMGF=0");
   }
-  catch (GsmException)
+  catch (GsmException&)
   {
     _capabilities._hasSMSPDUmode = false;
   }
@@ -138,7 +138,7 @@ void MeTa::init() throw(GsmException)
   {
     setCharSet("GSM");
   }
-  catch (GsmException)
+  catch (GsmException&)
   {
     // ignore errors, some devices don't support this
   }
