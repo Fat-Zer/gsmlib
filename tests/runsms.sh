@@ -6,9 +6,9 @@ errorexit() {
 }
 
 # prepare locales to make date format reproducible
-LC_ALL=en_US
-LANG=en
-LINGUAS=en
+LC_ALL=C
+LANG=C
+LINGUAS=C
 export LC_ALL LANG LINGUAS
 
 # run the test
