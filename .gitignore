@@ -2,7 +2,7 @@
 \#*#
 .#*
 
-# autottols artifacts
+# autotools artifacts
 Makefile.in
 /.cache/
 /autom4te.cache/
@@ -40,6 +40,7 @@ Makefile
 *.o
 *.la
 *.lo
+.deps/
 .libs/
 /apps/gsmctl
 /apps/gsmpb
@@ -56,6 +57,8 @@ Makefile
 /ext/gsmsiexfer
 
 # test artifacts
+/tests/*.log
+/tests/*.sh.trs
 /tests/testcb
 /tests/testgsmlib
 /tests/testparser
@@ -65,3 +68,6 @@ Makefile
 /tests/testsms2
 /tests/testspb
 /tests/testssms
+/tests/sms.sms
+/tests/spb-copy.pb
+/tests/spbi2.pb
