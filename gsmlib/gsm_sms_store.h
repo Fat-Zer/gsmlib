@@ -114,11 +114,21 @@ namespace gsmlib
 #if __GNUC__ == 2 && __GNUC_MINOR__ == 95
   class SMSStoreIterator : public random_access_iterator<SMSStoreEntry,
                            int>
-#else
+  {
+#elif !defined(__cplusplus) || __cplusplus < 201703L
   class SMSStoreIterator : public std::iterator<std::random_access_iterator_tag,
                            SMSStoreEntry, int>
-#endif
   {
+#else
+  class SMSStoreIterator {
+  public:
+    using iterator_category = std::random_access_iterator_tag;
+    using value_type        = SMSStoreEntry;
+    using difference_type   = int;
+    using pointer           = SMSStoreEntry*;
+    using reference         = SMSStoreEntry&;
+  private:
+#endif
     int _index;
     SMSStore *_store;
 
@@ -156,11 +166,21 @@ namespace gsmlib
 #if __GNUC__ == 2 && __GNUC_MINOR__ == 95
   class SMSStoreConstIterator : public std::random_access_iterator<SMSStoreEntry,
                                 int>
-#else
+  {
+#elif !defined(__cplusplus) || __cplusplus < 201703L
   class SMSStoreConstIterator : public std::iterator<std::random_access_iterator_tag,
                                 SMSStoreEntry, int>
-#endif
   {
+#else
+  class SMSStoreConstIterator {
+  public:
+    using iterator_category = std::random_access_iterator_tag;
+    using value_type        = SMSStoreEntry;
+    using difference_type   = int;
+    using pointer           = SMSStoreEntry*;
+    using reference         = SMSStoreEntry&;
+  private:
+#endif
     int _index;
     const SMSStore *_store;
 
