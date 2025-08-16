@@ -46,10 +46,10 @@
 using namespace gsmlib;
 
 // Latin-1 undefined character (code 172 (Latin-1 boolean not, "�"))
-const int NOP = 172;
+static const unsigned char NOP = 172;
 
 // GSM undefined character (code 16 (GSM Delta))
-const int GSM_NOP = 16;
+static const unsigned char GSM_NOP = 16;
 
 // conversion tables, Latin1 to GSM and GSM to Latin1
 

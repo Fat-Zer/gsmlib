@@ -109,15 +109,11 @@ std::string Timestamp::toString(bool appendTimeZone) const
   t.tm_isdst = -1;
   t.tm_yday = 0;
   t.tm_wday = 0;
-  const char* fmt = "%Y-%m-%dT%H:%M:%S";
-#ifdef BROKEN_STRFTIME
-  char formattedTime[1024];
-  strftime(formattedTime, 1024, fmt, &t);
-#else
-  int formattedTimeSize = strftime(NULL, INT_MAX, fmt, &t) + 1;
-  char *formattedTime = (char*)alloca(sizeof(char) * formattedTimeSize);
-  strftime(formattedTime, formattedTimeSize, fmt, &t);
-#endif
+
+  // The format requires 20 symbols, unless my math isn't off, but we'll round it up to 32
+  char formattedTime[32];
+  int rc = strftime(formattedTime, 32, "%Y-%m-%dT%H:%M:%S", &t);
+  assert(rc);
 
   if (! appendTimeZone)
     return formattedTime;

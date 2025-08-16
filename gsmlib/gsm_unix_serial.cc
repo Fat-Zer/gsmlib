@@ -39,7 +39,16 @@ static const int holdoffArraySize = sizeof(holdoff) / sizeof(int);
 // the timerMtx is necessary since several threads cannot use the
 // timer indepently of each other
 
-static pthread_mutex_t timerMtx = PTHREAD_MUTEX_INITIALIZER;
+// static pthread_mutex_t timerMtx = PTHREAD_MUTEX_INITIALIZER;
+// Note the variable was commented-out to suppress warning
+// FIXME: I'm not sure why the mutex was disabled in pre1.11, but I suspect
+//        it's because strictly speaking there are no guaranties that SIGALRM
+//        will be delivered to our thread specifically, and the mutexes just
+//        made the problem worse. The correct solution IMHO would be to run
+//        tcdrain() in a separate thread and cancel it in case in exceeds the
+//        timeout. But I have no means to debug this, so this problem should
+//        wait for someone else brave-enough to deal with it.
+//        <2025-08-16 Fat-Zer>
 #define pthread_mutex_lock(x) 
 #define pthread_mutex_unlock(x) 
 
@@ -166,8 +175,9 @@ int UnixSerialPort::readByte()
 
 UnixSerialPort::UnixSerialPort(std::string device, speed_t lineSpeed,
                                string initString, bool swHandshake) :
-  _oldChar(-1), _timeoutVal(TIMEOUT_SECS)
+  _noop(0), _oldChar(-1), _timeoutVal(TIMEOUT_SECS)
 {
+  (void) _noop; // suppress unused private member warning
   struct termios t;
 
   // open device

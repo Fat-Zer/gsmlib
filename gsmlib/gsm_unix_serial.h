@@ -28,8 +28,7 @@ namespace gsmlib
   {
   private:
     int _fd;                    // file descriptor for device
-    int _debug;                 // debug level (set by environment variable
-                                // GSM_DEBUG
+    int _noop;                  // Unused; kept for ABI-compat (like anybody cares about it)
     int _oldChar;               // character set by putBack() (-1 == none)
     long int _timeoutVal;       // timeout for getLine/readByte
 

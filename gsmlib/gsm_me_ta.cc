@@ -19,6 +19,7 @@
 #include <gsmlib/gsm_parser.h>
 #include <gsmlib/gsm_sysdep.h>
 
+#include <cstdint>
 #include <cstdlib>
 
 using namespace gsmlib;
@@ -1019,8 +1020,8 @@ void MeTa::sendSMSs(Ref<SMSSubmitMessage> smsTemplate, std::string text,
     {
       if (concatenatedMessageId != -1)
       {
-        unsigned char udhs[] = {0x00, 0x03, concatenatedMessageId,
-                                numMessages, ++numMessage};
+        unsigned char udhs[] = {0x00, 0x03, (uint8_t)concatenatedMessageId,
+                                (uint8_t)numMessages, ++numMessage};
         UserDataHeader udh(std::string((char*)udhs, 5));
         smsTemplate->setUserDataHeader(udh);
       }

@@ -35,6 +35,8 @@
 using namespace std;
 using namespace gsmlib;
 
+// FIXME: --verbose option was never properly implemented <2025-08-16 Fat-Zer>
+// #define VERBOSE_IMPLEMENTED
 #ifdef HAVE_GETOPT_LONG
 static struct option longOpts[] =
 {
@@ -47,7 +49,9 @@ static struct option longOpts[] =
   {"subtype", required_argument, (int*)NULL, 'i'},
   {"help", no_argument, (int*)NULL, 'h'},
   {"version", no_argument, (int*)NULL, 'v'},
+#ifdef VERBOSE_IMPLEMENTED //verbose is unimplemented
   {"verbose", no_argument, (int*)NULL, 'V'},
+#endif
   {(char*)NULL, 0, (int*)NULL, 0}
 };
 #else
@@ -129,7 +133,9 @@ int main(int argc, char *argv[])
     string type;
     string subtype;
     int subtypeN;
+#ifdef VERBOSE_IMPLEMENTED //verbose is unimplemented
     bool verbose = false;
+#endif
     string initString = DEFAULT_INIT_STRING;
     bool swHandshake = false;
     Ref<SieMe> sourceMeTa, destMeTa;
@@ -148,9 +154,11 @@ int main(int argc, char *argv[])
       case 'I':
         initString = optarg;
         break;
+#ifdef VERBOSE_IMPLEMENTED //verbose is unimplemented
       case 'V':
         verbose = true;
         break;
+#endif
       case 't':
         type = optarg;
         break;
@@ -198,11 +206,11 @@ int main(int argc, char *argv[])
                   "                    or the file to read") << endl
              << _("  -t, --charset     sets the character set to use for\n"
                   "                    phonebook entries") << endl
-             << _("  -S, --source-backend sets the source backend")
-             << endl
+             << _("  -S, --source-backend sets the source backend") << endl
              << _("  -v, --version     prints version and exits") << endl
-             << _("  -V, --verbose     print detailed progress messages")
-             << endl
+#ifdef VERBOSE_IMPLEMENTED //verbose is unimplemented
+             << _("  -V, --verbose     print detailed progress messages") << endl
+#endif
              << _("  -X, --xonxoff     switch on software handshake") << endl
              << _("  -y, --synchronize synchronize destination with source\n"
                   "                    entries (destination is overwritten)\n"

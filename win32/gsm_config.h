@@ -162,8 +162,5 @@
 #pragma warning( disable : 4786 )  // Disable warning messages
                                    // 4786 (id too long)
 
-// Win32 strftime() does not return length of output when passing
-// NULL pointer
-#define BROKEN_STRFTIME
 // Win32 STL erase() for maps makes iterators invalid
 #define BUGGY_MAP_ERASE
