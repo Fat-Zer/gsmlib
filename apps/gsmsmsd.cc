@@ -246,7 +246,7 @@ void sendSMS(string spoolDirBase, string sentDirBase, string failedDirBase,
 #ifndef WIN32
           if (enableSyslog)
           {
-            syslog(LOG_WARNING, "Could not open SMS spool file %s",
+            syslog(LOG_WARNING, "could not open SMS spool file %s",
                    filename.c_str());
             if (failedDirBase != "") {
               string failedfilename = failedDir + "/" + entry->d_name;
@@ -257,7 +257,7 @@ void sendSMS(string spoolDirBase, string sentDirBase, string failedDirBase,
           else
 #endif
           throw GsmException(
-            stringPrintf(_("count not open SMS spool file %s"),
+            stringPrintf(_("could not open SMS spool file %s"),
                          filename.c_str()), ParameterError);
         char phoneBuf[1001];
         ifs.getline(phoneBuf, 1000);
@@ -268,10 +268,10 @@ void sendSMS(string spoolDirBase, string sentDirBase, string failedDirBase,
             break;
           }
         string text;
-        while (! ifs.eof())
+        char c;
+        while (ifs.get(c))
         {
-          char c;
-          ifs.get(c);
+          if (c == 0) break;    // workaround for libstdc++ bug (still necessary?)
           text += c;
         }
         ifs.close();
@@ -306,7 +306,8 @@ void sendSMS(string spoolDirBase, string sentDirBase, string failedDirBase,
           }
 #ifndef WIN32
           if (enableSyslog)
-            syslog(LOG_NOTICE, "Sent SMS to %s from file %s", phoneBuf, filename.c_str());
+            syslog(LOG_NOTICE, "sent SMS to %s from file %s",
+                   phoneBuf, filename.c_str());
 #endif
           if (sentDirBase != "") {
 #ifdef WIN32
@@ -323,12 +324,15 @@ void sendSMS(string spoolDirBase, string sentDirBase, string failedDirBase,
         {
 #ifndef WIN32
           if (enableSyslog)
-            syslog(LOG_WARNING, "Failed sending SMS to %s from file %s: %s", phoneBuf,
-                   filename.c_str(), me.what());
+            syslog(LOG_WARNING, "failed sending SMS to %s from file %s: %s",
+                   phoneBuf, filename.c_str(), me.what());
           else
 #endif
-            cerr << "Failed sending SMS to " << phoneBuf << " from "
+          {
+            cerr << "Failed sending SMS to " << phoneBuf << " from file "
                  << filename << ": " << me.what() << endl;
+            throw;
+          }
           if (failedDirBase != "") {
 #ifdef WIN32
             string failedfilename = failedDir + "\\" + fileInfo.name;
@@ -352,9 +356,9 @@ void sendSMS(string spoolDirBase, string sentDirBase, string failedDirBase,
 }
 
 #ifndef WIN32
-void syslogExit(int exitcode, int *dummy)
+void syslogExit(int exitcode, void *dummy)
 {
-  syslog(LOG_NOTICE, "exited (exit %d)",exitcode);
+  syslog(LOG_NOTICE, "exited with code %d",exitcode);
 }
 #endif
 
@@ -414,9 +418,6 @@ int main(int argc, char *argv[])
       case 's':
         spoolDir = optarg;
         break;
-      case 'L':
-        enableSyslog = true;
-        break;
       case 'S':
         sentDir = optarg;
         break;
@@ -426,6 +427,17 @@ int main(int argc, char *argv[])
       case 'P':
         priorities = abs(atoi(optarg));
         break;
+#ifndef WIN32
+      case 'L':
+        enableSyslog = true;
+        // log messages prefixed by the program name with the path removed
+        openlog( strrchr(argv[0],'/')!=NULL ? strrchr(argv[0],'/')+1 : argv[0],
+                 LOG_CONS | LOG_NDELAY | LOG_PID, LOG_DAEMON);
+        syslog(LOG_NOTICE, "%s started (version %s [compiled %s])",
+               argv[0], VERSION, __DATE__);
+        on_exit(syslogExit, NULL);
+        break;
+#endif
       case 'f':
         flushSMS = true;
         break;
@@ -442,8 +454,10 @@ int main(int argc, char *argv[])
         break;
       case 'h':
         cerr << argv[0] << _(": [-a action][-b baudrate][-C sca][-d device]"
-                             "[-f][-h][-I init string]\n"
-                             "  [-s spool dir][-t][-v]{sms_type}")
+                             "[-f][-F failed dir]\n"
+                             "  [-h][-I init string][-L][-P priorities]"
+                             "[-s spool dir][-S sent dir][-t]\n"
+                             "  [-v]{sms_type}")
              << endl << endl
              << _("  -a, --action      the action to execute when an SMS "
                   "arrives\n"
@@ -458,7 +472,7 @@ int main(int argc, char *argv[])
              << _("  -d, --device      sets the device to connect to") << endl
              << _("  -D, --direct      enable direct routing of SMSs") << endl
              << _("  -f, --flush       flush SMS from store") << endl
-             << _("  -F, --failed      directory to move failed SMS to,") << endl
+             << _("  -F, --failed      directory to move failed SMS to") << endl
              << _("                    if unset, the SMS will be deleted") << endl
              << _("  -h, --help        prints this message") << endl
              << _("  -I, --init        device AT init sequence") << endl
@@ -471,7 +485,7 @@ int main(int argc, char *argv[])
              << _("  -r, --requeststat request SMS status report") << endl
              << _("  -s, --spool       spool directory for outgoing SMS")
              << endl
-             << _("  -S, --sent        directory to move sent SMS to,") << endl
+             << _("  -S, --sent        directory to move sent SMS to") << endl
              << _("                    if unset, the SMS will be deleted") << endl
              << _("  -t, --store       name of SMS store to use for flush\n"
                   "                    and/or temporary SMS storage") << endl
@@ -698,6 +712,10 @@ int main(int argc, char *argv[])
   }
   catch (GsmException &ge)
   {
+#ifndef WIN32
+    if (enableSyslog)
+      syslog(LOG_ERR, "error %s", ge.what());
+#endif
     cerr << argv[0] << _("[ERROR]: ") << ge.what() << endl;
     if (ge.getErrorClass() == MeTaCapabilityError)
       cerr << argv[0] << _("[ERROR]: ")

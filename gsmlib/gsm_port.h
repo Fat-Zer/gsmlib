@@ -17,10 +17,10 @@
 #include <gsmlib/gsm_util.h>
 #include <string>
 
-using namespace std;
-
 namespace gsmlib
 {
+  using std::string;
+
   // TA defaults
   const int TIMEOUT_SECS = 60;
   const char DEFAULT_INIT_STRING[] = "E0";

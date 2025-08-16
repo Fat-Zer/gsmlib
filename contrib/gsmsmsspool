@@ -1,8 +1,8 @@
-#! /bin/bash
+#! /bin/sh
 #
 # /usr/bin/gsmsmsspool: Queues SMS for sending
 #
-# written by Matthias Goebl <matthias@goebl.net>
+# written by Matthias Goebl <matthias.goebl@goebl.net>
 
 SPOOLDIR=/var/spool/sms
 PRIORITIES=3
@@ -13,21 +13,23 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-priority=$PRIORITIES  # default priority
+# the default priority can be overridden by the environment variable GSMSMS_PRIORITY
+priority=$PRIORITIES
 test -n "$GSMSMS_PRIORITY" && priority="$GSMSMS_PRIORITY"
-mailto=`id -un`
-test -n "$GSMSMS_NOTIFY" && mailto="$GSMSMS_NOTIFY"
+# the default reply email address can be overridden by the environment variable GSMSMS_NOTIFY
+notify=`id -un`		# default notify
+test -n "$GSMSMS_NOTIFY" && notify="$GSMSMS_NOTIFY"
 
 tmpfile="$SPOOLDIR/tmp/`date +%s`.$$"
 umask 022
-echo "$1	$mailto" > "$tmpfile"
+echo "$1	$notify" > "$tmpfile"
 if [ -n "$2" ]; then
-  echo "$2" | head -c 160 >> "$tmpfile"
+  echo -n "$2" | head -c 160 >> "$tmpfile"
 else
   head -c 160 >> "$tmpfile"
 fi
 
-if [ "`id -un`" = "root" ]; then
+if [ "`id -u`" = "0" ]; then
   chown gsmsms:gsmsms "$tmpfile"
 fi
 

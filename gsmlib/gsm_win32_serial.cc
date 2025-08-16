@@ -58,7 +58,7 @@ BOOL CancelIoHook(HANDLE file)
       return CancelIoProc(file);
   }
                          
-  return TRUE;
+  return TRUE; 
 }
 #define CancelIo CancelIoHook
 
@@ -67,8 +67,7 @@ BOOL CancelIoHook(HANDLE file)
 void Win32SerialPort::throwModemException(string message) throw(GsmException)
 {
   ostrstream os;
-  os << message << " (errno: " << errno << "/" << strerror(errno) << ")"
-     << ends;
+  os << message << " (errno: " << errno << "/" << strerror(errno) << ")";
   char *ss = os.str();
   string s(ss);
   delete[] ss;
@@ -90,13 +89,14 @@ int Win32SerialPort::readByte() throw(GsmException)
     return result;
   }
 
-  unsigned char c;
+  unsigned char c=0;
   int timeElapsed = 0;
   bool readDone = true;
   ExceptionSafeOverlapped  over;
 
   DWORD initTime = GetTickCount();
   DWORD dwReaded;
+
   if (!ReadFile(_file,&c,1,&dwReaded,&over))
   {
     readDone = false;
@@ -243,6 +243,24 @@ Win32SerialPort::Win32SerialPort(string device, int lineSpeed,
     if (!SetCommState(_file,&dcb))
       throwModemException(stringPrintf(_("SetCommState device '%s'"),
                                        device.c_str()));
+
+
+	// SetCommTimeouts
+	COMMTIMEOUTS timeouts;
+
+	if( !GetCommTimeouts( _file, &timeouts ) )
+		throwModemException(stringPrintf(_("GetCommTimeouts device '%s'"), device.c_str())); 
+
+	timeouts.ReadIntervalTimeout = 100; 
+	timeouts.ReadTotalTimeoutMultiplier = 10;
+	timeouts.ReadTotalTimeoutConstant = 100;
+	timeouts.WriteTotalTimeoutMultiplier = 10;
+	timeouts.WriteTotalTimeoutConstant = 100;
+
+	if (!SetCommTimeouts( _file, &timeouts ) )
+		throwModemException(stringPrintf(_("SetCommTimeouts device '%s'"), device.c_str()));
+
+ 
 
     Sleep(holdoff[initTries]);
 

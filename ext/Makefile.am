@@ -27,14 +27,18 @@ gsmincludedir =		$(includedir)/gsmlib
 gsminclude_HEADERS =	gsm_sie_me.h
 
 # build programs
-bin_PROGRAMS =		gsmsiectl gsmsiexfer
+bin_PROGRAMS =		gsmsiectl gsmsiexfer gsmsstk
 
 # build gsmsiectl from gsmsiectl.cc and libgsmme.la
 gsmsiectl_SOURCES =	gsmsiectl.cc
-gsmsiectl_LDADD =	../gsmlib/libgsmme.la libgsmext.la $(INTLLIBS)
+gsmsiectl_LDADD =	libgsmext.la ../gsmlib/libgsmme.la $(INTLLIBS)
 
 # build gsmsiexfer from gsmsiexfer.cc and libgsmme.la
 gsmsiexfer_SOURCES =	gsmsiexfer.cc
-gsmsiexfer_LDADD =	../gsmlib/libgsmme.la libgsmext.la $(INTLLIBS)
+gsmsiexfer_LDADD =	libgsmext.la ../gsmlib/libgsmme.la $(INTLLIBS)
+
+# build gsmsstk from gsmsstk.cc and libgsmme.la
+gsmsstk_SOURCES =	gsmsstk.cc
+gsmsstk_LDADD =	../gsmlib/libgsmme.la libgsmext.la $(INTLLIBS)
 
 

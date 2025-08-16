@@ -18,7 +18,7 @@
 #include <gsmlib/gsm_phonebook.h>
 #include <gsmlib/gsm_parser.h>
 #include <gsmlib/gsm_me_ta.h>
-#include <strstream>
+#include <sstream>
 #include <iostream>
 #include <assert.h>
 #include <ctype.h>
@@ -231,12 +231,9 @@ void Phonebook::writeEntry(int index, string telephone, string text)
   string s;
   if (telephone == "" && text == "")
   {
-    ostrstream os;
+	ostringstream os;
     os << "+CPBW=" << index;
-    os << ends;
-    char *ss = os.str();
-    s = string(ss);
-    delete[] ss;
+    s = os.str();
   }
   else
   {
@@ -248,13 +245,10 @@ void Phonebook::writeEntry(int index, string telephone, string text)
     string gsmText = text;
     if (lowercase(_myMeTa.getCurrentCharSet()) == "gsm")
       gsmText = latin1ToGsm(gsmText);
-    ostrstream os;
+	ostringstream os;
     os << "+CPBW=" << index << ",\"" << telephone << "\"," << type
        << ",\"";
-    os << ends;
-    char *ss = os.str();
-    s = string(ss);
-    delete[] ss;
+    s = os.str();
     // this cannot be added with ostrstream because the gsmText can
     // contain a zero (GSM default alphabet for '@')
     s +=  gsmText + "\"";
@@ -316,7 +310,8 @@ Phonebook::Phonebook(string phonebookName, Ref<GsmAt> at, MeTa &myMeTa,
   Parser p(_at->chat("+CPBR=?", "+CPBR:"));
 
   // get index of actually available entries in the phonebook
-  vector<bool> availablePositions = p.parseIntList();
+  vector<bool> availablePositions =
+    p.parseIntList(false, myMeTa.getCapabilities()._noCPBxParentheses);
   p.parseComma();
   _maxNumberLength = p.parseInt();
   p.parseComma();

@@ -31,6 +31,8 @@ gsmsmsd \- SMS message reception daemon
 [ \fB\-\-direct\fP ]
 [ \fB\-f\fP ]
 [ \fB\-\-flush\fP ]
+[ \fB\-F\fP \fIfailed SMS directory\fP ]
+[ \fB\-\-failed\fP \fIfailed SMS directory\fP ]
 [ \fB\-h\fP ]
 [ \fB\-\-help\fP ]
 [ \fB\-I\fP \fIinit string\fP ]
@@ -45,6 +47,8 @@ gsmsmsd \- SMS message reception daemon
 [ \fB\-\-version\fP ]
 [ \fB\-X\fP ]
 [ \fB\-\-xonxoff\fP ]
+[ \fB-S\fP \fIsent SMS directory\fP ]
+[ \fB--sent\fP \fIsent SMS directory\fP ]
 { \fIsms_type\fP }
 .PP
 .SH DESCRIPTION
@@ -71,7 +75,8 @@ To terminate \fIgsmsmsd\fP cleanly (without losing SMS messages) one
 should send either SIGINT (CTRL\-C on the command line) or SIGTERM to
 the process.
 .PP
-Error messages are printed to the standard error output.  If the program
+Error messages are printed to the standard error output or are sent
+to the syslog daemon, if syslog is enabled and available.  If the program
 terminates on error the error code 1 is returned.
 .PP
 \fIsms_type\fP may be any combination of:
@@ -122,6 +127,10 @@ supported by many mobile phone/GSM modem combinations. Therefore, the
 default is to store incoming SMS temporarily before processing them in 
 the indicated store.
 .TP
+\fB\-F\fP \fIfailed SMS directory\fP, \fB\-\-failed\fP \fIfailed SMS directory\fP
+Moves failed SMS messages to the given directory. If this option is not given,
+failed SMS will be removed.
+.TP
 \fB\-f\fP, \fB\-\-flush\fP
 This option causes \fIgsmsmsd\fP to flush (ie. read and erase)
 existing SMS messages from
@@ -138,6 +147,13 @@ Prints an option summary.
 Initialization string to send to the TA (default: "E0"). Note that the
 sequence "ATZ" is sent first.
 .TP
+\fB\-L\fP, \fB\-\-syslog\fP
+Send errors and information to the syslog daemon if available.
+.TP
+\fB-P\fP \fIpriority levels\fP, \fB--priorities\fP \fIpriority levels\fP
+Activates the priority system and sets the
+number or levels to use, see the \fBPRIORITY SYSTEM\fR section.
+.TP
 \fB\-r\fP, \fB\-\-requeststat\fP
 Request status reports for sent SMS. Note: This option only makes
 sense if the phone supports routing of status reports to the
@@ -152,7 +168,11 @@ the first line is interpreted as the SMS text. Please refer to
 .BR gsmsendsms(1)
 for details on the SMS text character set and maximum length.
 \fIgsmsmsd\fP polls the spool directory every 5 seconds. Sent
-SMS message files are removed.
+SMS message files are removed by default.
+.TP
+\fB-S\fP \fIsent SMS directory\fP, \fB--sent\fP \fIsent SMS directory\fP
+Moves sent SMS messages to the given directory. If this option is not given,
+sent SMS will be removed.
 .TP
 \fB\-t\fP \fISMS store name\fP, \fB\-\-store\fP \fISMS store name\fP
 The name of the SMS store to read from (for the \fB\-\-flush\fP option)
@@ -167,6 +187,13 @@ Prints the program version.
 .TP
 \fB\-X\fP, \fB\-\-xonxoff\fP
 Uses software handshaking (XON/XOFF) for accessing the device.
+.PP
+.SH PRIORITY SYSTEM
+If the \fB--priorities\fP option is given, the priority system is activated
+and the number of priority levels is set. There must be directories named
+<given spool directory name>+<priority level> for every level. This includes
+the directories given in the \fB--failed\fP and \fB--sent\fP options if they
+are used. See the \fBEXAMPLES\fR section.
 .PP
 .SH EXAMPLES
 The following invocation of \fIgsmsmsd\fP sends each incoming SMS message
@@ -223,13 +250,29 @@ gsmsmsd \-d /dev/ttyS2 \-\-spool /tmp/spooldir \-f \-\-store sm \\
 \-\-action 'mail smsadmin'
 .fi
 .PP
+The following invocation of \fIgsmsmsd\fP uses the priority system with
+two levels and preserves sent and failed SMS. It requires the following
+directories in /var/spool/sms/:
+queue1/ queue2/ send1/ send2/ failed1/ failed2/
+.br
+Before sending one SMS from queue2, all pending SMS from queue1 will be sent.
+Sent messages from queue1 will be moved to send1, sent messages from queue2
+to send2. Failed messages will be moved to failed1 and failed2.
+.PP
+.nf
+gsmsmsd -d /dev/ttyS2 -P 2 -s /var/spool/sms/queue \\
+-S /var/spool/sms/send -F /var/spool/sms/failed
+.fi
+.PP
 .SH FILES
 .TP 1.4i
 .B /dev/mobilephone
 Default mobile phone device.
 .PP
-.SH AUTHOR
-Peter Hofmann <software@pxh.de>
+.SH AUTHORS
+Peter Hofmann <software@pxh.de> (main work)
+.br
+Matthias Goebl <matthias.goebl@goebl.net> (priority system, error restart, syslog)
 .PP
 .SH BUGS
 Cell broadcast SMS message reception has not been tested, but it has

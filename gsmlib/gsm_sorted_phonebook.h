@@ -22,10 +22,10 @@
 #include <map>
 #include <fstream>
 
-using namespace std;
-
 namespace gsmlib
 {
+  using std::string;
+  using std::istream;
 
   // The class SortedPhonebook makes the phonebook more manageable:
   // - empty slots in the ME phonebook are hidden by the API

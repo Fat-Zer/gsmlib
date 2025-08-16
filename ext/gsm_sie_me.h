@@ -20,10 +20,10 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 namespace gsmlib
 {
+  using std::string;
+
   // *** Siemens mobile phone binary objects (bitmap, midi, vcal, vcard)
 
   struct BinaryObject
@@ -92,6 +92,10 @@ namespace gsmlib
 
     // Siemens Binary Write
     void setBinary(string type, int subtype, BinaryObject obj)
+      throw(GsmException);
+
+    // Siemens Sim Toolkit
+    void setSSTK(string pdu)
       throw(GsmException);
   };
 };

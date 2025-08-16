@@ -16,10 +16,10 @@
 #include <string>
 #include <assert.h>
 
-using namespace std;
-
 namespace gsmlib
 {
+  using std::string;
+
   // this struct represents a telephone number
   // usually _type == Unknown or International
   // and _number == ISDN_Telephone

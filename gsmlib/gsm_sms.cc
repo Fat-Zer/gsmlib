@@ -20,7 +20,7 @@
 #include <gsmlib/gsm_util.h>
 #include <gsmlib/gsm_parser.h>
 #include <gsmlib/gsm_me_ta.h>
-#include <strstream>
+#include <sstream>
 #include <string>
 
 using namespace std;
@@ -278,7 +278,7 @@ string SMSDeliverMessage::encode()
 
 string SMSDeliverMessage::toString() const
 {
-  ostrstream os;
+	ostringstream os;
   os << dashes << endl
      << _("Message type: SMS-DELIVER") << endl
      << _("SC address: '") << _serviceCentreAddress._number << "'" << endl
@@ -298,14 +298,13 @@ string SMSDeliverMessage::toString() const
      << bufToHex((unsigned char*)
                  ((string)_userDataHeader).data(),
                  ((string)_userDataHeader).length())
-     << endl
-     << _("User data: '") << _userData << "'" << endl
-     << dashes << endl << endl
-     << ends;
-  char *ss = os.str();
-  string result(ss);
-  delete[] ss;
-  return result;
+     << endl;
+     if(_dataCodingScheme.getAlphabet() != DCS_SIXTEEN_BIT_ALPHABET)
+       os << _("User data: '") << _userData << "'" << endl;
+     else
+       os << _("User data: '") << "0x" << bufToHex((unsigned char *)_userData.data(), _userData.length()) << "'" << endl;
+     os << dashes << endl << endl;
+     return os.str();
 }
 
 Address SMSDeliverMessage::address() const
@@ -420,7 +419,7 @@ string SMSSubmitMessage::encode()
 
 string SMSSubmitMessage::toString() const
 {
-  ostrstream os;
+	ostringstream os;
   os << dashes << endl
      << _("Message type: SMS-SUBMIT") << endl
      << _("SC address: '") << _serviceCentreAddress._number << "'" << endl
@@ -457,14 +456,13 @@ string SMSSubmitMessage::toString() const
      << _("User data header: 0x") << bufToHex((unsigned char*)
                                               ((string)_userDataHeader).data(),
                                               _userDataHeader.length())
-     << endl
-     << _("User data: '") << _userData << "'" << endl
-     << dashes << endl << endl
-     << ends;
-  char *ss = os.str();
-  string result(ss);
-  delete[] ss;
-  return result; 
+     << endl;
+     if(_dataCodingScheme.getAlphabet() != DCS_SIXTEEN_BIT_ALPHABET)
+       os << _("User data: '") << _userData << "'" << endl;
+     else
+       os << _("User data: '") << "0x" << bufToHex((unsigned char *)_userData.data(), _userData.length()) << "'" << endl;
+     os << dashes << endl << endl;
+     return os.str();
 }
 
 Address SMSSubmitMessage::address() const
@@ -495,7 +493,7 @@ SMSStatusReportMessage::SMSStatusReportMessage(string pdu) throw(GsmException)
   _serviceCentreAddress = d.getAddress(true);
   _messageTypeIndicator = (MessageType)d.get2Bits(); // bits 0..1
   assert(_messageTypeIndicator == SMS_STATUS_REPORT);
-  _moreMessagesToSend = d.getBit(); // bit 2
+  _moreMessagesToSend = ! d.getBit(); // bit 2
   d.getBit();                   // bit 3
   d.getBit();                   // bit 4
   _statusReportQualifier = d.getBit(); // bit 5
@@ -511,7 +509,7 @@ string SMSStatusReportMessage::encode()
   SMSEncoder e;
   e.setAddress(_serviceCentreAddress, true);
   e.set2Bits(_messageTypeIndicator); // bits 0..1
-  e.setBit(_moreMessagesToSend); // bit 2
+  e.setBit(! _moreMessagesToSend); // bit 2
   e.setBit();                   // bit 3
   e.setBit();                   // bit 4
   e.setBit(_statusReportQualifier); // bit 5
@@ -525,7 +523,7 @@ string SMSStatusReportMessage::encode()
 
 string SMSStatusReportMessage::toString() const
 {
-  ostrstream os;
+	ostringstream os;
   os << dashes << endl
      << _("Message type: SMS-STATUS-REPORT") << endl
      << _("SC address: '") << _serviceCentreAddress._number << "'" << endl
@@ -537,12 +535,8 @@ string SMSStatusReportMessage::toString() const
      << _("Discharge time: ") << _dischargeTime.toString() << endl
      << _("Status: 0x") << hex << (unsigned int)_status << dec
      << " '" << getSMSStatusString(_status) << "'" << endl
-     << dashes << endl << endl
-     << ends;
-  char *ss = os.str();
-  string result(ss);
-  delete[] ss;
-  return result; 
+     << dashes << endl << endl;
+  return os.str();
 }
 
 Address SMSStatusReportMessage::address() const
@@ -612,7 +606,7 @@ string SMSCommandMessage::encode()
 
 string SMSCommandMessage::toString() const
 {
-  ostrstream os;
+	ostringstream os;
   os << dashes << endl
      << _("Message type: SMS-COMMAND") << endl
      << _("SC address: '") << _serviceCentreAddress._number << "'" << endl
@@ -627,12 +621,8 @@ string SMSCommandMessage::toString() const
      << "'" << endl
      << _("Command data length: ") << (unsigned int)_commandDataLength << endl
      << _("Command data: '") << _commandData << "'" << endl
-     << dashes << endl << endl
-     << ends;
-  char *ss = os.str();
-  string result(ss);
-  delete[] ss;
-  return result; 
+     << dashes << endl << endl;
+  return os.str();
 }
 
 Address SMSCommandMessage::address() const
@@ -717,7 +707,7 @@ string SMSDeliverReportMessage::encode()
 
 string SMSDeliverReportMessage::toString() const
 {
-  ostrstream os;
+	ostringstream os;
   os << dashes << endl
      << _("Message type: SMS-DELIVER-REPORT") << endl
      << _("SC address: '") << _serviceCentreAddress._number << "'" << endl
@@ -732,14 +722,15 @@ string SMSDeliverReportMessage::toString() const
   if (_dataCodingSchemePresent)
     os << _("Data coding scheme: ") << _dataCodingScheme.toString() << endl;
   if (_userDataLengthPresent)
-    os << _("User data length: ") << (int)userDataLength() << endl
-       << _("User data: '") << _userData << "'" << endl;
-  os << dashes << endl << endl
-     << ends;
-  char *ss = os.str();
-  string result(ss);
-  delete[] ss;
-  return result; 
+  {
+    os << _("User data length: ") << (int)userDataLength() << endl;
+    if(_dataCodingScheme.getAlphabet() != DCS_SIXTEEN_BIT_ALPHABET)
+      os << _("User data: '") << _userData << "'" << endl;
+    else
+      os << _("User data: '") << "0x" << bufToHex((unsigned char *)_userData.data(), _userData.length()) << "'" << endl;
+  }
+  os << dashes << endl << endl;
+  return os.str();
 }
 
 Address SMSDeliverReportMessage::address() const
@@ -823,7 +814,7 @@ string SMSSubmitReportMessage::encode()
 
 string SMSSubmitReportMessage::toString() const
 {
-  ostrstream os;
+	ostringstream os;
   os << dashes << endl
      << _("Message type: SMS-SUBMIT-REPORT") << endl
      << _("SC address: '") << _serviceCentreAddress._number << "'" << endl
@@ -839,14 +830,15 @@ string SMSSubmitReportMessage::toString() const
   if (_dataCodingSchemePresent)
     os << _("Data coding scheme: ") << _dataCodingScheme.toString() << endl;
   if (_userDataLengthPresent)
-    os << _("User data length: ") << (int)userDataLength() << endl
-       << _("User data: '") << _userData << "'" << endl;
-  os << dashes << endl << endl
-     << ends;
-  char *ss = os.str();
-  string result(ss);
-  delete[] ss;
-  return result; 
+  {
+    os << _("User data length: ") << (int)userDataLength() << endl;
+    if(_dataCodingScheme.getAlphabet() != DCS_SIXTEEN_BIT_ALPHABET)
+      os << _("User data: '") << _userData << "'" << endl;
+    else
+      os << _("User data: '") << "0x" << bufToHex((unsigned char *)_userData.data(), _userData.length()) << "'" << endl;
+  }
+  os << dashes << endl << endl;
+  return os.str();
 }
 
 Address SMSSubmitReportMessage::address() const

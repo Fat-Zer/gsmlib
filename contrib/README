@@ -1,0 +1,21 @@
+I wrote these scripts for a sms-server with a sms-to-email gateway.
+
+The gsmsms service has to be started with "gsm-utils.init" (to be installed as
+/etc/init.d/gsm-utils).
+You can queue a new SMS by calling "gsmsmsspool +491791234567 blabla".
+"gsm-utils.cron.d" should be installed as /etc/cron.d/gsm-utils, so
+"gsmsmsrequeue" is called by cron every 5 minutes.
+If there's a failure sending the SMS, e.g. due to network overload,
+"gsmsmsrequeue" puts the SMS in the send-queue again.
+After 12 retries (= 2 hours) an error message will be sent by mail.
+In "gsmsmsrequeue" you can find a hook for your own accounting scripts.
+
+"gsmsmsq" displays the contents of all your queues.
+
+"gsm-utils.default" has to be installed to /etc/default/gsm-utils. There
+you can overwrite some settings.
+ 
+If you want to enqueue a SMS with a higher priority, set the environment
+variable GSMSMS_PRIORITY first, eg. "GSMSMS_PRIORITY=1 gsmsmsspool ...".
+
+Matthias Goebl <matthias.goebl@goebl.net>

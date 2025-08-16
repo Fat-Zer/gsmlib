@@ -22,10 +22,13 @@
 #include <map>
 #include <fstream>
 
-using namespace std;
-
 namespace gsmlib
 {
+  using std::string;
+  using std::multimap;
+  using std::pair;
+  using std::map;
+
   // a single entry in a phonebook
 
   class PhonebookEntryBase : public RefBase

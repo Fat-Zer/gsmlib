@@ -18,10 +18,10 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 namespace gsmlib
 {
+  using std::string;
+
   class Parser : public RefBase
   {
   private:
@@ -62,14 +62,17 @@ namespace gsmlib
 
     // parse a list of the form "("ABC", DEF")"
     // the list can be empty (ie. == "" ) if allowNoList == true
-    vector<string> parseStringList(bool allowNoList = false)
+    // the list can be without parentheses if allowNoParentheses = true
+    vector<string> parseStringList(bool allowNoList = false,
+                                   bool allowNoParentheses = false)
       throw(GsmException);
 
     // parse a list of the form "(12, 14)" or "(1-4, 10)"
     // the result is returned as a bit vector where for each integer
     // in the list and/or range(s) a bit is set
     // the list can be empty (ie. == "") if allowNoList == true
-    vector<bool> parseIntList(bool allowNoList = false)
+    vector<bool> parseIntList(bool allowNoList = false,
+                              bool allowNoParentheses = false)
       throw(GsmException);
 
     // parse a list of parameter ranges (see below)
@@ -88,7 +91,8 @@ namespace gsmlib
     // then IntRange::_high and _low are set to NOT_SET
     // the range may be short if allowNonRange == true
     // then IntRange::_high is set to NOT_SET
-    IntRange parseRange(bool allowNoRange = false, bool allowNonRange = false)
+    IntRange parseRange(bool allowNoRange = false, bool allowNonRange = false,
+                        bool allowNoParentheses = false)
       throw(GsmException);
     
     // parse an integer of the form "1234"

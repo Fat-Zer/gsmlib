@@ -16,10 +16,11 @@
 #include <string>
 #include <stdexcept>
 
-using namespace std;
-
 namespace gsmlib
 {
+  using std::string;
+  using std::runtime_error;
+
   // different classes of GSM errors
   enum GsmErrorClass{OSError,   // error caused by OS call (eg. file handling)
                      ParserError, // error when parsing AT response

@@ -1,0 +1,10 @@
+#! /bin/sh
+#
+# /usr/bin/gsmsmsq: Displays the SMS-Queues
+#
+# written by Matthias Goebl <matthias.goebl@goebl.net>
+
+SPOOLDIR=/var/spool/sms
+test -r /etc/default/gsm-utils && . /etc/default/gsm-utils
+
+cd /var/spool/sms && ls * | grep -v '^total '

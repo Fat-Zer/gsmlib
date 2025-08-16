@@ -252,6 +252,22 @@ void SieMe::setBinary(string type, int subtype, BinaryObject obj)
   }
 }
 
+// Siemens Sim Toolkit
+void SieMe::setSSTK(string pdu)
+  throw(GsmException)
+{
+  // Limitation: The maximum pdu size is 176 bytes (or 352 characters)
+  int maxPDUsize = 176;
+  if (pdu.length() > maxPDUsize*2)
+    throw GsmException(_("pdu too large"), ParameterError);
+
+    cout << "processing " << pdu.length() << " bytes." << endl;
+
+    string result = _at->sendPdu("^SSTK=" + intToStr(pdu.length()), "^SSTK:", pdu, true);
+    cout << result << endl;
+    cout << "OK" << endl;
+}
+
 
 
 

@@ -21,10 +21,12 @@
 #include <gsmlib/gsm_sms.h>
 #include <gsmlib/gsm_cb.h>
 
-using namespace std;
-
 namespace gsmlib
 {
+  using std::string;
+  using std::iterator;
+  using std::random_access_iterator_tag;
+
   // forward declarations
   class SMSStore;
   class MeTa;

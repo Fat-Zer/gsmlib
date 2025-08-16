@@ -16,7 +16,6 @@
 #include <gsmlib/gsm_nls.h>
 #include <gsmlib/gsm_error.h>
 #include <gsmlib/gsm_util.h>
-#include <strstream>
 
 using namespace std;
 using namespace gsmlib;

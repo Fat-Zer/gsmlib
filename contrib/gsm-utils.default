@@ -1,4 +1,7 @@
-PHONEDEV=/dev/mobilephone  # or /dev/ttyS0 or /dev/ircomm0
+# /etc/default/gsm-utils: These settings overwrite the defaults that are
+#                         used in the gsmsms*-scripts
+
+PHONEDEV=/dev/mobilephone  # or /dev/ttyS0 or /dev/ircomm0 or /dev/ttyUSB0
 BAUDRATE=9600
 PIN=""  # or 1234
 
@@ -10,4 +13,8 @@ SUBJECT="SMS delivery report:"
 
 SMSPROCESSOR=""  # or /usr/bin/gsmsmsprocessor
 
-do_accounting () { true; }  # it's your turn
+function do_accounting {
+ if [ "$2" = "sent" ]; then
+  true # it's your turn
+ fi
+}

@@ -20,7 +20,7 @@
 #include <gsmlib/gsm_event.h>
 #include <gsmlib/gsm_me_ta.h>
 #include <ctype.h>
-#include <strstream>
+#include <sstream>
 
 using namespace std;
 using namespace gsmlib;
@@ -70,7 +70,7 @@ void GsmAt::throwCmeException(string s) throw(GsmException)
     s = cutResponse(s, "+CME ERROR:");
   else
     s = cutResponse(s, "+CMS ERROR:");
-  istrstream is(s.c_str());
+	istringstream is(s);
   int error;
   is >> error;
   throw GsmException(_("ME/TA error '") +

@@ -1,3 +1,46 @@
+gsmlib-1.11
+     - Removed "using namespace std" from header files, used std types
+       are now referenced explicitly inside gsmlib namespace to avoid
+       namespace pollution
+
+     - fixed file descriptor leak in UnixSerialPort constructor in case
+       of exceptions
+
+     - added workaround for phones that return the list of available
+       charsets with parentheses
+
+     - Make SPEC file more RPM-conformant (thanks to Soós Péter) 
+
+     - Added hangup call for dial function of gsmctl
+
+     - Added fix for WindowsXP (thanks to Randy Palmer)
+
+     - Added new functionality (SMS priorities, error restart, syslog)
+       to gsmsmsd (thanks to Matthias Goebl)
+
+     - More standards-conformant spec file (thanks to Matthias Brill)
+
+     - Added features to gsmsmsd to better organize large-scale SMS
+       sending (failed/sent SMS directories, priorities, syslog facility)
+       thanks to Matthias Goebl
+
+     - Added support for the Motorola 60t phone thanks to Dan Eble
+
+     - Added a new contrib directory containing some contributed
+       scripts to make use of the command line apps easiers (thanks to
+       Matthias Goebl)
+
+     - Added Siemens-specific SIM toolkit functions to gsmlib extension
+       library (thanks to Christian W. Zuckschwerdt)
+
+     - Added to code SMS*Message::toString() functions to print 16 bit
+       user data in hexadecimal
+
+     - Converted from strstream sstream (thanks to Tyler Retzlaff)
+
+     - 
+
+	
 gsmlib-1.10
      - reactivated code in gsm_at to retry sending PDU after
        unsolicited result code 

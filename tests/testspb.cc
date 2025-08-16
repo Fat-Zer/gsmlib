@@ -3,7 +3,6 @@
 #endif
 #include <gsmlib/gsm_sorted_phonebook.h>
 #include <algorithm>
-#include <strstream>
 #include <iostream>
 
 using namespace std;

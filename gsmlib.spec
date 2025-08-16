@@ -1,14 +1,14 @@
-%define LIBVER 1.0.4
+%define LIBVER 1.0.5
 Summary: Library to access GSM mobile phones through GSM modems
 Name: gsmlib
-Version: 1.10
+Version: 1.11
 Release: 1
 Source: gsmlib-%{version}.tar.gz
 Group: System Environment/Libraries
 Copyright: GNU LIBRARY GENERAL PUBLIC LICENSE
 URL: http://www.pxh.de/fs/gsmlib/
 Vendor: Peter Hofmann <software@pxh.de>
-Buildroot: /var/tmp/gsmlib-root
+Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %package devel
 Summary: Development tools for programs which will use the gsmlib library.
@@ -45,7 +45,7 @@ following phones/phone types are currently supported:
 %setup
 
 %build
-CXXFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=/usr
+%configure
 make
 
 %install
@@ -60,33 +60,36 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-/usr/lib/libgsmme.so
-/usr/lib/libgsmme.so.%{LIBVER}
-/usr/bin/gsmsmsstore
-/usr/bin/gsmctl
-/usr/bin/gsmsmsd
-/usr/bin/gsmpb
-/usr/bin/gsmsendsms
-/usr/man/man1/gsmctl.1.gz
-/usr/man/man7/gsminfo.7.gz
-/usr/man/man1/gsmpb.1.gz
-/usr/man/man1/gsmsendsms.1.gz
-/usr/man/man8/gsmsmsd.8.gz
-/usr/man/man1/gsmsmsstore.1.gz
-/usr/share/locale/de/LC_MESSAGES/gsmlib.mo
+%{_libdir}/libgsmme.so
+%{_libdir}/libgsmme.so.%{LIBVER}
+%{_bindir}/gsmsmsstore
+%{_bindir}/gsmctl
+%{_bindir}/gsmsmsd
+%{_bindir}/gsmpb
+%{_bindir}/gsmsendsms
+%{_mandir}/man1/gsmctl.1.gz
+%{_mandir}/man7/gsminfo.7.gz
+%{_mandir}/man1/gsmpb.1.gz
+%{_mandir}/man1/gsmsendsms.1.gz
+%{_mandir}/man8/gsmsmsd.8.gz
+%{_mandir}/man1/gsmsmsstore.1.gz
+%{_datadir}/locale/de/LC_MESSAGES/gsmlib.mo
 
 %doc README INSTALL ABOUT-NLS AUTHORS COPYING NEWS TODO
 %doc doc/README.NLS doc/README.developers doc/FAQ ChangeLog
 
 %files devel
 %defattr(-,root,root)
-/usr/lib/libgsmme.a
-/usr/include/gsmlib
+%{_libdir}/libgsmme.a
+%{_libdir}/libgsmme.la
+%{_libdir}/libgsmext.a
+%{_libdir}/libgsmext.la
+%{_includedir}/gsmlib
 
 %files ext
-/usr/bin/gsmsiectl
-/usr/bin/gsmsiexfer
-/usr/lib/libgsmext.so
-/usr/lib/libgsmext.so.%{LIBVER}
+%{_bindir}/gsmsiectl
+%{_bindir}/gsmsiexfer
+%{_libdir}/libgsmext.so
+%{_libdir}/libgsmext.so.%{LIBVER}
 
 %doc ext/README.sieme

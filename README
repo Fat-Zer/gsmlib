@@ -66,16 +66,24 @@ HARDWARE
      - Siemens S25/- (Linux IrDA serial device)
      - Siemens S35i/- (Linux IrDA serial device)
      - Siemens S45
+     - Siemens S55
+     - Siemens TC35T and MC35T 
+     - Siemens A60/Siemens Data Cable USB DCA-510
+     - Siemens C60
      - Ericcson SH888/- (Linux IrDA serial device)
      - Ericsson 6050102/GM 12 GSM module
      - Ericsson T28s (firmware 000809 1106)
      - Ericsson T20e (firmware R3A007)
+     - Ericsson a2618s/-
+     - Ericsson R520m
      - -/Siemens M20T (stand-alone GSM module)
      - -/Wavecom WM02 GSM (stand-alone GSM module)
-     - Nokia 7110 (firware rev 4.80)/- (Linux IrDA serial device)
+     - Nokia 7110 (firmware rev 4.80)/- (Linux IrDA serial device)
+     - NOKIA 7210
      - Nokia 8290 (USA GSM 1900MHz)/- (Linux IrDA serial device)
      - Falcom A2-1/- (stand-alone GSM module)
      - Ericsson R320s/- (Linux IrDA serial device)
+     - Ericsson R520s/-
      - Motorola Timeport 260/- (Serial cable and Linux IrDA serial device)
      - Motorola Timeport 250/- (Linux IrDA serial device)
      - Motorola Timeport P7389/- (Linux IrDA serial device)
@@ -87,6 +95,11 @@ HARDWARE
      - Ericcson T65
      - Ericcson T39m/Bluetooth
      - Option International GlobeTrotter PCMCIA
+     - Samsung A300e/- (Linux IrDA)
+     - Sony Ericsson T300/- (Linux IrDA)
+     - Sony Ericsson T610/- (Linux IrDA)
+     - "Vierling ECOTEL" GSM Gateway
+     - Nokia 30/- (stand-alone GSM module)
 
      Note 1: Some of the mobile phones have an integrated GSM modem
      that can be accessed via the Linux IrDA drivers.
@@ -132,19 +145,23 @@ COPYING
 
 BUGS
 
-     There still seem to be some problems with IrDA devices under
-     Linux. There have been reports of gsmlib-based applications
-     (eg. gsmctl) hanging upon startup after initializing the serial port
-     /dev/ircomm. I would be thankful for any input on this problem.
-
      If something does not work with your OS platform or the mobile/TA
-     combination please send a complete trace of the compilation or the
-     program execution that did fail. Make sure to compile with debugging
-     information enabled. Otherwise it will not be possible for me to do
-     much about the problem. Send bug reports to the mailing list or
-     to software@pxh.de. I promise not to publish telephone numbers or other
-     private information that might be contained in the execution traces
-     that you send me.
+     combination please check first that you can connect to your phone with
+     a simple terminal program like minicom. If this connection works and
+     gsmlib-based programs fail (with the same serial interface parameters,
+     of course), then send a complete trace of the compilation or the
+     program execution that did fail. Otherwise it will not be possible for
+     me to do much about the problem. Send bug reports to the mailing list
+     or to software@pxh.de. I promise not to publish telephone numbers or
+     other private informatio
+     
+     Debugging output is controlled by the environment variable
+     GSMLIB_DEBUG. A value of 0 means no debugging output. 1 means
+     extensive debugging output. 2 prints every character exchanged between
+     gsmlib and the TA (GSM modem/mobile phone).
+     
+     In case of segmentations faults etc. please send a backtrace made with
+     gdb.
 
 
 AUTHOR
