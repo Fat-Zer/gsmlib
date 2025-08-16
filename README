@@ -3,7 +3,7 @@ INTRODUCTION
      This distribution contains a library to access GSM mobile phones
      through GSM modems or IrDA devices. Features include:
 
-     * modification of phonebooks stored in the mobile phone or on the 
+     * modification of phonebooks stored in the mobile phone or on the
        SIM card
 
      * reading and writing of SMS messages stored in the mobile phone
@@ -19,7 +19,7 @@ REQUIREMENTS
      You need a mobile phone that conforms to the GSM
      standards ETSI GSM 07.07, ETSI GSM 07.05, and others.
      Non-GSM mobile phones will not work! Additionally,
-     to access the mobile phone from the computer you will probably need an 
+     to access the mobile phone from the computer you will probably need an
      GSM modem (that would be a PC-CARD, usually). There might be some
      mobile phones, however, that incorporate directly terminal
      adapter (TA) functionality. Access via IrDA interfaces is also
@@ -45,7 +45,7 @@ INSTALLATION
 
 AVAILABLE DOCUMENTATION
 
-     For the command line tools UNIX manual pages are available in the 
+     For the command line tools UNIX manual pages are available in the
      doc subdirectory of this distribution. These are installed by
      default in the directories /usr/local/man1, man7, and man8.
 
@@ -53,10 +53,10 @@ AVAILABLE DOCUMENTATION
 
 
 HARDWARE
-     
+
      The following mobile phone/GSM modem combinations are reported to
      be compatible in varying degrees with the current release:
-  
+
      - Nokia 6150/Xircom REM56G.100
      - Nokia 6150/Options "GSM-Ready(R) Cellular-Only" modem
        from Option International
@@ -119,12 +119,12 @@ DISCLAIMER
 
      If you are not ready to accept these conditions please don't use
      this software.
- 
+
 
 COPYING
 
      This software is available on the LGPL (GNU LIBRARY GENERAL
-     PUBLIC LICENSE), ie. it is allowed to link 
+     PUBLIC LICENSE), ie. it is allowed to link
      the library to commercial programs.
 
      See the file COPYING for details on the license.
@@ -139,28 +139,21 @@ BUGS
 
      If something does not work with your OS platform or the mobile/TA
      combination please send a complete trace of the compilation or the
-     program execution that did fail. Make sure to compile with debugging 
+     program execution that did fail. Make sure to compile with debugging
      information enabled. Otherwise it will not be possible for me to do
      much about the problem. Send bug reports to the mailing list or
-     to software@pxh.de. I promise not to publish telephone numbers or other 
+     to software@pxh.de. I promise not to publish telephone numbers or other
      private information that might be contained in the execution traces
      that you send me.
-
-
-MAILING LISTS
-
-     There are now two mailings lists available for announcements and
-     discussion of gsmlib-related issues (hosted on lists.over.net).
-     Refer to these pages for information on subscription procedures
-     and an archive of previous postings:
-
-       http://lists.over.net/mailman/listinfo/gsmlib-announce/
-         for announcements regarding GSMLIB
-
-       http://lists.over.net/mailman/listinfo/gsmlib-devel/
-         the GSMLIB development list
 
 
 AUTHOR
 
      Peter Hofmann <software@pxh.de>.
+
+
+MAINTAINERS
+
+     Mark Purcell <msp@debian.org> (BEFORE THIS FORK !)
+
+     Vianney Bouchaud <v@bouchaud.org>
