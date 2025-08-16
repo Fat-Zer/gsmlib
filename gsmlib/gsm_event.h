@@ -30,15 +30,17 @@ namespace gsmlib
   {
   private:
     // dispatch CMT/CBR/CDS/CLIP etc.
-    void dispatch(string s, GsmAt &at) throw(GsmException);
+    void dispatch(std::string s, GsmAt &at) throw(GsmException);
 
   public:
+    virtual ~GsmEvent() { }
+
     // for SMSReception, type of SMS
     enum SMSMessageType {NormalSMS, CellBroadcastSMS, StatusReportSMS};
 
     // caller line identification presentation
     // only called if setCLIPEvent(true) is set
-    virtual void callerLineID(string number, string subAddr, string alpha);
+    virtual void callerLineID(std::string number, std::string subAddr, std::string alpha);
 
     // called if the string NO CARRIER is read
     virtual void noAnswer();
@@ -55,7 +57,7 @@ namespace gsmlib
 
     // SMS reception indication (called when SMS is not delivered to TE
     // but stored in ME memory)
-    virtual void SMSReceptionIndication(string storeName, unsigned int index,
+    virtual void SMSReceptionIndication(std::string storeName, unsigned int index,
                                         SMSMessageType messageType);
 
     // RING indication

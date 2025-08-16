@@ -19,7 +19,6 @@
 #include <assert.h>
 #include <sstream>
 
-using namespace std;
 using namespace gsmlib;
 
 // Parser members
@@ -37,11 +36,12 @@ int Parser::nextChar(bool skipWhiteSpace)
 
   return _s[_i++];
 }
-    
+
 bool Parser::checkEmptyParameter(bool allowNoParameter) throw(GsmException)
 {
   int c = nextChar();
   if (c == ',' || c == -1)
+  {
     if (allowNoParameter)
     {
       putBackChar();
@@ -50,26 +50,27 @@ bool Parser::checkEmptyParameter(bool allowNoParameter) throw(GsmException)
     else
       throwParseException(_("expected parameter"));
 
+  }
   putBackChar();
   return false;
 }
-    
-string Parser::parseString2(bool stringWithQuotationMarks)
+
+std::string Parser::parseString2(bool stringWithQuotationMarks)
   throw(GsmException)
 {
   int c;
-  string result;
-  if (parseChar('"', true))  // OK, string starts and ends with quotation mark
+  std::string result;
+  if (parseChar('"', true))  // OK, std::string starts and ends with quotation mark
     if (stringWithQuotationMarks)
     {
       // read till end of line
       while ((c = nextChar(false)) != -1)
         result += c;
-      
+
       // check for """ at end of line
       if (result.length() == 0 || result[result.length() - 1]  != '"')
         throwParseException(_("expected '\"'"));
-      
+
       // remove """ at the end
       result.resize(result.length() - 1);
     }
@@ -92,13 +93,13 @@ string Parser::parseString2(bool stringWithQuotationMarks)
     }
     if ((c == ',') || (c == ')')) putBackChar();
   }
-    
+
   return result;
 }
 
 int Parser::parseInt2() throw(GsmException)
 {
-  string s;
+  std::string s;
   int c;
   int result;
 
@@ -108,29 +109,30 @@ int Parser::parseInt2() throw(GsmException)
   if (s.length() == 0)
     throwParseException(_("expected number"));
 
-	istringstream is(s);
+  std::istringstream is(s);
   is >> result;
   return result;
 }
 
-void Parser::throwParseException(string message) throw(GsmException)
+void Parser::throwParseException(std::string message) throw(GsmException)
 {
   if (message.length() == 0)
-    throw GsmException(stringPrintf(_("unexpected end of string '%s'"),
+    throw GsmException(stringPrintf(_("unexpected end of std::string '%s'"),
                                     _s.c_str()), ParserError);
   else
     throw GsmException(message +
-                       stringPrintf(_(" (at position %d of string '%s')"), _i,
+                       stringPrintf(_(" (at position %d of std::string '%s')"), _i,
                                     _s.c_str()), ParserError);
 }
 
-Parser::Parser(string s) : _i(0), _s(s), _eos(false)
+Parser::Parser(std::string s) : _i(0), _s(s), _eos(false)
 {
 }
 
 bool Parser::parseChar(char c, bool allowNoChar) throw(GsmException)
 {
   if (nextChar() != c)
+  {
     if (allowNoChar)
     {
       putBackChar();
@@ -138,15 +140,16 @@ bool Parser::parseChar(char c, bool allowNoChar) throw(GsmException)
     }
     else
       throwParseException(stringPrintf(_("expected '%c'"), c));
+  }
   return true;
 }
 
-vector<string> Parser::parseStringList(bool allowNoList,
-                                       bool allowNoParentheses)
+std::vector<std::string> Parser::parseStringList(bool allowNoList,
+                                                 bool allowNoParentheses)
   throw(GsmException)
 {
   // handle case of empty parameter
-  vector<string> result;
+  std::vector<std::string> result;
   if (checkEmptyParameter(allowNoList)) return result;
 
   bool expectClosingParenthesis = parseChar('(', allowNoParentheses);
@@ -158,7 +161,7 @@ vector<string> Parser::parseStringList(bool allowNoList,
       result.push_back(parseString());
       int c = nextChar();
       if (c == ')')
-      break;
+        break;
       if (c == -1)
         if (expectClosingParenthesis)
           throwParseException();
@@ -168,15 +171,15 @@ vector<string> Parser::parseStringList(bool allowNoList,
         throwParseException(_("expected ')' or ','"));
     }
   }
-  
+
   return result;
 }
 
-vector<bool> Parser::parseIntList(bool allowNoList, bool allowNoParentheses)
+std::vector<bool> Parser::parseIntList(bool allowNoList, bool allowNoParentheses)
   throw(GsmException)
 {
   bool isRange = false;
-  vector<bool> result;
+  std::vector<bool> result;
   int resultCapacity = 0;
   unsigned int saveI = _i;
 
@@ -251,9 +254,9 @@ vector<bool> Parser::parseIntList(bool allowNoList, bool allowNoParentheses)
         if (pass == 1)
           result[thisInt] = true;
         lastInt = thisInt;
-      
+
         int c = nextChar();
-        
+
         if ((expectClosingParen && c == ')') ||
             (! expectClosingParen && c == -1))
           break;
@@ -279,11 +282,11 @@ vector<bool> Parser::parseIntList(bool allowNoList, bool allowNoParentheses)
   return result;
 }
 
-vector<ParameterRange> Parser::parseParameterRangeList(bool allowNoList)
+std::vector<ParameterRange> Parser::parseParameterRangeList(bool allowNoList)
   throw(GsmException)
 {
   // handle case of empty parameter
-  vector<ParameterRange> result;
+  std::vector<ParameterRange> result;
   if (checkEmptyParameter(allowNoList)) return result;
 
   result.push_back(parseParameterRange());
@@ -291,7 +294,7 @@ vector<ParameterRange> Parser::parseParameterRangeList(bool allowNoList)
   {
     result.push_back(parseParameterRange());
   }
-  
+
   return result;
 }
 
@@ -349,12 +352,12 @@ int Parser::parseInt(bool allowNoInt) throw(GsmException)
   return result;
 }
 
-string Parser::parseString(bool allowNoString,
-                           bool stringWithQuotationMarks)
+std::string Parser::parseString(bool allowNoString,
+				bool stringWithQuotationMarks)
   throw(GsmException)
 {
   // handle case of empty parameter
-  string result;
+  std::string result;
   if (checkEmptyParameter(allowNoString)) return result;
 
   result = parseString2(stringWithQuotationMarks);
@@ -365,6 +368,7 @@ string Parser::parseString(bool allowNoString,
 bool Parser::parseComma(bool allowNoComma) throw(GsmException)
 {
   if (nextChar() != ',')
+  {
     if(allowNoComma)
     {
       putBackChar();
@@ -372,13 +376,15 @@ bool Parser::parseComma(bool allowNoComma) throw(GsmException)
     }
     else
       throwParseException(_("expected comma"));
+  }
   return true;
 }
 
-string Parser::parseEol() throw(GsmException)
+std::string Parser::parseEol() throw(GsmException)
 {
-  string result;
+  std::string result;
   int c;
+
   while ((c = nextChar()) != -1) result += c;
   return result;
 }
@@ -392,12 +398,13 @@ void Parser::checkEol() throw(GsmException)
   }
 }
 
-string Parser::getEol()
+std::string Parser::getEol()
 {
-  string result;
+  std::string result;
   int c;
   unsigned int saveI = _i;
   bool saveEos = _eos;
+
   while ((c = nextChar()) != -1) result += c;
   _i = saveI;
   _eos = saveEos;

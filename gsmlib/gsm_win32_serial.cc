@@ -19,13 +19,12 @@
 #include <gsmlib/gsm_util.h>
 #include <fcntl.h>
 #include <iostream>
-#include <strstream>
+#include <sstream>
 #include <errno.h>
 #include <stdio.h>
 #include <assert.h>
 #include <signal.h>
 
-using namespace std;
 using namespace gsmlib;
 
 static long int timeoutVal = TIMEOUT_SECS;
@@ -57,19 +56,19 @@ BOOL CancelIoHook(HANDLE file)
     if (CancelIoProc)
       return CancelIoProc(file);
   }
-                         
+
   return TRUE; 
 }
 #define CancelIo CancelIoHook
 
 // Win32SerialPort members
 
-void Win32SerialPort::throwModemException(string message) throw(GsmException)
+void Win32SerialPort::throwModemException(std::string message) throw(GsmException)
 {
   ostrstream os;
   os << message << " (errno: " << errno << "/" << strerror(errno) << ")";
   char *ss = os.str();
-  string s(ss);
+  std::string s(ss);
   delete[] ss;
   throw GsmException(s, OSError, errno);
 }
@@ -155,8 +154,8 @@ int Win32SerialPort::readByte() throw(GsmException)
   return c;
 }
 
-Win32SerialPort::Win32SerialPort(string device, int lineSpeed,
-                               string initString, bool swHandshake)
+Win32SerialPort::Win32SerialPort(std::string device, int lineSpeed,
+                               std::string initString, bool swHandshake)
   throw(GsmException) :
   _oldChar(-1)
 {
@@ -280,7 +279,7 @@ Win32SerialPort::Win32SerialPort(string device, int lineSpeed,
       int readTries = 5;
       while (readTries-- > 0)
       {
-        string s = getLine();
+        std::string s = getLine();
         if (s.find("OK") != string::npos ||
             s.find("CABLE: GSM") != string::npos)
         {
@@ -295,7 +294,7 @@ Win32SerialPort::Win32SerialPort(string device, int lineSpeed,
         readTries = 5;
         // !!! no not declare this in loop, compiler error on Visual C++
         // (without SP and with SP4)
-        string s; 
+        std::string s; 
         putLine("AT" + initString);
         do
         {
@@ -326,7 +325,7 @@ Win32SerialPort::Win32SerialPort(string device, int lineSpeed,
 
 string Win32SerialPort::getLine() throw(GsmException)
 {
-  string result;
+  std::string result;
   int c;
   while ((c = readByte()) > 0)
   {
@@ -347,7 +346,7 @@ string Win32SerialPort::getLine() throw(GsmException)
   return result;
 }
 
-void Win32SerialPort::putLine(string line,
+void Win32SerialPort::putLine(std::string line,
                              bool carriageReturn) throw(GsmException)
 {
 #ifndef NDEBUG
@@ -497,7 +496,7 @@ Win32SerialPort::~Win32SerialPort()
     CloseHandle(_file);
 }
 
-int gsmlib::baudRateStrToSpeed(string baudrate) throw(GsmException)
+int gsmlib::baudRateStrToSpeed(std::string baudrate) throw(GsmException)
 {
   if (baudrate == "300")
     return 300;

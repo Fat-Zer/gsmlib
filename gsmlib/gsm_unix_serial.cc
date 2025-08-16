@@ -27,14 +27,14 @@
 #include <sys/ioctl.h>
 #include <signal.h>
 #include <pthread.h>
+#include <cstring>
 #include <cassert>
 
-using namespace std;
 using namespace gsmlib;
 
 static const int holdoff[] = {2000000, 1000000, 400000};
-static const int holdoffArraySize = sizeof(holdoff)/sizeof(int);
-  
+static const int holdoffArraySize = sizeof(holdoff) / sizeof(int);
+
 // alarm handling for socket read/write
 // the timerMtx is necessary since several threads cannot use the
 // timer indepently of each other
@@ -86,9 +86,9 @@ static void stopTimer()
 
 // UnixSerialPort members
 
-void UnixSerialPort::throwModemException(string message) throw(GsmException)
+void UnixSerialPort::throwModemException(std::string message) throw(GsmException)
 {
-  ostringstream os;
+  std::ostringstream os;
   os << message << " (errno: " << errno << "/" << strerror(errno) << ")";
   throw GsmException(os.str(), OSError, errno);
 }
@@ -113,7 +113,7 @@ int UnixSerialPort::readByte() throw(GsmException)
   struct timeval oneSecond;
   bool readDone = false;
 
-  while (! readDone && timeElapsed < _timeoutVal)
+  while (!readDone && timeElapsed < _timeoutVal)
   {
     if (interrupted())
       throwModemException(_("interrupted when reading from TA"));
@@ -145,7 +145,7 @@ int UnixSerialPort::readByte() throw(GsmException)
       break;
     }
   }
-  if (! readDone)
+  if (!readDone)
     throwModemException(_("timeout when reading from TA"));
 
 #ifndef NDEBUG
@@ -153,17 +153,18 @@ int UnixSerialPort::readByte() throw(GsmException)
   {
     // some useful debugging code
     if (c == LF)
-      cerr << "<LF>";
+      std::cerr << "<LF>";
     else if (c == CR)
-      cerr << "<CR>";
-    else cerr << "<'" << (char) c << "'>";
-    cerr.flush();
+      std::cerr << "<CR>";
+    else
+      std::cerr << "<'" << (char) c << "'>";
+    std::cerr.flush();
   }
 #endif
   return c;
 }
 
-UnixSerialPort::UnixSerialPort(string device, speed_t lineSpeed,
+UnixSerialPort::UnixSerialPort(std::string device, speed_t lineSpeed,
                                string initString, bool swHandshake)
   throw(GsmException) :
   _oldChar(-1), _timeoutVal(TIMEOUT_SECS)
@@ -259,14 +260,14 @@ UnixSerialPort::UnixSerialPort(string device, speed_t lineSpeed,
       {
         // for the first call getLine() waits only 3 seconds
         // because of _timeoutVal = 3
-        string s = getLine();
-        if (s.find("OK") != string::npos ||
-            s.find("CABLE: GSM") != string::npos)
+        std::string s = getLine();
+        if (s.find("OK") != std::string::npos ||
+            s.find("CABLE: GSM") != std::string::npos)
         {
           foundOK = true;
           readTries = 0;        // found OK, exit loop
         }
-        else if (s.find("ERROR") != string::npos)
+        else if (s.find("ERROR") != std::string::npos)
           readTries = 0;        // error, exit loop
       }
 
@@ -280,9 +281,9 @@ UnixSerialPort::UnixSerialPort(string device, speed_t lineSpeed,
         putLine("AT" + initString);
         while (readTries-- > 0)
         {
-          string s = getLine();
-          if (s.find("OK") != string::npos ||
-              s.find("CABLE: GSM") != string::npos)
+          std::string s = getLine();
+          if (s.find("OK") != std::string::npos ||
+              s.find("CABLE: GSM") != std::string::npos)
             return;                 // found OK, return
         }
       }
@@ -302,16 +303,14 @@ UnixSerialPort::UnixSerialPort(string device, speed_t lineSpeed,
                                   device.c_str()), OtherError);
 }
 
-string UnixSerialPort::getLine() throw(GsmException)
+std::string UnixSerialPort::getLine() throw(GsmException)
 {
-  string result;
+  std::string result;
   int c;
   while ((c = readByte()) >= 0)
   {
     while (c == CR)
-    {
       c = readByte();
-    }
     if (c == LF)
       break;
     result += c;
@@ -319,23 +318,23 @@ string UnixSerialPort::getLine() throw(GsmException)
 
 #ifndef NDEBUG
   if (debugLevel() >= 1)
-    cerr << "<-- " << result << endl;
+    std::cerr << "<-- " << result << std::endl;
 #endif
 
   return result;
 }
 
-void UnixSerialPort::putLine(string line,
-                             bool carriageReturn) throw(GsmException)
+void UnixSerialPort::putLine(std::string line, bool carriageReturn)
+  throw(GsmException)
 {
 #ifndef NDEBUG
   if (debugLevel() >= 1)
-    cerr << "--> " << line << endl;
+    std::cerr << "--> " << line << std::endl;
 #endif
 
   if (carriageReturn) line += CR;
   const char *l = line.c_str();
-  
+
   int timeElapsed = 0;
   struct timeval oneSecond;
 
@@ -371,7 +370,7 @@ void UnixSerialPort::putLine(string line,
       break;
     }
   }
-  
+
   while (timeElapsed < _timeoutVal)
   {
     if (interrupted())
@@ -414,7 +413,7 @@ UnixSerialPort::~UnixSerialPort()
     close(_fd);
 }
 
-speed_t gsmlib::baudRateStrToSpeed(string baudrate) throw(GsmException)
+speed_t gsmlib::baudRateStrToSpeed(std::string baudrate) throw(GsmException)
 {
   if (baudrate == "300")
     return B300;

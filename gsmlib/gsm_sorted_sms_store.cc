@@ -18,11 +18,11 @@
 #include <gsmlib/gsm_sorted_sms_store.h>
 #include <iostream>
 #include <fstream>
+#include <cstring>
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
 #endif
 
-using namespace std;
 using namespace gsmlib;
 
 // SMS message file format:
@@ -45,8 +45,8 @@ static const unsigned short int SMS_STORE_FILE_FORMAT_VERSION = 1;
 
 // aux function read bytes with error handling
 // return false if EOF
-static bool readnbytes(string &filename,
-                       istream &is, int len, char *buf,
+static bool readnbytes(std::string &filename,
+                       std::istream &is, int len, char *buf,
                        bool eofIsError = true) throw(GsmException)
 {
   is.read(buf, len);
@@ -58,7 +58,7 @@ static bool readnbytes(string &filename,
 }
 
 // aux function write bytes with error handling
-static void writenbytes(string &filename, ostream &os,
+static void writenbytes(std::string &filename, std::ostream &os,
                         int len, const char *buf) throw(GsmException)
 {
   os.write(buf, len);
@@ -68,64 +68,69 @@ static void writenbytes(string &filename, ostream &os,
                                      filename.c_str())), OSError);
 }
 
-void SortedSMSStore::readSMSFile(istream &pbs, string filename)
+void SortedSMSStore::readSMSFile(std::istream &pbs, std::string filename)
   throw(GsmException)
 {
   char numberBuf[4];
 
   // check the version
   try
-  {
-    readnbytes(filename, pbs, 2, numberBuf);
-  }
+    {
+      readnbytes(filename, pbs, 2, numberBuf);
+    }
   catch (GsmException &ge)
-  {
-    // ignore error, file might be empty initially
-  }
-  unsigned_int_2 version = ntohs(*((unsigned_int_2*)numberBuf));
-  if (! pbs.eof() && version != SMS_STORE_FILE_FORMAT_VERSION)
+    {
+      // ignore error, file might be empty initially
+    }
+  unsigned_int_2 version;
+  memcpy(&version, numberBuf, sizeof(*numberBuf));
+  version = ntohs(version);
+  if (!pbs.eof() && version != SMS_STORE_FILE_FORMAT_VERSION)
     throw GsmException(stringPrintf(_("file '%s' has wrong version"),
                                     filename.c_str()), ParameterError);
 
   // read entries
   while (1)
-  {
-    // read PDU length and exit loop if EOF
-    if (! readnbytes(filename, pbs, 2, numberBuf, false))
-      break;
+    {
+      // read PDU length and exit loop if EOF
+      if (! readnbytes(filename, pbs, 2, numberBuf, false))
+	break;
 
-    unsigned_int_2 pduLen = ntohs(*((unsigned_int_2*)numberBuf));
-    if (pduLen > 500)
-      throw GsmException(stringPrintf(_("corrupt SMS store file '%s'"),
-                                      filename.c_str()), ParameterError);
+      unsigned_int_2 pduLen;
+      memcpy(&pduLen, numberBuf, sizeof(*numberBuf));
+      pduLen = ntohs(pduLen);
 
-    // read reserved integer field of message (was formerly index)
-    readnbytes(filename, pbs, 4, numberBuf);
-    //unsigned_int_4 reserved = ntohl(*((unsigned_int_4*)numberBuf));
+      if (pduLen > 500)
+	throw GsmException(stringPrintf(_("corrupt SMS store file '%s'"),
+					filename.c_str()), ParameterError);
+
+      // read reserved integer field of message (was formerly index)
+      readnbytes(filename, pbs, 4, numberBuf);
+      //unsigned_int_4 reserved = ntohl(*((unsigned_int_4*)numberBuf));
     
-    // read message type
-    readnbytes(filename, pbs, 1, numberBuf);
-    SMSMessage::MessageType messageType =
-      (SMSMessage::MessageType)numberBuf[0];
-    if (messageType > 2)
-      throw GsmException(stringPrintf(_("corrupt SMS store file '%s'"),
-                                      filename.c_str()), ParameterError);
+      // read message type
+      readnbytes(filename, pbs, 1, numberBuf);
+      SMSMessage::MessageType messageType =
+	(SMSMessage::MessageType)numberBuf[0];
+      if (messageType > 2)
+	throw GsmException(stringPrintf(_("corrupt SMS store file '%s'"),
+					filename.c_str()), ParameterError);
 
-    char *pduBuf = (char*)alloca(sizeof(char) * pduLen);
+      char *pduBuf = (char*)alloca(sizeof(char) * pduLen);
 
-    // read pdu
-    readnbytes(filename, pbs, pduLen, pduBuf);
-    SMSMessageRef message =
-      SMSMessage::decode(string(pduBuf, pduLen),
-                         (messageType != SMSMessage::SMS_SUBMIT));
+      // read pdu
+      readnbytes(filename, pbs, pduLen, pduBuf);
+      SMSMessageRef message =
+	SMSMessage::decode(std::string(pduBuf, pduLen),
+			   (messageType != SMSMessage::SMS_SUBMIT));
     
-    SMSStoreEntry *newEntry = new SMSStoreEntry(message, _nextIndex++);
-    _sortedSMSStore.insert(
-      SMSStoreMap::value_type(
-        SMSMapKey(*this, message->serviceCentreTimestamp()),
-        newEntry)
-      );
-  }
+      SMSStoreEntry *newEntry = new SMSStoreEntry(message, _nextIndex++);
+      _sortedSMSStore.insert(
+			     SMSStoreMap::value_type(
+						     SMSMapKey(*this, message->serviceCentreTimestamp()),
+						     newEntry)
+			     );
+    }
 }
 
 void SortedSMSStore::sync(bool fromDestructor) throw(GsmException)
@@ -146,13 +151,13 @@ void SortedSMSStore::sync(bool fromDestructor) throw(GsmException)
     }
 
     // open stream
-    ostream *pbs = NULL;
+    std::ostream *pbs = NULL;
     try
     {
       if (_filename == "")
-        pbs = &cout;
+        pbs = &std::cout;
       else
-		pbs = new ofstream(_filename.c_str(), ios::out | ios::binary);
+	pbs = new std::ofstream(_filename.c_str(), std::ios::out | std::ios::binary);
       
       if (pbs->bad())
         throw GsmException(
@@ -170,7 +175,7 @@ void SortedSMSStore::sync(bool fromDestructor) throw(GsmException)
            i != _sortedSMSStore.end(); ++i)
       {
         // create PDU and write length
-        string pdu = i->second->message()->encode();
+        std::string pdu = i->second->message()->encode();
         unsigned_int_2 pduLen = htons(pdu.length());
         writenbytes(_filename, *pbs, 2, (char*)&pduLen);
 
@@ -188,11 +193,11 @@ void SortedSMSStore::sync(bool fromDestructor) throw(GsmException)
     }
     catch(GsmException &e)
     {
-      if (pbs != &cout) delete pbs;
+      if (pbs != &std::cout) delete pbs;
       throw;
     }
     // close file
-    if (pbs != &cout) delete pbs;
+    if (pbs != &std::cout) delete pbs;
 
     _changed = false;
   }
@@ -205,12 +210,12 @@ void SortedSMSStore::checkReadonly() throw(GsmException)
     ParameterError);
 }
 
-SortedSMSStore::SortedSMSStore(string filename) throw(GsmException) :
+SortedSMSStore::SortedSMSStore(std::string filename) throw(GsmException) :
   _changed(false), _fromFile(true), _madeBackupFile(false),
   _sortOrder(ByDate), _readonly(false), _filename(filename), _nextIndex(0)
 {
   // open the file
-  ifstream pbs(filename.c_str(), ios::in | ios::binary);
+  std::ifstream pbs(filename.c_str(), std::ios::in | std::ios::binary);
   if (pbs.bad())
     throw GsmException(stringPrintf(_("cannot open file '%s'"),
                                     filename.c_str()), OSError);
@@ -225,7 +230,7 @@ SortedSMSStore::SortedSMSStore(bool fromStdin) throw(GsmException) :
 {
   // read from stdin
   if (fromStdin)
-    readSMSFile(cin, (string)_("<STDIN>"));
+    readSMSFile(std::cin, (std::string)_("<STDIN>"));
 }
 
 SortedSMSStore::SortedSMSStore(SMSStoreRef meSMSStore)

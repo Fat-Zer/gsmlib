@@ -20,17 +20,15 @@
 #include <time.h>
 #include <sstream>
 #include <iomanip>
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif
 #include <climits>
 #include <string>
-using namespace std;
+#include <cstring>
+
 using namespace gsmlib;
 
 // Address members
 
-Address::Address(string number) : _plan(ISDN_Telephone)
+Address::Address(std::string number) : _plan(ISDN_Telephone)
 {
   number = removeWhiteSpace(number);
   if (number.length() > 0 && number[0] == '+')
@@ -45,7 +43,7 @@ Address::Address(string number) : _plan(ISDN_Telephone)
   }
 }
 
-string Address::toString() const
+std::string Address::toString() const
 {
   if (_type == International)
     return "+" + _number;
@@ -58,9 +56,9 @@ bool gsmlib::operator<(const Address &x, const Address &y)
   // normalize numbers according to the following two rules:
   // - prepend "+" if international number
   // - append 0s to the shorter number so that both numbers have equal length
-  string xnumber = x._number;
-  string ynumber = y._number;
-  static string twenty0s = "00000000000000000000";
+  std::string xnumber = x._number;
+  std::string ynumber = y._number;
+  static std::string twenty0s = "00000000000000000000";
 
   if (x._type == Address::International) xnumber = "+" + xnumber;
   if (y._type == Address::International) ynumber = "+" + ynumber;
@@ -93,7 +91,7 @@ bool Timestamp::empty() const
     _minute == 0 && _seconds == 0 && _timeZoneMinutes == 0;
 }
 
-string Timestamp::toString(bool appendTimeZone) const
+std::string Timestamp::toString(bool appendTimeZone) const
 {
   short timeZoneMinutes = _timeZoneMinutes;
   short timeZoneHours = timeZoneMinutes / 60;
@@ -124,10 +122,10 @@ string Timestamp::toString(bool appendTimeZone) const
   if (! appendTimeZone)
     return formattedTime;
 
-	ostringstream os;
+  std::ostringstream os;
   os << formattedTime << " (" << (_negativeTimeZone ? '-' : '+')
-     << setfill('0') << setw(2) << timeZoneHours 
-     << setw(2) << timeZoneMinutes << ')';
+     << std::setfill('0') << std::setw(2) << timeZoneHours 
+     << std::setw(2) << timeZoneMinutes << ')';
   return os.str();
 }
 
@@ -173,7 +171,7 @@ bool gsmlib::operator==(const Timestamp &x, const Timestamp &y)
 
 // TimePeriod members
 
-string TimePeriod::toString() const
+std::string TimePeriod::toString() const
 {
   switch (_format)
   {
@@ -181,7 +179,7 @@ string TimePeriod::toString() const
     return _("not present");
   case Relative:
   {
-	ostringstream os;
+    std::ostringstream os;
     if (_relativeTime <= 143)
       os << ((int)_relativeTime + 1) * 5 << _(" minutes");
     else if (_relativeTime <= 167)
@@ -201,9 +199,9 @@ string TimePeriod::toString() const
 
 // DataCodingScheme members
 
-string DataCodingScheme::toString() const
+std::string DataCodingScheme::toString() const
 {
-  string result;
+  std::string result;
   if (compressed()) result += _("compressed   ");
   if (messageWaitingIndication())
     switch (getMessageWaitingType())
@@ -242,7 +240,7 @@ string DataCodingScheme::toString() const
 
 // SMSDecoder members
 
-SMSDecoder::SMSDecoder(string pdu) : _bi(0), _septetStart(NULL)
+SMSDecoder::SMSDecoder(std::string pdu) : _bi(0), _septetStart(NULL)
 {
   _p = new unsigned char[pdu.length() / 2];
   _op = _p;
@@ -291,9 +289,9 @@ void SMSDecoder::getOctets(unsigned char* octets, unsigned short length)
   }
 }
 
-string SMSDecoder::getSemiOctets(unsigned short length)
+std::string SMSDecoder::getSemiOctets(unsigned short length)
 {
-  string result;
+  std::string result;
   result.reserve(length);
   alignOctet();
   for (unsigned short i = 0; i < length; ++i)
@@ -355,31 +353,31 @@ unsigned long SMSDecoder::getTimeZone(bool &negativeTimeZone)
   unsigned long result = 0;
   alignOctet();
   for (unsigned short i = 0; i < 2; ++i)
-  {
-    if (_bi == 0)
     {
-      if (_op >= _maxop)
-        throw GsmException(_("premature end of PDU"), SMSFormatError);
-      // bits 0..3 are most significant
-      if (i == 0)
-      {                         // get sign
-        result = result * 10 + (*_op & 0x7);
-        negativeTimeZone = (*_op & 0x8 == 0);
-      }
+      if (_bi == 0)
+	{
+	  if (_op >= _maxop)
+	    throw GsmException(_("premature end of PDU"), SMSFormatError);
+	  // bits 0..3 are most significant
+	  if (i == 0)
+	    {                         // get sign
+	      result = result * 10 + (*_op & 0x7);
+	      negativeTimeZone = ((*_op & 0x8) == 0);
+	    }
+	  else
+	    result = result * 10 + (*_op & 0xf);
+	  _bi = 4;
+	}
       else
-        result = result * 10 + (*_op & 0xf);
-      _bi = 4;
+	{
+	  if (_op >= _maxop)
+	    throw GsmException(_("premature end of PDU"), SMSFormatError);
+	  // bits 4..7 are least significant
+	  result = result * 10 + (*_op >> 4);
+	  _bi = 0;
+	  ++_op;
+	}
     }
-    else
-    {
-      if (_op >= _maxop)
-        throw GsmException(_("premature end of PDU"), SMSFormatError);
-      // bits 4..7 are least significant
-      result = result * 10 + (*_op >> 4);
-      _bi = 0;
-      ++_op;
-    }
-  }
   alignOctet();
   return result * 15;           // compute minutes
 }
@@ -392,9 +390,9 @@ unsigned long SMSDecoder::getInteger(unsigned short length)
   return result;
 }
 
-string SMSDecoder::getString(unsigned short length)
+std::string SMSDecoder::getString(unsigned short length)
 {
-  string result;
+  std::string result;
   alignSeptet();
   for (unsigned short i = 0; i < length; ++i)
   {
@@ -515,7 +513,7 @@ void SMSEncoder::setOctets(const unsigned char* octets, unsigned short length)
     *_op++ = octets[i];
 }
 
-void SMSEncoder::setSemiOctets(string semiOctets)
+void SMSEncoder::setSemiOctets(std::string semiOctets)
 {
   alignOctet();
   for (unsigned int i = 0; i < semiOctets.length(); ++i)
@@ -539,8 +537,8 @@ void SMSEncoder::setSemiOctets(string semiOctets)
 void SMSEncoder::setSemiOctetsInteger(unsigned long intValue,
                                       unsigned short length)
 {
-  string s;
-  ostringstream os;
+  std::string s;
+  std::ostringstream os;
   os << intValue;
   s = os.str();
   assert(s.length() <= length);
@@ -561,7 +559,7 @@ void SMSEncoder::setInteger(unsigned long intvalue, unsigned short length)
     setBit((intvalue & (1 << i)) != 0);
 }
 
-void SMSEncoder::setString(string stringValue)
+void SMSEncoder::setString(std::string stringValue)
 {
   alignSeptet();
   for (unsigned int i = 0; i < stringValue.length(); ++i)
@@ -576,17 +574,17 @@ void SMSEncoder::setAddress(Address &address, bool scAddressFormat)
 {
   alignOctet();
   if (scAddressFormat)
-  {
-    unsigned int numberLen = address._number.length();
-    if (numberLen == 0)
     {
-      setOctet(0);              // special case: use default SC address
-      return;                   // (set by +CSCA=)
+      unsigned int numberLen = address._number.length();
+      if (numberLen == 0)
+	{
+	  setOctet(0);              // special case: use default SC address
+	  return;                   // (set by +CSCA=)
+	}
+      setOctet(numberLen / 2 + numberLen % 2 + 1);
+      // not supported for SCA format
+      assert(address._type != Address::Alphanumeric);
     }
-    setOctet(numberLen / 2 + numberLen % 2 + 1);
-    // not supported for SCA format
-    assert(address._type != Address::Alphanumeric);
-  }
   else
     if (address._type == Address::Alphanumeric)
       // address in GSM default encoding, see also comment in getAddress()
@@ -597,15 +595,17 @@ void SMSEncoder::setAddress(Address &address, bool scAddressFormat)
   setInteger(address._plan, 4);
   setInteger(address._type, 3);
   setBit(1);
-  
+
   if (address._number.length() > 0)
-    if (address._type == Address::Alphanumeric)
     {
-      markSeptet();
-      setString(latin1ToGsm(address._number));
+      if (address._type == Address::Alphanumeric)
+	{
+	  markSeptet();
+	  setString(latin1ToGsm(address._number));
+	}
+      else
+	setSemiOctets(address._number);
     }
-    else
-      setSemiOctets(address._number);
   alignOctet();
 }
 
@@ -623,27 +623,27 @@ void SMSEncoder::setTimestamp(Timestamp timestamp)
 void SMSEncoder::setTimePeriod(TimePeriod period)
 {
   switch (period._format)
-  {
-  case TimePeriod::NotPresent:
-    break;
-  case TimePeriod::Relative:
-    setOctet(period._relativeTime);
-    break;
-  case TimePeriod::Absolute:
-    setTimestamp(period._absoluteTime);
-    break;
-  default:
-    assert(0);
-    break;
-  }
+    {
+    case TimePeriod::NotPresent:
+      break;
+    case TimePeriod::Relative:
+      setOctet(period._relativeTime);
+      break;
+    case TimePeriod::Absolute:
+      setTimestamp(period._absoluteTime);
+      break;
+    default:
+      assert(0);
+      break;
+    }
 }
 
-string SMSEncoder::getHexString()
+std::string SMSEncoder::getHexString()
 {
   short bi = _bi;
   unsigned char *op = _op;
   alignOctet();
-  string result = bufToHex(_p, _op - _p);
+  std::string result = bufToHex(_p, _op - _p);
   _bi = bi;
   _op = op;
   return result;
@@ -674,21 +674,21 @@ void UserDataHeader::decode(SMSDecoder &d)
   unsigned char *s =
     (unsigned char*)alloca(sizeof(unsigned char) * udhLen);
   d.getOctets(s, udhLen);
-  string ss((char*)s, (unsigned int)udhLen);
+  std::string ss((char*)s, (unsigned int)udhLen);
   _udh = ss;
 }
 
-string UserDataHeader::getIE(unsigned char id)
+std::string UserDataHeader::getIE(unsigned char id)
 {
   int udhl, pos = 0;
-	
+
   udhl = _udh.length();
   while (pos < udhl)
-  {
-    unsigned char iei = _udh[pos++];
-    unsigned char ieidl = _udh[pos++];
-    if (iei == id) return _udh.substr(pos, ieidl);
-    pos += ieidl;
-  }
+    {
+      unsigned char iei = _udh[pos++];
+      unsigned char ieidl = _udh[pos++];
+      if (iei == id) return _udh.substr(pos, ieidl);
+      pos += ieidl;
+    }
   return "";
 }

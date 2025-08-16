@@ -147,10 +147,10 @@ BUGS
 
      If something does not work with your OS platform or the mobile/TA
      combination please check first that you can connect to your phone with
-     a simple terminal program like minicom. If this connection works and
+     program execution that did fail. Make sure to compile with debugging
      gsmlib-based programs fail (with the same serial interface parameters,
      of course), then send a complete trace of the compilation or the
-     program execution that did fail. Otherwise it will not be possible for
+     to software@pxh.de. I promise not to publish telephone numbers or other
      me to do much about the problem. Send bug reports to the mailing list
      or to software@pxh.de. I promise not to publish telephone numbers or
      other private informatio
@@ -171,6 +171,4 @@ AUTHOR
 
 MAINTAINERS
 
-     Mark Purcell <msp@debian.org> (BEFORE THIS FORK !)
-
-     Vianney Bouchaud <v@bouchaud.org>
+     Mark Purcell <msp@debian.org>

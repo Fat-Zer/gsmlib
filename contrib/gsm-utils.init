@@ -11,7 +11,7 @@
 #
 # /etc/init.d/gsm-utils: Controls the GSM SMS send daemon
 #
-# written by Matthias Goebl <matthias@goebl.net>
+# written by Matthias Goebl <matthias.goebl@goebl.net>
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON=/usr/bin/gsmsmsd

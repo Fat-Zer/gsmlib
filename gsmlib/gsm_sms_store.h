@@ -115,7 +115,7 @@ namespace gsmlib
   class SMSStoreIterator : public random_access_iterator<SMSStoreEntry,
                            int>
 #else
-  class SMSStoreIterator : public iterator<random_access_iterator_tag,
+  class SMSStoreIterator : public std::iterator<std::random_access_iterator_tag,
                            SMSStoreEntry, int>
 #endif
   {
@@ -154,10 +154,10 @@ namespace gsmlib
   };
 
 #if __GNUC__ == 2 && __GNUC_MINOR__ == 95
-  class SMSStoreConstIterator : public random_access_iterator<SMSStoreEntry,
+  class SMSStoreConstIterator : public std::random_access_iterator<SMSStoreEntry,
                                 int>
 #else
-  class SMSStoreConstIterator : public iterator<random_access_iterator_tag,
+  class SMSStoreConstIterator : public std::iterator<std::random_access_iterator_tag,
                                 SMSStoreEntry, int>
 #endif
   {
@@ -194,8 +194,8 @@ namespace gsmlib
   class SMSStore : public RefBase, public NoCopy
   {
   private:
-    vector<SMSStoreEntry*> _store; // vector of store entries
-    string _storeName;          // name of the store, 2-byte like "SM"
+    std::vector<SMSStoreEntry*> _store; // vector of store entries
+    std::string _storeName;          // name of the store, 2-byte like "SM"
     Ref<GsmAt> _at;             // my GsmAt class
     MeTa &_meTa;                // my MeTa class
     bool _useCache;             // true if entries should be cached
@@ -219,7 +219,7 @@ namespace gsmlib
     int doInsert(SMSMessageRef message) throw(GsmException);
 
     // used by class MeTa
-    SMSStore(string storeName, Ref<GsmAt> at, MeTa &meTa) throw(GsmException);
+    SMSStore(std::string storeName, Ref<GsmAt> at, MeTa &meTa) throw(GsmException);
 
     // resize store entry vector if necessary
     void resizeStore(int newSize);
@@ -235,7 +235,7 @@ namespace gsmlib
     void setCaching(bool useCache) {_useCache = useCache;}
 
     // return name of this store (2-character string)
-    string name() const {return _storeName;}
+    std::string name() const {return _storeName;}
 
     // SMS store traversal commands
     // these are suitable to use stdc++ lib algorithms and iterators

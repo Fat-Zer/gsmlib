@@ -23,17 +23,16 @@
 #include <sstream>
 #include <string>
 
-using namespace std;
 using namespace gsmlib;
 
 // local constants
 
-static const string dashes =
+static const std::string dashes =
 "---------------------------------------------------------------------------";
 
 // SMSMessage members
 
-Ref<SMSMessage> SMSMessage::decode(string pdu,
+Ref<SMSMessage> SMSMessage::decode(std::string pdu,
                                    bool SCtoMEdirection,
                                    GsmAt *at) throw(GsmException)
 {
@@ -88,11 +87,11 @@ Ref<SMSMessage> SMSMessage::decode(string pdu,
   return result;
 }
 
-Ref<SMSMessage> SMSMessage::decode(istream& s) throw(gsmlib::GsmException)
+Ref<SMSMessage> SMSMessage::decode(std::istream& s) throw(gsmlib::GsmException)
 {
-  string pdu;
-  unsigned char ScToMe; 
-	
+  std::string pdu;
+  unsigned char ScToMe;
+
   s >> ScToMe;
   s >> pdu;
 
@@ -110,7 +109,7 @@ unsigned char SMSMessage::send(Ref<SMSMessage> &ackPdu)
   if (_at.isnull())
     throw GsmException(_("no device given for sending SMS"), ParameterError);
 
-  string pdu = encode();
+  std::string pdu = encode();
   Parser p(_at->sendPdu("+CMGS=" +
                         intToStr(pdu.length() / 2 - getSCAddressLen()),
                         "+CMGS:", pdu));
@@ -118,7 +117,7 @@ unsigned char SMSMessage::send(Ref<SMSMessage> &ackPdu)
 
   if (p.parseComma(true))
   {
-    string pdu = p.parseEol();
+    std::string pdu = p.parseEol();
 
     // add missing service centre address if required by ME
     if (! _at->getMeTa().getCapabilities()._hasSMSSCAprefix)
@@ -154,27 +153,20 @@ unsigned char SMSMessage::userDataLength() const
     return _userData.length() + (udhl ? (1 + udhl) : 0);
 }
 
-ostream& SMSMessage::operator<<(ostream& s)
+std::ostream& SMSMessage::operator<<(std::ostream& s)
 {
   unsigned char ScToMe;
-	
+
   if (dynamic_cast<SMSDeliverMessage*>(this) || 
       dynamic_cast<SMSStatusReportMessage*>(this) || 
       dynamic_cast<SMSSubmitReportMessage*>(this))
-  {
     ScToMe = 'S';
-  }
   else if (dynamic_cast<SMSSubmitMessage*>(this) || 
            dynamic_cast<SMSCommandMessage*>(this) || 
            dynamic_cast<SMSDeliverReportMessage*>(this))
-  {
     ScToMe = 'M';
-  }
   else
-  {
     throw GsmException(_("unhandled SMS TPDU type"), OtherError);
-  }
-
   s << ScToMe;
   return s << encode();
 }
@@ -182,7 +174,7 @@ ostream& SMSMessage::operator<<(ostream& s)
 // SMSMessage::SMSMessage(SMSMessage &m)
 // {
 //   _at = m._at;
-  
+
 // }
 
 // SMSMessage &SMSMessage::operator=(SMSMessage &m)
@@ -207,7 +199,7 @@ SMSDeliverMessage::SMSDeliverMessage()
   init();
 }
 
-SMSDeliverMessage::SMSDeliverMessage(string pdu) throw(GsmException)
+SMSDeliverMessage::SMSDeliverMessage(std::string pdu) throw(GsmException)
 {
   SMSDecoder d(pdu);
   _serviceCentreAddress = d.getAddress(true);
@@ -232,7 +224,7 @@ SMSDeliverMessage::SMSDeliverMessage(string pdu) throw(GsmException)
     if (_dataCodingScheme.getAlphabet() == DCS_DEFAULT_ALPHABET)
       userDataLength -= ((_userDataHeader.length() + 1) * 8 + 6) / 7;
     else
-      userDataLength -= ((string)_userDataHeader).length() + 1;
+      userDataLength -= ((std::string)_userDataHeader).length() + 1;
   }
   else
     _userDataHeader = UserDataHeader();
@@ -244,14 +236,14 @@ SMSDeliverMessage::SMSDeliverMessage(string pdu) throw(GsmException)
   }
   else
   {                             // userDataLength is length in octets
-    unsigned char *s = 
+    unsigned char *s =
       (unsigned char*)alloca(sizeof(unsigned char) * userDataLength);
     d.getOctets(s, userDataLength);
     _userData.assign((char*)s, (unsigned int)userDataLength);
   }
 }
 
-string SMSDeliverMessage::encode()
+std::string SMSDeliverMessage::encode()
 {
   SMSEncoder e;
   e.setAddress(_serviceCentreAddress, true);
@@ -276,34 +268,34 @@ string SMSDeliverMessage::encode()
   return e.getHexString();
 }
 
-string SMSDeliverMessage::toString() const
+std::string SMSDeliverMessage::toString() const
 {
-	ostringstream os;
-  os << dashes << endl
-     << _("Message type: SMS-DELIVER") << endl
-     << _("SC address: '") << _serviceCentreAddress._number << "'" << endl
-     << _("More messages to send: ") << _moreMessagesToSend << endl
-     << _("Reply path: ") << _replyPath << endl
+  std::ostringstream os;
+  os << dashes << std::endl
+     << _("Message type: SMS-DELIVER") << std::endl
+     << _("SC address: '") << _serviceCentreAddress._number << "'" << std::endl
+     << _("More messages to send: ") << _moreMessagesToSend << std::endl
+     << _("Reply path: ") << _replyPath << std::endl
      << _("User data header indicator: ")
-     << (_userDataHeader.length()!=0) << endl
-     << _("Status report indication: ") << _statusReportIndication << endl
-     << _("Originating address: '") << _originatingAddress._number 
-     << "'" << endl
-     << _("Protocol identifier: 0x") << hex
-     << (unsigned int)_protocolIdentifier << dec << endl
-     << _("Data coding scheme: ") << _dataCodingScheme.toString() << endl
-     << _("SC timestamp: ") << _serviceCentreTimestamp.toString() << endl
-     << _("User data length: ") << (int)userDataLength() << endl
+     << (_userDataHeader.length()!=0) << std::endl
+     << _("Status report indication: ") << _statusReportIndication << std::endl
+     << _("Originating address: '") << _originatingAddress._number
+     << "'" << std::endl
+     << _("Protocol identifier: 0x") << std::hex
+     << (unsigned int)_protocolIdentifier << std::dec << std::endl
+     << _("Data coding scheme: ") << _dataCodingScheme.toString() << std::endl
+     << _("SC timestamp: ") << _serviceCentreTimestamp.toString() << std::endl
+     << _("User data length: ") << (int)userDataLength() << std::endl
      << _("User data header: 0x")
      << bufToHex((unsigned char*)
-                 ((string)_userDataHeader).data(),
-                 ((string)_userDataHeader).length())
-     << endl;
+                 ((std::string)_userDataHeader).data(),
+                 ((std::string)_userDataHeader).length())
+     << std::endl;
      if(_dataCodingScheme.getAlphabet() != DCS_SIXTEEN_BIT_ALPHABET)
-       os << _("User data: '") << _userData << "'" << endl;
+       os << _("User data: '") << _userData << "'" << std::endl;
      else
-       os << _("User data: '") << "0x" << bufToHex((unsigned char *)_userData.data(), _userData.length()) << "'" << endl;
-     os << dashes << endl << endl;
+       os << _("User data: '") << "0x" << bufToHex((unsigned char *)_userData.data(), _userData.length()) << "'" << std::endl;
+     os << dashes << std::endl << std::endl;
      return os.str();
 }
 
@@ -339,7 +331,7 @@ SMSSubmitMessage::SMSSubmitMessage()
   init();
 }
 
-SMSSubmitMessage::SMSSubmitMessage(string pdu) throw(GsmException)
+SMSSubmitMessage::SMSSubmitMessage(std::string pdu) throw(GsmException)
 { 
   SMSDecoder d(pdu);
   _serviceCentreAddress = d.getAddress(true);
@@ -365,7 +357,7 @@ SMSSubmitMessage::SMSSubmitMessage(string pdu) throw(GsmException)
     if (_dataCodingScheme.getAlphabet() == DCS_DEFAULT_ALPHABET)
       userDataLength -= ((_userDataHeader.length() + 1) * 8 + 6) / 7;
     else
-      userDataLength -= ((string)_userDataHeader).length() + 1;
+      userDataLength -= ((std::string)_userDataHeader).length() + 1;
   }
   else
     _userDataHeader = UserDataHeader();
@@ -384,14 +376,14 @@ SMSSubmitMessage::SMSSubmitMessage(string pdu) throw(GsmException)
   }
 }
 
-SMSSubmitMessage::SMSSubmitMessage(string text, string number)
+SMSSubmitMessage::SMSSubmitMessage(std::string text, std::string number)
 {
   init();
   _destinationAddress = Address(number);
   _userData = text;
 }
 
-string SMSSubmitMessage::encode()
+std::string SMSSubmitMessage::encode()
 {
   SMSEncoder e;
   e.setAddress(_serviceCentreAddress, true);
@@ -417,13 +409,13 @@ string SMSSubmitMessage::encode()
   return e.getHexString();
 }
 
-string SMSSubmitMessage::toString() const
+std::string SMSSubmitMessage::toString() const
 {
-	ostringstream os;
-  os << dashes << endl
-     << _("Message type: SMS-SUBMIT") << endl
-     << _("SC address: '") << _serviceCentreAddress._number << "'" << endl
-     << _("Reject duplicates: ") << _rejectDuplicates << endl
+  std::ostringstream os;
+  os << dashes << std::endl
+     << _("Message type: SMS-SUBMIT") << std::endl
+     << _("SC address: '") << _serviceCentreAddress._number << "'" << std::endl
+     << _("Reject duplicates: ") << _rejectDuplicates << std::endl
      << _("Validity period format: ");
   switch (_validityPeriodFormat)
   {
@@ -440,28 +432,28 @@ string SMSSubmitMessage::toString() const
     os << _("unknown");
     break;
   }
-  os << endl
-     << _("Reply path: ") << _replyPath << endl
+  os << std::endl
+     << _("Reply path: ") << _replyPath << std::endl
      << _("User data header indicator: ")
-     << (_userDataHeader.length()!=0) << endl
-     << _("Status report request: ") << _statusReportRequest << endl
-     << _("Message reference: ") << (unsigned int)_messageReference << endl
-     << _("Destination address: '") << _destinationAddress._number 
-     << "'" << endl
-     << _("Protocol identifier: 0x") << hex 
-     << (unsigned int)_protocolIdentifier << dec << endl
-     << _("Data coding scheme: ") << _dataCodingScheme.toString() << endl
-     << _("Validity period: ") << _validityPeriod.toString() << endl
-     << _("User data length: ") << (int)userDataLength() << endl
+     << (_userDataHeader.length()!=0) << std::endl
+     << _("Status report request: ") << _statusReportRequest << std::endl
+     << _("Message reference: ") << (unsigned int)_messageReference << std::endl
+     << _("Destination address: '") << _destinationAddress._number
+     << "'" << std::endl
+     << _("Protocol identifier: 0x") << std::hex
+     << (unsigned int)_protocolIdentifier << std::dec << std::endl
+     << _("Data coding scheme: ") << _dataCodingScheme.toString() << std::endl
+     << _("Validity period: ") << _validityPeriod.toString() << std::endl
+     << _("User data length: ") << (int)userDataLength() << std::endl
      << _("User data header: 0x") << bufToHex((unsigned char*)
-                                              ((string)_userDataHeader).data(),
+                                              ((std::string)_userDataHeader).data(),
                                               _userDataHeader.length())
-     << endl;
+     << std::endl;
      if(_dataCodingScheme.getAlphabet() != DCS_SIXTEEN_BIT_ALPHABET)
-       os << _("User data: '") << _userData << "'" << endl;
+       os << _("User data: '") << _userData << "'" <<std::endl;
      else
-       os << _("User data: '") << "0x" << bufToHex((unsigned char *)_userData.data(), _userData.length()) << "'" << endl;
-     os << dashes << endl << endl;
+       os << _("User data: '") << "0x" << bufToHex((unsigned char *)_userData.data(), _userData.length()) << "'" << std::endl;
+     os << dashes << std::endl << std::endl;
      return os.str();
 }
 
@@ -487,7 +479,7 @@ void SMSStatusReportMessage::init()
   _status = SMS_STATUS_RECEIVED;
 }
 
-SMSStatusReportMessage::SMSStatusReportMessage(string pdu) throw(GsmException)
+SMSStatusReportMessage::SMSStatusReportMessage(std::string pdu) throw(GsmException)
 {
   SMSDecoder d(pdu);
   _serviceCentreAddress = d.getAddress(true);
@@ -504,7 +496,7 @@ SMSStatusReportMessage::SMSStatusReportMessage(string pdu) throw(GsmException)
   _status = d.getOctet();
 }
 
-string SMSStatusReportMessage::encode()
+std::string SMSStatusReportMessage::encode()
 {
   SMSEncoder e;
   e.setAddress(_serviceCentreAddress, true);
@@ -521,21 +513,21 @@ string SMSStatusReportMessage::encode()
   return e.getHexString();
 }
 
-string SMSStatusReportMessage::toString() const
+std::string SMSStatusReportMessage::toString() const
 {
-	ostringstream os;
-  os << dashes << endl
-     << _("Message type: SMS-STATUS-REPORT") << endl
-     << _("SC address: '") << _serviceCentreAddress._number << "'" << endl
-     << _("More messages to send: ") << _moreMessagesToSend << endl
-     << _("Status report qualifier: ") << _statusReportQualifier << endl
-     << _("Message reference: ") << (unsigned int)_messageReference << endl
-     << _("Recipient address: '") << _recipientAddress._number << "'" << endl
-     << _("SC timestamp: ") << _serviceCentreTimestamp.toString() << endl
-     << _("Discharge time: ") << _dischargeTime.toString() << endl
-     << _("Status: 0x") << hex << (unsigned int)_status << dec
-     << " '" << getSMSStatusString(_status) << "'" << endl
-     << dashes << endl << endl;
+  std::ostringstream os;
+  os << dashes << std::endl
+     << _("Message type: SMS-STATUS-REPORT") << std::endl
+     << _("SC address: '") << _serviceCentreAddress._number << "'" << std::endl
+     << _("More messages to send: ") << _moreMessagesToSend << std::endl
+     << _("Status report qualifier: ") << _statusReportQualifier << std::endl
+     << _("Message reference: ") << (unsigned int)_messageReference << std::endl
+     << _("Recipient address: '") << _recipientAddress._number << "'" << std::endl
+     << _("SC timestamp: ") << _serviceCentreTimestamp.toString() << std::endl
+     << _("Discharge time: ") << _dischargeTime.toString() << std::endl
+     << _("Status: 0x") << std::hex << (unsigned int)_status << std::dec
+     << " '" << getSMSStatusString(_status) << "'" << std::endl
+     << dashes << std::endl << std::endl;
   return os.str();
 }
 
@@ -560,10 +552,10 @@ void SMSCommandMessage::init()
   _protocolIdentifier = 0;
   _commandType = EnquireSM;
   _messageNumber = 0;
-  _commandDataLength = 0; 
+  _commandDataLength = 0;
 }
 
-SMSCommandMessage::SMSCommandMessage(string pdu) throw(GsmException)
+SMSCommandMessage::SMSCommandMessage(std::string pdu) throw(GsmException)
 {
   SMSDecoder d(pdu);
   _serviceCentreAddress = d.getAddress(true);
@@ -579,12 +571,12 @@ SMSCommandMessage::SMSCommandMessage(string pdu) throw(GsmException)
   _messageNumber = d.getOctet();
   _destinationAddress = d.getAddress();
   _commandDataLength = d.getOctet();
-  unsigned char *s = 
+  unsigned char *s =
       (unsigned char*)alloca(sizeof(unsigned char) * _commandDataLength);
   d.getOctets(s, _commandDataLength);
 }
 
-string SMSCommandMessage::encode()
+std::string SMSCommandMessage::encode()
 {
   SMSEncoder e;
   e.setAddress(_serviceCentreAddress, true);
@@ -604,24 +596,24 @@ string SMSCommandMessage::encode()
   return e.getHexString();
 }
 
-string SMSCommandMessage::toString() const
+std::string SMSCommandMessage::toString() const
 {
-	ostringstream os;
-  os << dashes << endl
-     << _("Message type: SMS-COMMAND") << endl
-     << _("SC address: '") << _serviceCentreAddress._number << "'" << endl
-     << _("Message reference: ") << (unsigned int)_messageReference << endl
-     << _("Status report request: ") << _statusReportRequest << endl
-     << _("Protocol identifier: 0x") << hex 
-     << (unsigned int)_protocolIdentifier << dec << endl
-     << _("Command type: 0x") << hex << (unsigned int)_commandType
-     << dec << endl
-     << _("Message number: ") << (unsigned int)_messageNumber << endl
-     << _("Destination address: '") << _destinationAddress._number 
-     << "'" << endl
-     << _("Command data length: ") << (unsigned int)_commandDataLength << endl
-     << _("Command data: '") << _commandData << "'" << endl
-     << dashes << endl << endl;
+  std::ostringstream os;
+  os << dashes << std::endl
+     << _("Message type: SMS-COMMAND") << std::endl
+     << _("SC address: '") << _serviceCentreAddress._number << "'" << std::endl
+     << _("Message reference: ") << (unsigned int)_messageReference << std::endl
+     << _("Status report request: ") << _statusReportRequest << std::endl
+     << _("Protocol identifier: 0x") << std::hex
+     << (unsigned int)_protocolIdentifier << std::dec << std::endl
+     << _("Command type: 0x") << std::hex << (unsigned int)_commandType
+     << std::dec << std::endl
+     << _("Message number: ") << (unsigned int)_messageNumber << std::endl
+     << _("Destination address: '") << _destinationAddress._number
+     << "'" << std::endl
+     << _("Command data length: ") << (unsigned int)_commandDataLength << std::endl
+     << _("Command data: '") << _commandData << "'" << std::endl
+     << dashes << std::endl << std::endl;
   return os.str();
 }
 
@@ -646,7 +638,7 @@ void SMSDeliverReportMessage::init()
   _userDataLengthPresent = false;
 }
 
-SMSDeliverReportMessage::SMSDeliverReportMessage(string pdu)
+SMSDeliverReportMessage::SMSDeliverReportMessage(std::string pdu)
   throw(GsmException)
 {
   SMSDecoder d(pdu);
@@ -680,7 +672,7 @@ SMSDeliverReportMessage::SMSDeliverReportMessage(string pdu)
   }
 }
 
-string SMSDeliverReportMessage::encode()
+std::string SMSDeliverReportMessage::encode()
 {
   SMSEncoder e;
   e.setAddress(_serviceCentreAddress, true);
@@ -705,31 +697,31 @@ string SMSDeliverReportMessage::encode()
   return e.getHexString();
 }
 
-string SMSDeliverReportMessage::toString() const
+std::string SMSDeliverReportMessage::toString() const
 {
-	ostringstream os;
-  os << dashes << endl
-     << _("Message type: SMS-DELIVER-REPORT") << endl
-     << _("SC address: '") << _serviceCentreAddress._number << "'" << endl
+  std::ostringstream os;
+  os << dashes << std::endl
+     << _("Message type: SMS-DELIVER-REPORT") << std::endl
+     << _("SC address: '") << _serviceCentreAddress._number << "'" << std::endl
      << _("Protocol identifier present: ") << _protocolIdentifierPresent
-     << endl
-     << _("Data coding scheme present: ") << _dataCodingSchemePresent << endl
-     << _("User data length present: ") << _userDataLengthPresent << endl;
+     << std::endl
+     << _("Data coding scheme present: ") << _dataCodingSchemePresent << std::endl
+     << _("User data length present: ") << _userDataLengthPresent << std::endl;
   if (_protocolIdentifierPresent)
-    os << _("Protocol identifier: 0x") << hex
+    os << _("Protocol identifier: 0x") << std::hex
        << (unsigned int)_protocolIdentifier
-       << dec << endl;
+       << std::dec << std::endl;
   if (_dataCodingSchemePresent)
-    os << _("Data coding scheme: ") << _dataCodingScheme.toString() << endl;
+    os << _("Data coding scheme: ") << _dataCodingScheme.toString() << std::endl;
   if (_userDataLengthPresent)
   {
-    os << _("User data length: ") << (int)userDataLength() << endl;
+    os << _("User data length: ") << (int)userDataLength() << std::endl;
     if(_dataCodingScheme.getAlphabet() != DCS_SIXTEEN_BIT_ALPHABET)
-      os << _("User data: '") << _userData << "'" << endl;
+      os << _("User data: '") << _userData << "'" << std::endl;
     else
-      os << _("User data: '") << "0x" << bufToHex((unsigned char *)_userData.data(), _userData.length()) << "'" << endl;
+      os << _("User data: '") << "0x" << bufToHex((unsigned char *)_userData.data(), _userData.length()) << "'" << std::endl;
   }
-  os << dashes << endl << endl;
+  os << dashes << std::endl << std::endl;
   return os.str();
 }
 
@@ -755,7 +747,7 @@ void SMSSubmitReportMessage::init()
   _userDataLengthPresent = false;
 }
 
-SMSSubmitReportMessage::SMSSubmitReportMessage(string pdu) throw(GsmException)
+SMSSubmitReportMessage::SMSSubmitReportMessage(std::string pdu) throw(GsmException)
 {
   SMSDecoder d(pdu);
   _serviceCentreAddress = d.getAddress(true);
@@ -788,7 +780,7 @@ SMSSubmitReportMessage::SMSSubmitReportMessage(string pdu) throw(GsmException)
   }
 }
 
-string SMSSubmitReportMessage::encode()
+std::string SMSSubmitReportMessage::encode()
 {
   SMSEncoder e;
   e.setAddress(_serviceCentreAddress, true);
@@ -812,32 +804,32 @@ string SMSSubmitReportMessage::encode()
   return e.getHexString();
 }
 
-string SMSSubmitReportMessage::toString() const
+std::string SMSSubmitReportMessage::toString() const
 {
-	ostringstream os;
-  os << dashes << endl
-     << _("Message type: SMS-SUBMIT-REPORT") << endl
-     << _("SC address: '") << _serviceCentreAddress._number << "'" << endl
-     << _("SC timestamp: ") << _serviceCentreTimestamp.toString() << endl
+  std::ostringstream os;
+  os << dashes << std::endl
+     << _("Message type: SMS-SUBMIT-REPORT") << std::endl
+     << _("SC address: '") << _serviceCentreAddress._number << "'" << std::endl
+     << _("SC timestamp: ") << _serviceCentreTimestamp.toString() << std::endl
      << _("Protocol identifier present: ") << _protocolIdentifierPresent
-     << endl
-     << _("Data coding scheme present: ") << _dataCodingSchemePresent << endl
-     << _("User data length present: ") << _userDataLengthPresent << endl;
+     << std::endl
+     << _("Data coding scheme present: ") << _dataCodingSchemePresent << std::endl
+     << _("User data length present: ") << _userDataLengthPresent << std::endl;
   if (_protocolIdentifierPresent)
-    os << _("Protocol identifier: 0x") << hex
+    os << _("Protocol identifier: 0x") << std::hex
        << (unsigned int)_protocolIdentifier
-       << dec << endl;
+       << std::dec << std::endl;
   if (_dataCodingSchemePresent)
-    os << _("Data coding scheme: ") << _dataCodingScheme.toString() << endl;
+    os << _("Data coding scheme: ") << _dataCodingScheme.toString() << std::endl;
   if (_userDataLengthPresent)
   {
-    os << _("User data length: ") << (int)userDataLength() << endl;
+    os << _("User data length: ") << (int)userDataLength() << std::endl;
     if(_dataCodingScheme.getAlphabet() != DCS_SIXTEEN_BIT_ALPHABET)
-      os << _("User data: '") << _userData << "'" << endl;
+      os << _("User data: '") << _userData << "'" << std::endl;
     else
-      os << _("User data: '") << "0x" << bufToHex((unsigned char *)_userData.data(), _userData.length()) << "'" << endl;
+      os << _("User data: '") << "0x" << bufToHex((unsigned char *)_userData.data(), _userData.length()) << "'" << std::endl;
   }
-  os << dashes << endl << endl;
+  os << dashes << std::endl << std::endl;
   return os.str();
 }
 

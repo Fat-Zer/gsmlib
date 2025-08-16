@@ -31,8 +31,6 @@ gsmsmsd \- SMS message reception daemon
 [ \fB\-\-direct\fP ]
 [ \fB\-f\fP ]
 [ \fB\-\-flush\fP ]
-[ \fB\-F\fP \fIfailed SMS directory\fP ]
-[ \fB\-\-failed\fP \fIfailed SMS directory\fP ]
 [ \fB\-h\fP ]
 [ \fB\-\-help\fP ]
 [ \fB\-I\fP \fIinit string\fP ]
@@ -127,7 +125,7 @@ supported by many mobile phone/GSM modem combinations. Therefore, the
 default is to store incoming SMS temporarily before processing them in 
 the indicated store.
 .TP
-\fB\-F\fP \fIfailed SMS directory\fP, \fB\-\-failed\fP \fIfailed SMS directory\fP
+\fB-F\fP \fIfailed SMS directory\fP, \fB\-\-failed\fP \fIfailed SMS directory\fP
 Moves failed SMS messages to the given directory. If this option is not given,
 failed SMS will be removed.
 .TP
@@ -147,10 +145,10 @@ Prints an option summary.
 Initialization string to send to the TA (default: "E0"). Note that the
 sequence "ATZ" is sent first.
 .TP
-\fB\-L\fP, \fB\-\-syslog\fP
+\fB-L\fP, \fB\-\-syslog\fP
 Send errors and information to the syslog daemon if available.
 .TP
-\fB-P\fP \fIpriority levels\fP, \fB--priorities\fP \fIpriority levels\fP
+\fB\-P\fP \fIpriority levels\fP, \fB\-\-priorities\fP \fIpriority levels\fP
 Activates the priority system and sets the
 number or levels to use, see the \fBPRIORITY SYSTEM\fR section.
 .TP

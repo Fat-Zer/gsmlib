@@ -11,7 +11,7 @@
 // *************************************************************************
 
 #ifdef HAVE_CONFIG_H
-#include <gsm_config.h>
+  #include <gsm_config.h>
 #endif
 #include <gsmlib/gsm_nls.h>
 #include <gsmlib/gsm_util.h>
@@ -24,25 +24,28 @@
 #include <ctype.h>
 #include <errno.h>
 #if !defined(HAVE_CONFIG_H) || defined(HAVE_UNISTD_H)
-#include <unistd.h>
+  #include <unistd.h>
 #endif
 #if !defined(HAVE_CONFIG_H) || defined(HAVE_MALLOC_H)
-#include <malloc.h>
+  #include <malloc.h>
 #endif
 #include <stdarg.h>
 #ifdef HAVE_VSNPRINTF
 // switch on vsnprintf() prototype in stdio.h
-#define __USE_GNU
-#define _GNU_SOURCE
+  #ifndef __USE_GNU
+    #define __USE_GNU
+  #endif
+  #ifndef _GNU_SOURCE
+    #define _GNU_SOURCE
+  #endif
 #endif
 #include <cstdlib>
 #include <stdio.h>
 #include <sys/stat.h>
 
-using namespace std;
 using namespace gsmlib;
 
-// Latin-1 undefined character (code 172 (Latin-1 boolean not, "¬"))
+// Latin-1 undefined character (code 172 (Latin-1 boolean not, "ï¿½"))
 const int NOP = 172;
 
 // GSM undefined character (code 16 (GSM Delta))
@@ -52,15 +55,15 @@ const int GSM_NOP = 16;
 
 static unsigned char gsmToLatin1Table[] =
 {
-  //  0 '@', '£', '$', '¥', 'è', 'é', 'ù', 'ì', 
+  //  0 '@', 'ï¿½', '$', 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½', 
         '@', 163, '$', 165, 232, 233, 249, 236,
-  //  8 'ò', 'Ç',  LF, 'Ø', 'ø',  CR, 'Å', 'å', 
+  //  8 'ï¿½', 'ï¿½',  LF, 'ï¿½', 'ï¿½',  CR, 'ï¿½', 'ï¿½', 
         242, 199,  10, 216, 248,  13, 197, 229,
-  // 16 '¬', '_', '¬', '¬', '¬', '¬', '¬', '¬',
+  // 16 'ï¿½', '_', 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½',
         NOP, '_', NOP, NOP, NOP, NOP, NOP, NOP, 
-  // 24 '¬', '¬', '¬', '¬', 'Æ', 'æ', 'ß', 'É',
+  // 24 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½',
         NOP, NOP, NOP, NOP, 198, 230, 223, 201, 
-  // 32 ' ', '!', '"', '#', '¤', '%', '&', ''',
+  // 32 ' ', '!', '"', '#', 'ï¿½', '%', '&', ''',
         ' ', '!', '"', '#', 164, '%', '&', '\'',
   // 40 '(', ')', '*', '+', ',', '-', '.', '/',
         '(', ')', '*', '+', ',', '-', '.', '/',
@@ -68,21 +71,21 @@ static unsigned char gsmToLatin1Table[] =
          '0', '1', '2', '3', '4', '5', '6', '7',
   // 56 '8', '9', ':', ';', '<', '=', '>', '?', 
         '8', '9', ':', ';', '<', '=', '>', '?', 
-  // 64 '¡', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 
+  // 64 'ï¿½', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 
         161, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 
   // 72 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 
         'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
   // 80 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
          'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
-  // 88 'X', 'Y', 'Z', 'Ä', 'Ö', 'Ñ', 'Ü', '§', 
+  // 88 'X', 'Y', 'Z', 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½', 
         'X', 'Y', 'Z', 196, 214, 209, 220, 167,
-  // 96 '¿', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
+  // 96 'ï¿½', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
         191, 'a', 'b', 'c', 'd', 'e', 'f', 'g',
   // 104 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 
          'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 
   // 112 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 
          'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 
-  // 120 'x', 'y', 'z', 'ä', 'ö', 'ñ', 'ü', 'à', 
+  // 120 'x', 'y', 'z', 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½', 'ï¿½', 
          'x', 'y', 'z', 228, 246, 241, 252, 224
 };
 
@@ -100,30 +103,32 @@ public:
   }
 } latin1ToGsmTableInit;
 
-string gsmlib::gsmToLatin1(string s)
+std::string gsmlib::gsmToLatin1(std::string s)
 {
-  string result(s.length(), 0);
-  for (string::size_type i = 0; i < s.length(); i++)
-    result[i] = (unsigned char)s[i] > 127 ? NOP : gsmToLatin1Table[s[i]];
+  std::string result(s.length(), 0);
+  for (std::string::size_type i = 0; i < s.length(); i++)
+    result[i] = (unsigned char)s[i] > 127 ? NOP : gsmToLatin1Table[static_cast<unsigned int>(s[i])];
   return result;
 }
 
-string gsmlib::latin1ToGsm(string s)
+std::string gsmlib::latin1ToGsm(std::string s)
 {
-  string result(s.length(), 0);
-  for (string::size_type i = 0; i < s.length(); i++)
+  std::string result(s.length(), 0);
+  for (std::string::size_type i = 0; i < s.length(); i++)
     result[i] = latin1ToGsmTable[(unsigned char)s[i]];
   return result;
 }
 
 static unsigned char byteToHex[] =
-{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
- 'A', 'B', 'C', 'D', 'E', 'F'};
+{
+  '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+  'A', 'B', 'C', 'D', 'E', 'F'
+};
 
-string gsmlib::bufToHex(const unsigned char *buf, unsigned long length)
+std::string gsmlib::bufToHex(const unsigned char *buf, unsigned long length)
 {
   const unsigned char *bb = buf;
-  string result;
+  std::string result;
   result.reserve(length * 2);
 
   for (unsigned long i = 0; i < length; ++i)
@@ -134,7 +139,7 @@ string gsmlib::bufToHex(const unsigned char *buf, unsigned long length)
   return result;
 }
 
-bool gsmlib::hexToBuf(const string &hexString, unsigned char *buf)
+bool gsmlib::hexToBuf(const std::string &hexString, unsigned char *buf)
 {
   if (hexString.length() % 2 != 0)
     return false;
@@ -156,18 +161,18 @@ bool gsmlib::hexToBuf(const string &hexString, unsigned char *buf)
   return true;
 }
 
-string gsmlib::intToStr(int i)
+std::string gsmlib::intToStr(int i)
 {
-  ostringstream os;
+  std::ostringstream os;
   os << i;
   return os.str();
 }
 
-string gsmlib::removeWhiteSpace(string s)
+std::string gsmlib::removeWhiteSpace(std::string s)
 {
-  string result;
+  std::string result;
   for (unsigned int i = 0; i < s.length(); ++i)
-    if (! isspace(s[i]))
+    if (!std::isspace(s[i]))
       result += s[i];
   return result;
 }
@@ -175,17 +180,17 @@ string gsmlib::removeWhiteSpace(string s)
 #ifdef WIN32
 
 // helper routine, find out whether filename starts with "COM"
-static bool isCom(string filename)
+static bool isCom(std::string filename)
 {
   filename = removeWhiteSpace(lowercase(filename));
   // remove UNC begin
-  if ( filename.compare(0, 4, "\\\\.\\") == 0 )
+  if (filename.compare(0, 4, "\\\\.\\") == 0)
     filename.erase(0, 4);
   return filename.length() < 3 || filename.substr(0, 3) == "com";
 }
 #endif
 
-bool gsmlib::isFile(string filename)
+bool gsmlib::isFile(std::string filename)
 {
 #ifdef WIN32
   // stat does not work reliably under Win32 to indicate devices
@@ -239,9 +244,9 @@ bool gsmlib::isFile(string filename)
                      ParameterError);
 }
 
-void gsmlib::renameToBackupFile(string filename) throw(GsmException)
+void gsmlib::renameToBackupFile(std::string filename) throw(GsmException)
 {
-  string backupFilename = filename + "~";
+  std::string backupFilename = filename + "~";
   unlink(backupFilename.c_str());
   if (rename(filename.c_str(), backupFilename.c_str()) < 0)
     throw GsmException(
@@ -254,42 +259,42 @@ void gsmlib::renameToBackupFile(string filename) throw(GsmException)
 
 #ifndef NDEBUG
 
-NoCopy::NoCopy(NoCopy &n)
+gsmlib::NoCopy::NoCopy(NoCopy &n)
 {
-  cerr << "ABORT: NoCopy copy constructor used" << endl;
+  std::cerr << "ABORT: NoCopy copy constructor used" << std::endl;
   abort();
 }
 
-NoCopy &NoCopy::operator=(NoCopy &n)
+gsmlib::NoCopy &gsmlib::NoCopy::operator=(NoCopy &n)
 {
-  cerr << "ABORT: NoCopy::operator= used" << endl;
+  std::cerr << "ABORT: NoCopy::operator= used" << std::endl;
   abort();
 }
 
 #endif // NDEBUG
 
-string gsmlib::lowercase(string s)
+std::string gsmlib::lowercase(std::string s)
 {
-  string result;
+  std::string result;
   for (unsigned int i = 0; i < s.length(); ++i)
     result += tolower(s[i]);
   return result;
 }
 
-int gsmlib::checkNumber(string s) throw(GsmException)
+int gsmlib::checkNumber(std::string s) throw(GsmException)
 {
   for (unsigned int i = 0; i < s.length(); ++i)
     if (! isdigit(s[i]))
       throw GsmException(stringPrintf(_("expected number, got '%s'"),
                                       s.c_str()), ParameterError);
   int result;
-	istringstream is(s);
+  std::istringstream is(s);
   is >> result;
   return result;
 }
 
 #ifdef HAVE_VSNPRINTF
-string gsmlib::stringPrintf(const char *format, ...)
+std::string gsmlib::stringPrintf(const char *format, ...)
 {
   va_list args;
   va_start(args, format);
@@ -301,7 +306,7 @@ string gsmlib::stringPrintf(const char *format, ...)
     if (nchars < size)
     {
       va_end(args);
-      return string(buf, nchars);
+      return std::string(buf, nchars);
     }
     size *= 2;
   }
@@ -338,10 +343,10 @@ bool gsmlib::interrupted()
   return interruptObject != NULL && interruptObject->interrupted();
 }
 
-void gsmlib::checkTextAndTelephone(string text, string telephone)
+void gsmlib::checkTextAndTelephone(std::string text, std::string telephone)
   throw(GsmException)
 {
-  if (text.find('"') != string::npos)
+  if (text.find('"') != std::string::npos)
     throw GsmException(
       stringPrintf(_("text '%s' contains illegal character '\"'"),
                    text.c_str()),
@@ -375,4 +380,9 @@ void gsmlib::reportProgress(int part, int total)
 {
   if (progressObject != NULL)
     progressObject->reportProgress(part, total);
+}
+
+bool gsmlib::isSet(std::vector<bool> &b, unsigned int bit)
+{
+  return b.size() > bit && b[bit];
 }
