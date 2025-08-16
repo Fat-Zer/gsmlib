@@ -190,9 +190,10 @@ void deleteNotPresent(gsmlib::SortedPhonebookRef sourcePhonebook,
                       gsmlib::SortedPhonebookRef destPhonebook,
                       bool indexed, bool verbose)
 {
-  for (gsmlib::SortedPhonebookBase::iterator i = destPhonebook->begin();
-       i != destPhonebook->end(); ++i)
+  gsmlib::SortedPhonebookBase::iterator i, next;
+  for (next = i = destPhonebook->begin(); next != destPhonebook->end();)
   {
+    i = next++; // increase iterator here because otherwise we might erase it
     std::pair<gsmlib::SortedPhonebookBase::iterator, gsmlib::SortedPhonebookBase::iterator> range;
     if (indexed)
     {
