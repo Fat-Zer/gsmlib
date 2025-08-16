@@ -19,7 +19,7 @@
 
 using namespace gsmlib;
 
-std::string gsmlib::getMEErrorText(const int errorCode) throw(GsmException)
+std::string gsmlib::getMEErrorText(const int errorCode)
 {
   switch (errorCode)
   {
@@ -107,7 +107,7 @@ std::string gsmlib::getMEErrorText(const int errorCode) throw(GsmException)
   }
 }
 
-std::string gsmlib::getSMSErrorText(const int errorCode) throw(GsmException)
+std::string gsmlib::getSMSErrorText(const int errorCode)
 {
   switch (errorCode)
   {

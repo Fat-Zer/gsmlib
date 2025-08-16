@@ -80,7 +80,6 @@ std::string SortedPhonebook::unescapeString(char *line, unsigned int &pos)
 }
 
 void SortedPhonebook::readPhonebookFile(std::istream &pbs, std::string filename)
-  throw(GsmException)
 {
   // read entries
   while (! pbs.eof())
@@ -131,7 +130,7 @@ void SortedPhonebook::readPhonebookFile(std::istream &pbs, std::string filename)
   }
 }
 
-void SortedPhonebook::sync(bool fromDestructor) throw(GsmException)
+void SortedPhonebook::sync(bool fromDestructor)
 {
   // if not in file it already is stored in ME/TA
   if (! _fromFile) return;
@@ -210,15 +209,14 @@ void SortedPhonebook::sync(bool fromDestructor) throw(GsmException)
   }
 }
 
-void SortedPhonebook::checkReadonly() throw(GsmException)
+void SortedPhonebook::checkReadonly()
 {
   if (_readonly) throw GsmException(
     _("attempt to change phonebook read from <STDIN>"),
     ParameterError);
 }
 
-SortedPhonebook::SortedPhonebook(std::string filename, bool useIndices)
-  throw(GsmException) :
+SortedPhonebook::SortedPhonebook(std::string filename, bool useIndices) :
   _changed(false), _fromFile(true), _madeBackupFile(false),
   _sortOrder(ByIndex), _useIndices(useIndices), _readonly(false),
   _filename(filename)
@@ -233,8 +231,7 @@ SortedPhonebook::SortedPhonebook(std::string filename, bool useIndices)
   readPhonebookFile(pbs, filename);
 }
 
-SortedPhonebook::SortedPhonebook(bool fromStdin, bool useIndices)
-  throw(GsmException) :
+SortedPhonebook::SortedPhonebook(bool fromStdin, bool useIndices) :
   _changed(false), _fromFile(true), _madeBackupFile(false),
   _sortOrder(ByIndex), _useIndices(useIndices), _readonly(fromStdin)
   // _filename is "" - this means stdout
@@ -244,8 +241,7 @@ SortedPhonebook::SortedPhonebook(bool fromStdin, bool useIndices)
     readPhonebookFile(std::cin, (std::string)_("<STDIN>"));
 }
 
-SortedPhonebook::SortedPhonebook(PhonebookRef mePhonebook)
-  throw(GsmException) :
+SortedPhonebook::SortedPhonebook(PhonebookRef mePhonebook) :
   _changed(false), _fromFile(false), _madeBackupFile(false),
   _sortOrder(ByIndex), _readonly(false), _mePhonebook(mePhonebook)
 {
@@ -344,7 +340,7 @@ int SortedPhonebook::capacity() const
 }
 
 SortedPhonebook::iterator
-SortedPhonebook::insert(const PhonebookEntryBase& x) throw(GsmException)
+SortedPhonebook::insert(const PhonebookEntryBase& x)
 {
   checkReadonly();
   _changed = true;
@@ -409,13 +405,11 @@ SortedPhonebook::insert(const PhonebookEntryBase& x) throw(GsmException)
 
 SortedPhonebook::iterator
 SortedPhonebook::insert(iterator position, const PhonebookEntryBase& x)
-  throw(GsmException)
 {
   return insert(x);
 }
 
 SortedPhonebook::size_type SortedPhonebook::erase(std::string &key)
-  throw(GsmException)
 {
   // deallocate memory or remove from underlying ME phonebook
   for (PhonebookMap::iterator i =
@@ -436,7 +430,6 @@ SortedPhonebook::size_type SortedPhonebook::erase(std::string &key)
 }
 
 SortedPhonebook::size_type SortedPhonebook::erase(int key)
-  throw(GsmException)
 {
   // deallocate memory or remove from underlying ME phonebook
   for (PhonebookMap::iterator i =
@@ -456,7 +449,6 @@ SortedPhonebook::size_type SortedPhonebook::erase(int key)
 }
 
 void SortedPhonebook::erase(iterator position)
-  throw(GsmException)
 {
   checkReadonly();
   _changed = true;
@@ -470,7 +462,6 @@ void SortedPhonebook::erase(iterator position)
 }
 
 void SortedPhonebook::erase(iterator first, iterator last)
-  throw(GsmException)
 {
   checkReadonly();
   _changed = true;
@@ -482,7 +473,7 @@ void SortedPhonebook::erase(iterator first, iterator last)
   _sortedPhonebook.erase(first, last);
 }
 
-void SortedPhonebook::clear() throw(GsmException)
+void SortedPhonebook::clear()
 {
   checkReadonly();
   _changed = true;

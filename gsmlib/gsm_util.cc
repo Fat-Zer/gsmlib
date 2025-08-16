@@ -244,7 +244,7 @@ bool gsmlib::isFile(std::string filename)
                      ParameterError);
 }
 
-void gsmlib::renameToBackupFile(std::string filename) throw(GsmException)
+void gsmlib::renameToBackupFile(std::string filename)
 {
   std::string backupFilename = filename + "~";
   unlink(backupFilename.c_str());
@@ -281,7 +281,7 @@ std::string gsmlib::lowercase(std::string s)
   return result;
 }
 
-int gsmlib::checkNumber(std::string s) throw(GsmException)
+int gsmlib::checkNumber(std::string s)
 {
   for (unsigned int i = 0; i < s.length(); ++i)
     if (! isdigit(s[i]))
@@ -344,7 +344,6 @@ bool gsmlib::interrupted()
 }
 
 void gsmlib::checkTextAndTelephone(std::string text, std::string telephone)
-  throw(GsmException)
 {
   if (text.find('"') != std::string::npos)
     throw GsmException(

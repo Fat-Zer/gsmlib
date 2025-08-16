@@ -67,24 +67,24 @@ namespace gsmlib
     void clearCached() { _cached = false; }
 
     // return SMS message stored in the entry
-    SMSMessageRef message() const throw(GsmException);
+    SMSMessageRef message() const;
 
     // return CB message stored in the entry
-    CBMessageRef cbMessage() const throw(GsmException);
+    CBMessageRef cbMessage() const;
 
     // return message status in store
-    SMSMemoryStatus status() const throw(GsmException);
+    SMSMemoryStatus status() const;
 
     // return true if empty, ie. no SMS in this entry
-    bool empty() const throw(GsmException);
+    bool empty() const;
 
     // send this PDU from store
     // returns message reference and ACK-PDU (if requested)
     // only applicate to SMS-SUBMIT and SMS-COMMAND
-    unsigned char send(Ref<SMSMessage> &ackPdu) throw(GsmException);
+    unsigned char send(Ref<SMSMessage> &ackPdu);
     
     // same as above, but ACK-PDU is discarded
-    unsigned char send() throw(GsmException);
+    unsigned char send();
 
     // return index (guaranteed to be unique,
     // can be used for identification in store)
@@ -203,23 +203,22 @@ namespace gsmlib
     // internal access functions
     // read/write entry from/to ME
     void readEntry(int index, SMSMessageRef &message,
-                   SMSStoreEntry::SMSMemoryStatus &status) throw(GsmException);
-    void readEntry(int index, CBMessageRef &message) throw(GsmException);
-    void writeEntry(int &index, SMSMessageRef message)
-      throw(GsmException);
+                   SMSStoreEntry::SMSMemoryStatus &status);
+    void readEntry(int index, CBMessageRef &message);
+    void writeEntry(int &index, SMSMessageRef message);
     // erase entry
-    void eraseEntry(int index) throw(GsmException);
+    void eraseEntry(int index);
     // send PDU index from store
     // returns message reference and ACK-PDU (if requested)
     // only applicate to SMS-SUBMIT and SMS-COMMAND
-    unsigned char send(int index, Ref<SMSMessage> &ackPdu) throw(GsmException);
+    unsigned char send(int index, Ref<SMSMessage> &ackPdu);
     
 
     // do the actual insertion, return index of new element
-    int doInsert(SMSMessageRef message) throw(GsmException);
+    int doInsert(SMSMessageRef message);
 
     // used by class MeTa
-    SMSStore(std::string storeName, Ref<GsmAt> at, MeTa &meTa) throw(GsmException);
+    SMSStore(std::string storeName, Ref<GsmAt> at, MeTa &meTa);
 
     // resize store entry vector if necessary
     void resizeStore(int newSize);
@@ -258,30 +257,27 @@ namespace gsmlib
     // Warning: indices may be _larger_ than size() because of this
     // (perhaps this should be changed, because it is unexpected behavior)
 
-    int size() const throw(GsmException);
+    int size() const;
     int max_size() const {return _store.size();}
     int capacity() const {return _store.size();}
-    bool empty() const throw(GsmException) {return size() == 0;}
+    bool empty() const {return size() == 0;}
 
     // insert iterators insert into the first empty cell regardless of position
     // existing iterators may be invalidated after an insert operation
     // return position
     // insert only writes to available positions
     // warning: insert fails silently if size() == max_size()
-    iterator insert(iterator position, const SMSStoreEntry& x)
-      throw(GsmException);
-    iterator insert(const SMSStoreEntry& x) throw(GsmException);
+    iterator insert(iterator position, const SMSStoreEntry& x);
+    iterator insert(const SMSStoreEntry& x);
 
     // insert n times, same procedure as above
-    void insert (iterator pos, int n, const SMSStoreEntry& x)
-      throw(GsmException);
-    void insert (iterator pos, long n, const SMSStoreEntry& x)
-      throw(GsmException);
+    void insert (iterator pos, int n, const SMSStoreEntry& x);
+    void insert (iterator pos, long n, const SMSStoreEntry& x);
 
     // erase operators set used slots to "empty"
-    iterator erase(iterator position) throw(GsmException);
-    iterator erase(iterator first, iterator last) throw(GsmException);
-    void clear() throw(GsmException);
+    iterator erase(iterator position);
+    iterator erase(iterator first, iterator last);
+    void clear();
 
     // destructor
     ~SMSStore();

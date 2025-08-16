@@ -32,29 +32,28 @@ namespace gsmlib
 //    OVERLAPPED _overIn;         // overlapped structure for wait
 
     // throw GsmException include UNIX errno
-    void throwModemException(string message) throw(GsmException);
+    void throwModemException(string message);
     
   public:
     // create Port given the UNIX device name
     Win32SerialPort(string device, int lineSpeed = DEFAULT_BAUD_RATE,
                    string initString = DEFAULT_INIT_STRING,
                    bool swHandshake = false)
-      throw(GsmException);
 
     // inherited from Port
     void putBack(unsigned char c);
-    int readByte() throw(GsmException);
-    string getLine() throw(GsmException);
+    int readByte();
+    string getLine();
     void putLine(string line,
-                         bool carriageReturn = true) throw(GsmException);
-    bool wait(GsmTime timeout) throw(GsmException);
+                         bool carriageReturn = true);
+    bool wait(GsmTime timeout);
     void setTimeOut(unsigned int timeout);
 
     virtual ~Win32SerialPort();
   };
 
   // convert baudrate string ("300" .. "460800") to speed_t
-  extern int baudRateStrToSpeed(string baudrate) throw(GsmException);
+  extern int baudRateStrToSpeed(string baudrate);
 };
 
 #endif // GSM_UNIX_SERIAL_H

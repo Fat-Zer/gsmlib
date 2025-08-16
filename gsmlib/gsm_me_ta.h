@@ -134,18 +134,18 @@ namespace gsmlib
     std::string _lastCharSet;        // remember last character set
 
     // init ME/TA to sensible defaults
-    void init() throw(GsmException);
+    void init();
 
   public:
     // initialize a new MeTa object given the port
-    MeTa(Ref<Port> port) throw(GsmException);
+    MeTa(Ref<Port> port);
 
     // initialize a new MeTa object given the AT handler
-    //MeTa(Ref<GsmAt> at) throw(GsmException);
+    //MeTa(Ref<GsmAt> at);
 
     // set the current phonebook in the ME
     // remember the last phonebook set for optimisation
-    void setPhonebook(std::string phonebookName) throw(GsmException);
+    void setPhonebook(std::string phonebookName);
 
     // set the current SMS store in the ME
     // set storeTypes to
@@ -155,13 +155,12 @@ namespace gsmlib
     // remember the last SMS store set for optimisation
     // if needResultCode is set this optimisation is not done
     std::string setSMSStore(std::string smsStore, int storeTypes,
-                       bool needResultCode = false)
-      throw(GsmException);
+                       bool needResultCode = false);
 
     // get current SMS store settings
     void getSMSStore(std::string &readDeleteStore,
                      std::string &writeSendStore,
-                     std::string &receiveStore) throw(GsmException);
+                     std::string &receiveStore);
 
     // get capabilities of this ME/TA
     Capabilities getCapabilities() const {return _capabilities;}
@@ -177,51 +176,51 @@ namespace gsmlib
       {return _at->setEventHandler(newHandler);}
 
     // wait for an event
-    void waitEvent(GsmTime timeout) throw(GsmException);
+    void waitEvent(GsmTime timeout);
 
     // *** ETSI GSM 07.07 Section 5: "General Commands"
 
     // return ME information
-    MEInfo getMEInfo() throw(GsmException);
+    MEInfo getMEInfo();
 
     // return available character sets
-    std::vector<std::string> getSupportedCharSets() throw(GsmException);// (+CSCS=?)
+    std::vector<std::string> getSupportedCharSets();// (+CSCS=?)
     
     // return current character set (default: GSM)
-    std::string getCurrentCharSet() throw(GsmException);// (+CSCS?)
+    std::string getCurrentCharSet();// (+CSCS?)
 
     // set character set to use
-    void setCharSet(std::string charSetName) throw(GsmException);// (+CSCS=)
+    void setCharSet(std::string charSetName);// (+CSCS=)
     
     // *** ETSI GSM 07.07 Section 6: "Call control commands and methods"
     
     // get extended error report
-    std::string getExtendedErrorReport() throw(GsmException);// (+CEER)
+    std::string getExtendedErrorReport();// (+CEER)
 
     // dial a number, CLI presentation as defined in network
-    void dial(std::string number) throw(GsmException);// (ATD)
+    void dial(std::string number);// (ATD)
 
     // answer
-    void answer() throw(GsmException); // (ATA)
+    void answer(); // (ATA)
 
     // hangup
-    void hangup() throw(GsmException); // (ATH)
+    void hangup(); // (ATH)
     
     // set Personal Identification Number
-    void setPIN(std::string number) throw(GsmException);// (+CPIN)
+    void setPIN(std::string number);// (+CPIN)
 
     // get PIN Status
-    std::string getPINStatus() throw(GsmException);// (+CPIN?)
+    std::string getPINStatus();// (+CPIN?)
 
     // *** ETSI GSM 07.07 Section 7: "Network service related commands"
     
     // return available network operators
     // this fills in all fields of OPInfo with the exception of _mode
-    std::vector<OPInfo> getAvailableOPInfo() throw(GsmException); // (+COPS=?)
+    std::vector<OPInfo> getAvailableOPInfo(); // (+COPS=?)
 
     // return current network operators
     // this fills in all the fields of OPInfo with the exception of _status
-    OPInfo getCurrentOPInfo() throw(GsmException);
+    OPInfo getCurrentOPInfo();
 
     // set network operator
     // caller must fill in ALL names it has read from previous calls
@@ -230,41 +229,37 @@ namespace gsmlib
     void setCurrentOPInfo(OPModes mode,
                           std::string longName = "",
                           std::string shortName = "",
-                          int numericName = NOT_SET) throw(GsmException);
+                          int numericName = NOT_SET);
 
     // get facility lock capabilities (+CLCK)
-    std::vector<std::string> getFacilityLockCapabilities() throw(GsmException);
+    std::vector<std::string> getFacilityLockCapabilities();
 
     // query facility lock status for named facility
-    bool getFacilityLockStatus(std::string facility, FacilityClass cl)
-      throw(GsmException);
+    bool getFacilityLockStatus(std::string facility, FacilityClass cl);
 
     // lock facility
-    void lockFacility(std::string facility, FacilityClass cl, std::string passwd = "")
-      throw(GsmException);
+    void lockFacility(std::string facility, FacilityClass cl, std::string passwd = "");
 
     // unlock facility
-    void unlockFacility(std::string facility, FacilityClass cl, std::string passwd = "")
-      throw(GsmException);
+    void unlockFacility(std::string facility, FacilityClass cl, std::string passwd = "");
 
     // return names of facility for which a password can be set
     // and the maximum length of the respective password
-    std::vector<PWInfo> getPasswords() throw(GsmException);// (+CPWD=?)
+    std::vector<PWInfo> getPasswords();// (+CPWD=?)
 
     // set password for the given facility
-    void setPassword(std::string facility, std::string oldPasswd, std::string newPasswd)
-      throw(GsmException);
+    void setPassword(std::string facility, std::string oldPasswd, std::string newPasswd);
     // (+CPWD=)
 
     // get CLIP (caller line identification presentation) in the network
-    bool getNetworkCLIP() throw(GsmException);// (+CLIP?)
+    bool getNetworkCLIP();// (+CLIP?)
 
     // set CLIP presentation on or off
     // enables GsmEvent::callerLineID
-    void setCLIPPresentation(bool enable) throw(GsmException);// (+CLIP=)
+    void setCLIPPresentation(bool enable);// (+CLIP=)
 
     // returns if the above is enable
-    bool getCLIPPresentation() throw(GsmException);// (+CLIP?)
+    bool getCLIPPresentation();// (+CLIP?)
 
     // set call forwarding
     void setCallForwarding(ForwardReason reason,
@@ -272,16 +267,14 @@ namespace gsmlib
                            std::string number,
                            std::string subaddr,
                            FacilityClass cl = (FacilityClass)ALL_FACILITIES,
-                           int forwardTime = NOT_SET)
-      throw(GsmException); // (+CCFC=)
+                           int forwardTime = NOT_SET);
 
     // get Information of currently set CF in the network
     // the caller must give the reason to query
     void getCallForwardInfo(ForwardReason reason,
                             ForwardInfo &voice,
                             ForwardInfo &fax,
-                            ForwardInfo &data)
-      throw(GsmException); // (+CCFC=)
+                            ForwardInfo &data);
 
 
     // *** ETSI GSM 07.07 Section 8: "Mobile Equipment control
@@ -294,18 +287,18 @@ namespace gsmlib
     // 3 disable phone receive RF circuits only
     // 4 disable phone both transmit and receive RF circuits
     // 5...127 implementation-defined
-    int getFunctionalityLevel() throw(GsmException);
-    void setFunctionalityLevel(int level) throw(GsmException);
+    int getFunctionalityLevel();
+    void setFunctionalityLevel(int level);
 
     // return battery charge status (+CBC):
     // 0 ME is powered by the battery
     // 1 ME has a battery connected, but is not powered by it
     // 2 ME does not have a battery connected
     // 3 Recognized power fault, calls inhibited
-    int getBatteryChargeStatus() throw(GsmException);
+    int getBatteryChargeStatus();
 
     // return battery charge (range 0..100) (+CBC)
-    int getBatteryCharge() throw(GsmException);
+    int getBatteryCharge();
 
     // get signal strength indication (+CSQ):
     // 0 -113 dBm or less
@@ -313,37 +306,37 @@ namespace gsmlib
     // 2...30 -109... -53 dBm
     // 31 -51 dBm or greater
     // 99 not known or not detectable
-    int getSignalStrength() throw(GsmException);
+    int getSignalStrength();
 
     // get channel bit error rate (+CSQ):
     // 0...7 as RXQUAL values in the table in GSM 05.08 [20] subclause 8.2.4
     // 99 not known or not detectable
-    int getBitErrorRate() throw(GsmException);
+    int getBitErrorRate();
 
     // get available phone book memory storage strings (+CPBS=?)
-    std::vector<std::string> getPhoneBookStrings() throw(GsmException);
+    std::vector<std::string> getPhoneBookStrings();
 
     // get phone book given the phone book memory storage string
     PhonebookRef getPhonebook(std::string phonebookString,
-                              bool preload = false) throw(GsmException);
+                              bool preload = false);
 
 
     // *** ETSI GSM 07.05 SMS functions
 
     // return service centre address (+CSCA?)
-    std::string getServiceCentreAddress() throw(GsmException);
+    std::string getServiceCentreAddress();
 
     // set service centre address (+CSCA=)
-    void setServiceCentreAddress(std::string sca) throw(GsmException);
+    void setServiceCentreAddress(std::string sca);
     
     // return names of available message stores (<mem1>, +CPMS=?)
-    std::vector<std::string> getSMSStoreNames() throw(GsmException);
+    std::vector<std::string> getSMSStoreNames();
 
     // return SMS store given the name
-    SMSStoreRef getSMSStore(std::string storeName) throw(GsmException);
+    SMSStoreRef getSMSStore(std::string storeName);
 
     // send a single SMS message
-    void sendSMS(Ref<SMSSubmitMessage> smsMessage) throw(GsmException);
+    void sendSMS(Ref<SMSSubmitMessage> smsMessage);
 
     // send one or several (concatenated) SMS messages
     // The SUBMIT message template must have all options set, only
@@ -354,21 +347,20 @@ namespace gsmlib
     // GSM GTS 3.40 is used, the old UDH in the template is overwritten).
     void sendSMSs(Ref<SMSSubmitMessage> smsTemplate, std::string text,
                   bool oneSMS = false,
-                  int concatenatedMessageId = -1)
-      throw(GsmException);
+                  int concatenatedMessageId = -1);
 
     // set SMS service level
     // if set to 1 send commands return ACK PDU, 0 is the default
-    void setMessageService(int serviceLevel) throw(GsmException);
+    void setMessageService(int serviceLevel);
 
     // return SMS service level
-    unsigned int getMessageService() throw(GsmException);
+    unsigned int getMessageService();
 
     // return true if any of the thre message types GsmEvent::SMSMessageType
     // is routed directly to the TA and not stored in the ME
     void getSMSRoutingToTA(bool &smsRouted, // (+CNMI?)
                            bool &cbsRouted,
-                           bool &statusReportsRouted) throw(GsmException);
+                           bool &statusReportsRouted);
 
     // sets routing of SMS to TA to true for all supported SMSMessageTypes
     // if onlyReceptionIndication is set to true
@@ -379,23 +371,21 @@ namespace gsmlib
     // my hardware
     void setSMSRoutingToTA(bool enableSMS, bool enableCBS,
                            bool enableStatReport,
-                           bool onlyReceptionIndication = true)
-      throw(GsmException);
+                           bool onlyReceptionIndication = true);
     // (+CNMI=)
 
-    bool getCallWaitingLockStatus(FacilityClass cl)
-      throw(GsmException);
+    bool getCallWaitingLockStatus(FacilityClass cl);
 	
     void setCallWaitingLockStatus(FacilityClass cl,
-                                  bool lock)throw(GsmException);
+                                  bool lock);
 
-    void setCLIRPresentation(bool enable) throw(GsmException);
+    void setCLIRPresentation(bool enable);
     //(+CLIR)
     
     // 0:according to the subscription of the CLIR service
     // 1:CLIR invocation
     // 2:CLIR suppression
-    int getCLIRPresentation() throw(GsmException);
+    int getCLIRPresentation();
 
     friend class Phonebook;
     friend class SMSStore;

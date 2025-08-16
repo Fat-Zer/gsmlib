@@ -23,7 +23,7 @@ using namespace gsmlib;
 
 // GsmEvent members
 
-void GsmEvent::dispatch(std::string s, GsmAt &at) throw(GsmException)
+void GsmEvent::dispatch(std::string s, GsmAt &at)
 {
   SMSMessageType messageType;
   bool indication = false;

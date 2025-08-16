@@ -42,7 +42,7 @@ namespace gsmlib
     std::string cutResponse(std::string answer, std::string responseToMatch);
 
     // parse CME error contained in string and throw MeTaException
-    void throwCmeException(std::string s) throw(GsmException);
+    void throwCmeException(std::string s);
 
   public:
     GsmAt(MeTa &meTa);
@@ -64,7 +64,7 @@ namespace gsmlib
     std::string chat(std::string atCommand = "",
 		     std::string response = "",
 		     bool ignoreErrors = false,
-		     bool acceptEmptyResponse = false) throw(GsmException);
+		     bool acceptEmptyResponse = false);
 
     // same as chat() above but also get pdu if expectPdu == true
     std::string chat(std::string atCommand,
@@ -72,13 +72,12 @@ namespace gsmlib
 		     std::string &pdu,
 		     bool ignoreErrors = false,
 		     bool expectPdu = true,
-		     bool acceptEmptyResponse = false) throw(GsmException);
+		     bool acceptEmptyResponse = false);
 
     // same as above, but expect several response lines
     std::vector<std::string> chatv(std::string atCommand = "",
 				   std::string response = "",
-				   bool ignoreErrors = false)
-      throw(GsmException);
+				   bool ignoreErrors = false);
 
     // removes whitespace at beginning and end of string
     std::string normalize(std::string s);
@@ -87,14 +86,14 @@ namespace gsmlib
     // at the end
     // return text after response
     std::string sendPdu(std::string atCommand, std::string response, std::string pdu,
-			bool acceptEmptyResponse = false) throw(GsmException);
+			bool acceptEmptyResponse = false);
     
     // functions from class Port
-    std::string getLine() throw(GsmException);
+    std::string getLine();
     void putLine(std::string line,
-                 bool carriageReturn = true) throw(GsmException);
-    bool wait(GsmTime timeout) throw(GsmException);
-    int readByte() throw(GsmException);
+                 bool carriageReturn = true);
+    bool wait(GsmTime timeout);
+    int readByte();
 
     // set event handler class, return old one
     GsmEvent *setEventHandler(GsmEvent *newHandler);

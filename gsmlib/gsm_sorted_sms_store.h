@@ -73,13 +73,13 @@ namespace gsmlib
     unsigned int _nextIndex;    // next index to use for file-based store
 
     // initial read of SMS file
-    void readSMSFile(std::istream &pbs, std::string filename) throw(GsmException);
+    void readSMSFile(std::istream &pbs, std::string filename);
     
     // synchronize SortedSMSStore with file (no action if in ME)
-    void sync(bool fromDestructor) throw(GsmException);
+    void sync(bool fromDestructor);
     
     // throw an exception if _readonly is set
-    void checkReadonly() throw(GsmException);
+    void checkReadonly();
 
   public:
     // iterator defs
@@ -88,12 +88,12 @@ namespace gsmlib
 
     // constructor for file-based store
     // read from file
-    SortedSMSStore(std::string filename) throw(GsmException);
+    SortedSMSStore(std::string filename);
     // read from stdin or start empty and write to stdout
-    SortedSMSStore(bool fromStdin) throw(GsmException);
+    SortedSMSStore(bool fromStdin);
 
     // constructor for ME-based store
-    SortedSMSStore(SMSStoreRef meSMSStore) throw(GsmException);
+    SortedSMSStore(SMSStoreRef meSMSStore);
 
     // handle sorting
     void setSortOrder(SortOrder newOrder);
@@ -110,15 +110,14 @@ namespace gsmlib
     int size() const {return _sortedSMSStore.size();}
     int max_size() const;
     int capacity() const;
-    bool empty() const throw(GsmException) {return size() == 0;}
+    bool empty() const {return size() == 0;}
 
     // existing iterators may be invalidated after an insert operation
     // return position
     // insert only writes to available positions
     // warning: insert fails silently if size() == max_size()
-    iterator insert(const SMSStoreEntry& x) throw(GsmException);
-    iterator insert(iterator position, const SMSStoreEntry& x)
-      throw(GsmException);
+    iterator insert(const SMSStoreEntry& x);
+    iterator insert(iterator position, const SMSStoreEntry& x);
 
     SMSStoreMap::size_type count(Address &key)
       {
@@ -198,15 +197,15 @@ namespace gsmlib
         return _sortedSMSStore.equal_range(SMSMapKey(*this, key));
       }
 
-    size_type erase(Address &key) throw(GsmException);
-    size_type erase(int key) throw(GsmException);
-    size_type erase(Timestamp &key) throw(GsmException);
-    void erase(iterator position) throw(GsmException);
-    void erase(iterator first, iterator last) throw(GsmException);
-    void clear() throw(GsmException);
+    size_type erase(Address &key);
+    size_type erase(int key);
+    size_type erase(Timestamp &key);
+    void erase(iterator position);
+    void erase(iterator first, iterator last);
+    void clear();
 
     // synchronize SortedPhonebook with file (no action if in ME)
-    void sync() throw(GsmException) {sync(false);}
+    void sync() {sync(false);}
     
     // destructor
     // writes back change to file if store is in file

@@ -30,22 +30,22 @@ namespace gsmlib
   {
   public:
     // read line from port(including eol characters)
-    virtual std::string getLine() throw(GsmException) =0;
+    virtual std::string getLine() =0;
     
     // write line to port
     virtual void putLine(std::string line,
-                         bool carriageReturn = true) throw(GsmException) =0;
+                         bool carriageReturn = true) =0;
 
     // wait for new data to become available, return after timeout
     // if timeout == 0, wait forever
     // return true if data available
-    virtual bool wait(GsmTime timeout) throw(GsmException) =0;
+    virtual bool wait(GsmTime timeout) =0;
 
     // put back one byte that can be read by a subsequent call to readByte()
     virtual void putBack(unsigned char c) =0;
 
     // read a single byte, return -1 if error or file closed
-    virtual int readByte() throw(GsmException) =0;
+    virtual int readByte() =0;
 
     // set timeout for the readByte(), getLine(), and putLine() functions
     // (globally for ALL ports)

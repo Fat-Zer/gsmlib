@@ -29,7 +29,7 @@ SMSStoreEntry::SMSStoreEntry() :
 }
 
 
-SMSMessageRef SMSStoreEntry::message() const throw(GsmException)
+SMSMessageRef SMSStoreEntry::message() const
 {
   if (! cached())
   {
@@ -42,7 +42,7 @@ SMSMessageRef SMSStoreEntry::message() const throw(GsmException)
   return _message;
 }
 
-CBMessageRef SMSStoreEntry::cbMessage() const throw(GsmException)
+CBMessageRef SMSStoreEntry::cbMessage() const
 {
   assert(_mySMSStore != NULL);
 
@@ -57,7 +57,6 @@ CBMessageRef SMSStoreEntry::cbMessage() const throw(GsmException)
 }
 
 SMSStoreEntry::SMSMemoryStatus SMSStoreEntry::status() const
-  throw(GsmException)
 {
   if (! cached())
   {
@@ -70,18 +69,17 @@ SMSStoreEntry::SMSMemoryStatus SMSStoreEntry::status() const
   return _status;
 }
 
-bool SMSStoreEntry::empty() const throw(GsmException)
+bool SMSStoreEntry::empty() const
 {
   return message().isnull();
 }
 
 unsigned char SMSStoreEntry::send(Ref<SMSMessage> &ackPdu)
-  throw(GsmException)
 {
   return _mySMSStore->send(_index, ackPdu);
 }
 
-unsigned char SMSStoreEntry::send() throw(GsmException)
+unsigned char SMSStoreEntry::send()
 {
   SMSMessageRef mref;
   return send(mref);
@@ -168,7 +166,6 @@ const SMSStoreEntry *SMSStoreConstIterator::operator->()
 
 void SMSStore::readEntry(int index, SMSMessageRef &message,
                          SMSStoreEntry::SMSMemoryStatus &status)
-  throw(GsmException)
 {
   // select SMS store
   _meTa.setSMSStore(_storeName, 1);
@@ -220,7 +217,6 @@ void SMSStore::readEntry(int index, SMSMessageRef &message,
 }
 
 void SMSStore::readEntry(int index, CBMessageRef &message)
-  throw(GsmException)
 {
   // select SMS store
   _meTa.setSMSStore(_storeName, 1);
@@ -258,7 +254,6 @@ void SMSStore::readEntry(int index, CBMessageRef &message)
 }
 
 void SMSStore::writeEntry(int &index, SMSMessageRef message)
-  throw(GsmException)
 {
   // select SMS store
   _meTa.setSMSStore(_storeName, 2);
@@ -289,7 +284,7 @@ void SMSStore::writeEntry(int &index, SMSMessageRef message)
   index = p.parseInt() - 1;
 }
 
-void SMSStore::eraseEntry(int index) throw(GsmException)
+void SMSStore::eraseEntry(int index)
 {
   // Select SMS store
   _meTa.setSMSStore(_storeName, 1);
@@ -303,7 +298,6 @@ void SMSStore::eraseEntry(int index) throw(GsmException)
 }
 
 unsigned char SMSStore::send(int index, Ref<SMSMessage> &ackPdu)
- throw(GsmException)
 {
   Parser p(_at->chat("+CMSS=" + intToStr(index + 1), "+CMSS:"));
   unsigned char messageReference = p.parseInt();
@@ -325,7 +319,6 @@ unsigned char SMSStore::send(int index, Ref<SMSMessage> &ackPdu)
 }
 
 int SMSStore::doInsert(SMSMessageRef message)
-  throw(GsmException)
 {
   int index;
   writeEntry(index, message);
@@ -335,8 +328,7 @@ int SMSStore::doInsert(SMSMessageRef message)
   return index;
 }
 
-SMSStore::SMSStore(std::string storeName, Ref<GsmAt> at, MeTa &meTa)
-  throw(GsmException) :
+SMSStore::SMSStore(std::string storeName, Ref<GsmAt> at, MeTa &meTa) :
   _storeName(storeName), _at(at), _meTa(meTa), _useCache(true)
 {
   // select SMS store
@@ -419,7 +411,7 @@ SMSStore::const_reference SMSStore::back() const
   return *_store.back();
 }
 
-int SMSStore::size() const throw(GsmException)
+int SMSStore::size() const
 {
   // select SMS store
   Parser p(_meTa.setSMSStore(_storeName, 1, true));
@@ -429,35 +421,30 @@ int SMSStore::size() const throw(GsmException)
 
 SMSStore::iterator SMSStore::insert(iterator position,
                                     const SMSStoreEntry& x)
-  throw(GsmException)
 {
   int index = doInsert(x.message());
   return SMSStoreIterator(index, this);
 }
 
 SMSStore::iterator SMSStore::insert(const SMSStoreEntry& x)
-  throw(GsmException)
 {
   int index = doInsert(x.message());
   return SMSStoreIterator(index, this);
 }
 
 void SMSStore::insert (iterator pos, int n, const SMSStoreEntry& x)
-  throw(GsmException)
 {
   for (int i = 0; i < n; i++)
     doInsert(x.message());
 }
 
 void SMSStore::insert (iterator pos, long n, const SMSStoreEntry& x)
-  throw(GsmException)
 {
   for (long i = 0; i < n; i++)
     doInsert(x.message());
 }
 
 SMSStore::iterator SMSStore::erase(iterator position)
-  throw(GsmException)
 {
   eraseEntry(position->_index);
   position->_cached = false;
@@ -465,7 +452,6 @@ SMSStore::iterator SMSStore::erase(iterator position)
 }
 
 SMSStore::iterator SMSStore::erase(iterator first, iterator last)
-  throw(GsmException)
 {
   iterator i(0, this);
   for (i = first; i != last; ++i)
@@ -473,7 +459,7 @@ SMSStore::iterator SMSStore::erase(iterator first, iterator last)
   return i;
 }
 
-void SMSStore::clear() throw(GsmException)
+void SMSStore::clear()
 {
   for (iterator i = begin(); i != end(); ++i)
     erase(i);

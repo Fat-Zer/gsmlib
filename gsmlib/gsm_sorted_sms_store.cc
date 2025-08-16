@@ -47,7 +47,7 @@ static const unsigned short int SMS_STORE_FILE_FORMAT_VERSION = 1;
 // return false if EOF
 static bool readnbytes(std::string &filename,
                        std::istream &is, int len, char *buf,
-                       bool eofIsError = true) throw(GsmException)
+                       bool eofIsError = true)
 {
   is.read(buf, len);
   if (is.bad() || (is.eof() && eofIsError))
@@ -59,7 +59,7 @@ static bool readnbytes(std::string &filename,
 
 // aux function write bytes with error handling
 static void writenbytes(std::string &filename, std::ostream &os,
-                        int len, const char *buf) throw(GsmException)
+                        int len, const char *buf)
 {
   os.write(buf, len);
   if (os.bad())
@@ -69,7 +69,6 @@ static void writenbytes(std::string &filename, std::ostream &os,
 }
 
 void SortedSMSStore::readSMSFile(std::istream &pbs, std::string filename)
-  throw(GsmException)
 {
   char numberBuf[4];
 
@@ -133,7 +132,7 @@ void SortedSMSStore::readSMSFile(std::istream &pbs, std::string filename)
     }
 }
 
-void SortedSMSStore::sync(bool fromDestructor) throw(GsmException)
+void SortedSMSStore::sync(bool fromDestructor)
 {
   if (_fromFile && _changed)
   {
@@ -203,14 +202,14 @@ void SortedSMSStore::sync(bool fromDestructor) throw(GsmException)
   }
 }
 
-void SortedSMSStore::checkReadonly() throw(GsmException)
+void SortedSMSStore::checkReadonly()
 {
   if (_readonly) throw GsmException(
     _("attempt to change SMS store read from <STDIN>"),
     ParameterError);
 }
 
-SortedSMSStore::SortedSMSStore(std::string filename) throw(GsmException) :
+SortedSMSStore::SortedSMSStore(std::string filename) :
   _changed(false), _fromFile(true), _madeBackupFile(false),
   _sortOrder(ByDate), _readonly(false), _filename(filename), _nextIndex(0)
 {
@@ -223,7 +222,7 @@ SortedSMSStore::SortedSMSStore(std::string filename) throw(GsmException) :
   readSMSFile(pbs, filename);
 }
 
-SortedSMSStore::SortedSMSStore(bool fromStdin) throw(GsmException) :
+SortedSMSStore::SortedSMSStore(bool fromStdin) :
   _changed(false), _fromFile(true), _madeBackupFile(false),
   _sortOrder(ByDate), _readonly(fromStdin), _nextIndex(0)
   // _filename is "" - this means stdout
@@ -233,8 +232,7 @@ SortedSMSStore::SortedSMSStore(bool fromStdin) throw(GsmException) :
     readSMSFile(std::cin, (std::string)_("<STDIN>"));
 }
 
-SortedSMSStore::SortedSMSStore(SMSStoreRef meSMSStore)
-  throw(GsmException) :
+SortedSMSStore::SortedSMSStore(SMSStoreRef meSMSStore) :
   _changed(false), _fromFile(false), _madeBackupFile(false),
   _sortOrder(ByDate), _readonly(false), _meSMSStore(meSMSStore)
 {
@@ -333,7 +331,7 @@ int SortedSMSStore::capacity() const
 }
 
 SortedSMSStore::iterator
-SortedSMSStore::insert(const SMSStoreEntry& x) throw(GsmException)
+SortedSMSStore::insert(const SMSStoreEntry& x)
 {
   checkReadonly();
   _changed = true;
@@ -385,13 +383,11 @@ SortedSMSStore::insert(const SMSStoreEntry& x) throw(GsmException)
 
 SortedSMSStore::iterator
 SortedSMSStore::insert(iterator position, const SMSStoreEntry& x)
-  throw(GsmException)
 {
   return insert(x);
 }
 
 SortedSMSStore::size_type SortedSMSStore::erase(Address &key)
-  throw(GsmException)
 {
   assert(_sortOrder == ByAddress);
 
@@ -413,7 +409,6 @@ SortedSMSStore::size_type SortedSMSStore::erase(Address &key)
 }
 
 SortedSMSStore::size_type SortedSMSStore::erase(int key)
-  throw(GsmException)
 {
   assert(_sortOrder == ByIndex || _sortOrder == ByType);
 
@@ -435,7 +430,6 @@ SortedSMSStore::size_type SortedSMSStore::erase(int key)
 }
 
 SortedSMSStore::size_type SortedSMSStore::erase(Timestamp &key)
-  throw(GsmException)
 {
   assert(_sortOrder == ByDate);
 
@@ -457,7 +451,6 @@ SortedSMSStore::size_type SortedSMSStore::erase(Timestamp &key)
 }
 
 void SortedSMSStore::erase(iterator position)
-  throw(GsmException)
 {
   checkReadonly();
   _changed = true;
@@ -471,7 +464,6 @@ void SortedSMSStore::erase(iterator position)
 }
 
 void SortedSMSStore::erase(iterator first, iterator last)
-  throw(GsmException)
 {
   checkReadonly();
   _changed = true;
@@ -483,7 +475,7 @@ void SortedSMSStore::erase(iterator first, iterator last)
   _sortedSMSStore.erase(first, last);
 }
 
-void SortedSMSStore::clear() throw(GsmException)
+void SortedSMSStore::clear()
 {
   checkReadonly();
   _changed = true;

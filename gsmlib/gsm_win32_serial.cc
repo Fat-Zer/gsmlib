@@ -63,7 +63,7 @@ BOOL CancelIoHook(HANDLE file)
 
 // Win32SerialPort members
 
-void Win32SerialPort::throwModemException(std::string message) throw(GsmException)
+void Win32SerialPort::throwModemException(std::string message)
 {
   ostrstream os;
   os << message << " (errno: " << errno << "/" << strerror(errno) << ")";
@@ -79,7 +79,7 @@ void Win32SerialPort::putBack(unsigned char c)
   _oldChar = c;
 }
 
-int Win32SerialPort::readByte() throw(GsmException)
+int Win32SerialPort::readByte()
 {
   if (_oldChar != -1)
   {
@@ -156,7 +156,6 @@ int Win32SerialPort::readByte() throw(GsmException)
 
 Win32SerialPort::Win32SerialPort(std::string device, int lineSpeed,
                                std::string initString, bool swHandshake)
-  throw(GsmException) :
   _oldChar(-1)
 {
  try
@@ -323,7 +322,7 @@ Win32SerialPort::Win32SerialPort(std::string device, int lineSpeed,
  }
 }
 
-string Win32SerialPort::getLine() throw(GsmException)
+string Win32SerialPort::getLine()
 {
   std::string result;
   int c;
@@ -347,7 +346,7 @@ string Win32SerialPort::getLine() throw(GsmException)
 }
 
 void Win32SerialPort::putLine(std::string line,
-                             bool carriageReturn) throw(GsmException)
+                             bool carriageReturn)
 {
 #ifndef NDEBUG
   if (debugLevel() >= 1)
@@ -447,7 +446,7 @@ void Win32SerialPort::putLine(std::string line,
   // in order to properly handle unsolicited result codes from the ME/TA
 }
 
-bool Win32SerialPort::wait(GsmTime timeout) throw(GsmException)
+bool Win32SerialPort::wait(GsmTime timeout)
 {
   // See differences from UNIX
   // Why do I use Windows ?
@@ -496,7 +495,7 @@ Win32SerialPort::~Win32SerialPort()
     CloseHandle(_file);
 }
 
-int gsmlib::baudRateStrToSpeed(std::string baudrate) throw(GsmException)
+int gsmlib::baudRateStrToSpeed(std::string baudrate)
 {
   if (baudrate == "300")
     return 300;

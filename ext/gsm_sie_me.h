@@ -40,63 +40,61 @@ namespace gsmlib
   {
   private:
     // init ME/TA to sensible defaults
-    void init() throw(GsmException);
+    void init();
 
   public:
     // initialize a new MeTa object given the port
-    SieMe(Ref<Port> port) throw(GsmException);
+    SieMe(Ref<Port> port);
 
 
     // get the current phonebook in the Siemens ME
-    vector<string> getSupportedPhonebooks() throw(GsmException);// (AT^SPBS=?)
+    vector<string> getSupportedPhonebooks();// (AT^SPBS=?)
 
     // get the current phonebook in the Siemens ME
-    string getCurrentPhonebook() throw(GsmException); // (AT^SPBS?)
+    string getCurrentPhonebook(); // (AT^SPBS?)
 
     // set the current phonebook in the Siemens ME
     // remember the last phonebook set for optimisation
-    void setPhonebook(string phonebookName) throw(GsmException); // (AT^SPBS=)
+    void setPhonebook(string phonebookName); // (AT^SPBS=)
 
 
     // Siemens get supported signal tones
-    IntRange getSupportedSignalTones() throw(GsmException); // (AT^SPST=?)
+    IntRange getSupportedSignalTones(); // (AT^SPST=?)
 
     // Siemens set ringing tone
-    void playSignalTone(int tone) throw(GsmException); // (AT^SRTC=x,1)
+    void playSignalTone(int tone); // (AT^SRTC=x,1)
 
     // Siemens set ringing tone
-    void stopSignalTone(int tone) throw(GsmException); // (AT^SRTC=x,0)
+    void stopSignalTone(int tone); // (AT^SRTC=x,0)
 
 
     // Siemens get ringing tone
-    IntRange getSupportedRingingTones() throw(GsmException); // (AT^SRTC=?)
+    IntRange getSupportedRingingTones(); // (AT^SRTC=?)
     // Siemens get ringing tone
-    int getCurrentRingingTone() throw(GsmException); // (AT^SRTC?)
+    int getCurrentRingingTone(); // (AT^SRTC?)
     // Siemens set ringing tone
-    void setRingingTone(int tone, int volume) throw(GsmException);// (AT^SRTC=)
+    void setRingingTone(int tone, int volume);// (AT^SRTC=)
     // Siemens set ringing tone on
-    void playRingingTone() throw(GsmException);
+    void playRingingTone();
     // Siemens set ringing tone of
-    void stopRingingTone() throw(GsmException);
+    void stopRingingTone();
     // Siemens toggle ringing tone
-    void toggleRingingTone() throw(GsmException); // (AT^SRTC)
+    void toggleRingingTone(); // (AT^SRTC)
 
     // Siemens get supported binary read
-    vector<ParameterRange> getSupportedBinaryReads() throw(GsmException);
+    vector<ParameterRange> getSupportedBinaryReads();
 
     // Siemens get supported binary write
-    vector<ParameterRange> getSupportedBinaryWrites() throw(GsmException);
+    vector<ParameterRange> getSupportedBinaryWrites();
 
     // Siemens Binary Read
-    BinaryObject getBinary(string type, int subtype) throw(GsmException);
+    BinaryObject getBinary(string type, int subtype);
 
     // Siemens Binary Write
-    void setBinary(string type, int subtype, BinaryObject obj)
-      throw(GsmException);
+    void setBinary(string type, int subtype, BinaryObject obj);
 
     // Siemens Sim Toolkit
-    void setSSTK(string pdu)
-      throw(GsmException);
+    void setSSTK(string pdu);
   };
 };
 

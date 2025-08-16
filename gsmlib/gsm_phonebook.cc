@@ -28,14 +28,12 @@ using namespace gsmlib;
 // PhonebookEntry members
 
 PhonebookEntry::PhonebookEntry(const PhonebookEntryBase &e)
-  throw(GsmException) : _cached(true), _myPhonebook(NULL)
 {
   set(e.telephone(), e.text(), e.index(), e.useIndex());
 }
 
 void PhonebookEntry::set(std::string telephone, std::string text, int index,
                          bool useIndex)
-  throw(GsmException)
 {
   checkTextAndTelephone(text, telephone);
 
@@ -70,7 +68,7 @@ void PhonebookEntry::set(std::string telephone, std::string text, int index,
   _changed = true;
 }
 
-std::string PhonebookEntry::text() const throw(GsmException)
+std::string PhonebookEntry::text() const
 {
   if (! cached())
   {
@@ -83,7 +81,7 @@ std::string PhonebookEntry::text() const throw(GsmException)
   return _text;
 }
 
-std::string PhonebookEntry::telephone() const throw(GsmException)
+std::string PhonebookEntry::telephone() const
 {
   if (! cached())
   {
@@ -104,13 +102,12 @@ bool PhonebookEntry::cached() const
     return _cached && _myPhonebook->_useCache;
 }
 
-PhonebookEntry::PhonebookEntry(const PhonebookEntry &e) throw(GsmException)
+PhonebookEntry::PhonebookEntry(const PhonebookEntry &e)
 {
   set(e._telephone, e._text, e._index, e._useIndex);
 }
 
 PhonebookEntry &PhonebookEntry::operator=(const PhonebookEntry &e)
-  throw(GsmException)
 {
   set(e._telephone, e._text, e._index, e._useIndex);
   return *this;
@@ -161,7 +158,6 @@ int Phonebook::parsePhonebookEntry(std::string response,
 }
 
 void Phonebook::readEntry(int index, std::string &telephone, std::string &text)
-  throw(GsmException)
 {
   // select phonebook
   _myMeTa.setPhonebook(_phonebookName);
@@ -188,7 +184,6 @@ void Phonebook::readEntry(int index, std::string &telephone, std::string &text)
 }
 
 void Phonebook::findEntry(std::string text, int &index, std::string &telephone)
-  throw(GsmException)
 {
   // select phonebook
   _myMeTa.setPhonebook(_phonebookName);
@@ -216,7 +211,6 @@ void Phonebook::findEntry(std::string text, int &index, std::string &telephone)
 }
 
 void Phonebook::writeEntry(int index, std::string telephone, std::string text)
-  throw(GsmException)
 {
 #ifndef NDEBUG
   if (debugLevel() >= 1)
@@ -256,7 +250,6 @@ void Phonebook::writeEntry(int index, std::string telephone, std::string text)
 }
 
 Phonebook::iterator Phonebook::insertFirstEmpty(std::string telephone, std::string text)
-  throw(GsmException)
 {
   for (int i = 0; i < _maxSize; i++)
     if (_phonebook[i].empty())
@@ -289,7 +282,7 @@ Phonebook::iterator Phonebook::insert(const std::string telephone,
 }
 
 Phonebook::Phonebook(std::string phonebookName, Ref<GsmAt> at, MeTa &myMeTa,
-                     bool preload) throw(GsmException) :
+                     bool preload) :
   _phonebookName(phonebookName), _at(at), _myMeTa(myMeTa), _useCache(true)
 {
   // select phonebook
@@ -470,7 +463,7 @@ Phonebook::const_reference Phonebook::back() const
   return _phonebook[_maxSize - 1];
 }
 
-int Phonebook::size() const throw(GsmException)
+int Phonebook::size() const
 {
   if (_size != -1)
     return _size;
@@ -488,7 +481,6 @@ int Phonebook::size() const throw(GsmException)
 
 Phonebook::iterator Phonebook::insert(iterator position,
                                       const PhonebookEntry& x)
-  throw(GsmException)
 {
   if (x.useIndex() && x.index() != -1)
     return insert(x.telephone(), x.text(), x.index());
@@ -497,7 +489,6 @@ Phonebook::iterator Phonebook::insert(iterator position,
 }
 
 void Phonebook::insert (iterator pos, int n, const PhonebookEntry& x)
-  throw(GsmException)
 {
   for (int i = 0; i < n; i++)
     if (x.useIndex() && x.index() != -1)
@@ -507,7 +498,6 @@ void Phonebook::insert (iterator pos, int n, const PhonebookEntry& x)
 }
 
 void Phonebook::insert (iterator pos, long n, const PhonebookEntry& x)
-  throw(GsmException)
 {
   for (long i = 0; i < n; i++)
     if (x.useIndex() && x.index() != -1)
@@ -517,7 +507,6 @@ void Phonebook::insert (iterator pos, long n, const PhonebookEntry& x)
 }
 
 Phonebook::iterator Phonebook::erase(iterator position)
-  throw(GsmException)
 {
   if (! position->empty())
   {
@@ -528,7 +517,6 @@ Phonebook::iterator Phonebook::erase(iterator position)
 }
 
 Phonebook::iterator Phonebook::erase(iterator first, iterator last)
-  throw(GsmException)
 {
   iterator i;
   for (i = first; i != last; ++i)
@@ -536,13 +524,13 @@ Phonebook::iterator Phonebook::erase(iterator first, iterator last)
   return i;
 }
 
-void Phonebook::clear() throw(GsmException)
+void Phonebook::clear()
 {
   for (iterator i = begin(); i != end(); ++i)
     erase(i);
 }
 
-Phonebook::iterator Phonebook::find(std::string text) throw(GsmException)
+Phonebook::iterator Phonebook::find(std::string text)
 {
   int index;
   std::string telephone;

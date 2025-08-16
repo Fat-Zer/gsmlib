@@ -55,13 +55,12 @@ namespace gsmlib
       
     // accessor functions
     virtual void set(std::string telephone, std::string text, int index = -1,
-		     bool useIndex = false)
-      throw(GsmException);
-    virtual std::string text() const throw(GsmException);
-    virtual std::string telephone() const throw(GsmException);
+		     bool useIndex = false);
+    virtual std::string text() const;
+    virtual std::string telephone() const;
 
     // return true if both telephone and text are empty
-    bool empty() const throw(GsmException);
+    bool empty() const;
 
     // set to true if operator== should compare the _index as well
     void setUseIndex(bool useIndex)
@@ -85,9 +84,8 @@ namespace gsmlib
     // return deep copy of this entry
     virtual Ref<PhonebookEntryBase> clone();
     
-    PhonebookEntryBase(const PhonebookEntryBase &e) throw(GsmException);
-    PhonebookEntryBase &operator=(const PhonebookEntryBase &e)
-      throw(GsmException);
+    PhonebookEntryBase(const PhonebookEntryBase &e);
+    PhonebookEntryBase &operator=(const PhonebookEntryBase &e);
 
     virtual ~PhonebookEntryBase() {}
   };
@@ -148,17 +146,15 @@ namespace gsmlib
     virtual int size() const = 0;
     virtual int max_size() const = 0;
     virtual int capacity() const = 0;
-    virtual bool empty() const throw(GsmException) = 0;
+    virtual bool empty() const = 0;
 
     // existing iterators remain valid after an insert or erase operation
 
     // return position
     // insert only writes to available positions
     // warning: insert fails silently if size() == max_size()
-    virtual iterator insert(const PhonebookEntryBase& x) throw(GsmException)
-      = 0;
-    virtual iterator insert(iterator position, const PhonebookEntryBase& x)
-      throw(GsmException) = 0;
+    virtual iterator insert(const PhonebookEntryBase& x) = 0;
+    virtual iterator insert(iterator position, const PhonebookEntryBase& x) = 0;
 
     virtual PhonebookMap::size_type count(std::string &key) = 0;
     virtual iterator find(std::string &key) = 0;
@@ -172,14 +168,14 @@ namespace gsmlib
     virtual iterator upper_bound(int key) = 0;
     virtual std::pair<iterator, iterator> equal_range(int key) = 0;
 
-    virtual size_type erase(std::string &key) throw(GsmException) = 0;
-    virtual size_type erase(int key) throw(GsmException) = 0;
-    virtual void erase(iterator position) throw(GsmException) = 0;
-    virtual void erase(iterator first, iterator last) throw(GsmException) = 0;
-    virtual void clear() throw(GsmException) = 0;
+    virtual size_type erase(std::string &key) = 0;
+    virtual size_type erase(int key) = 0;
+    virtual void erase(iterator position) = 0;
+    virtual void erase(iterator first, iterator last) = 0;
+    virtual void clear() = 0;
 
     // synchronize SortedPhonebookBase with storage
-    virtual void sync() throw(GsmException) = 0;
+    virtual void sync() = 0;
 
     virtual ~SortedPhonebookBase() {}
   };
@@ -195,8 +191,7 @@ namespace gsmlib
 
     // return sorted phonebook object given the source specification
     // (eg. database name, URL, etc.)
-    virtual SortedPhonebookRef createPhonebook(std::string source)
-      throw(GsmException) = 0;
+    virtual SortedPhonebookRef createPhonebook(std::string source) = 0;
   };
 
   // registry for custom backends
@@ -210,14 +205,13 @@ namespace gsmlib
     // register a factory class for a specific backend
     // (case does not matter for backend name)
     static void registerCustomPhonebookFactory(std::string backendName,
-					       CustomPhonebookFactory *factory)
-      throw(GsmException);
+					       CustomPhonebookFactory *factory);
       
     
     // return a phonebook object given the backend name and the source
     // specification
     static SortedPhonebookRef
-    createPhonebook(std::string backendName, std::string source) throw(GsmException);
+    createPhonebook(std::string backendName, std::string source);
   };
 
 };

@@ -109,7 +109,7 @@ std::string CBDataCodingScheme::toString() const
 
 // CBMessage members
 
-CBMessage::CBMessage(std::string pdu) throw(GsmException)
+CBMessage::CBMessage(std::string pdu)
 {
   SMSDecoder d(pdu);
   _messageCode = d.getInteger(6) << 4;

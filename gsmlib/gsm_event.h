@@ -30,7 +30,7 @@ namespace gsmlib
   {
   private:
     // dispatch CMT/CBR/CDS/CLIP etc.
-    void dispatch(std::string s, GsmAt &at) throw(GsmException);
+    void dispatch(std::string s, GsmAt &at);
 
   public:
     virtual ~GsmEvent() { }

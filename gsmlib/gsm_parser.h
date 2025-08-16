@@ -39,18 +39,18 @@ namespace gsmlib
     // skips white space
     // returns true if no parameter
     // or throw an GsmException if allowNoParameter == false
-    bool checkEmptyParameter(bool allowNoParameter) throw(GsmException);
+    bool checkEmptyParameter(bool allowNoParameter);
 
     // parse a std::string (like "string")
     // throw an exception if not well-formed
-    std::string parseString2(bool stringWithQuotationMarks) throw(GsmException);
+    std::string parseString2(bool stringWithQuotationMarks);
 
     // parse a int (like 1234)
     // throw an exception if not well-formed
-    int parseInt2() throw(GsmException);
+    int parseInt2();
 
     // throw a parser exception
-    void throwParseException(std::string message = "") throw(GsmException);
+    void throwParseException(std::string message = "");
 
   public:
     Parser(std::string s);
@@ -58,33 +58,29 @@ namespace gsmlib
     // the following functions skip white space
     // parse a character, if absent throw a GsmException
     // return false if allowNoChar == true and character not encountered
-    bool parseChar(char c, bool allowNoChar = false) throw(GsmException);
+    bool parseChar(char c, bool allowNoChar = false);
 
     // parse a list of the form "("ABC", DEF")"
     // the list can be empty (ie. == "" ) if allowNoList == true
     // the list can be without parentheses if allowNoParentheses = true
     std::vector<std::string> parseStringList(bool allowNoList = false,
-                                             bool allowNoParentheses = false)
-      throw(GsmException);
+                                             bool allowNoParentheses = false);
 
     // parse a list of the form "(12, 14)" or "(1-4, 10)"
     // the result is returned as a bit vector where for each integer
     // in the list and/or range(s) a bit is set
     // the list can be empty (ie. == "") if allowNoList == true
     std::vector<bool> parseIntList(bool allowNoList = false,
-                              bool allowNoParentheses = false)
-      throw(GsmException);
+                              bool allowNoParentheses = false);
 
     // parse a list of parameter ranges (see below)
     // the list can be empty (ie. == "" ) if allowNoList == true
-    std::vector<ParameterRange> parseParameterRangeList(bool allowNoList = false)
-      throw(GsmException);
+    std::vector<ParameterRange> parseParameterRangeList(bool allowNoList = false);
 
     // parse a std::string plus its valid integer range of the
     // form "("string",(1-125))"
     // the parameter range may be absent if allowNoParameterRange == true
-    ParameterRange parseParameterRange(bool allowNoParameterRange = false)
-      throw(GsmException);
+    ParameterRange parseParameterRange(bool allowNoParameterRange = false);
 
     // parse an integer range of the form "(1-125)"
     // the range may be absent if allowNoRange == true
@@ -92,13 +88,12 @@ namespace gsmlib
     // the range may be short if allowNonRange == true
     // then IntRange::_high is set to NOT_SET
     IntRange parseRange(bool allowNoRange = false, bool allowNonRange = false,
-                        bool allowNoParentheses = false)
-      throw(GsmException);
+                        bool allowNoParentheses = false);
 
     // parse an integer of the form "1234"
     // allow absent int if allowNoInt == true
     // then it returns NOT_SET
-    int parseInt(bool allowNoInt = false) throw(GsmException);
+    int parseInt(bool allowNoInt = false);
 
     // parse a std::string of the form ""string""
     // allow absent std::string if allowNoString == true
@@ -106,19 +101,18 @@ namespace gsmlib
     // if stringWithQuotationMarks == true the std::string may contain """
     // the std::string is then parsed till the end of the line
     std::string parseString(bool allowNoString = false,
-                       bool stringWithQuotationMarks = false)
-      throw(GsmException);
+                       bool stringWithQuotationMarks = false);
 
     // parse a single ","
     // the comma may be absent if allowNoComma == true
     // returns true if there was a comma
-    bool parseComma(bool allowNoComma = false) throw(GsmException);
+    bool parseComma(bool allowNoComma = false);
 
     // parse till end of line, return result without whitespace
-    std::string parseEol() throw(GsmException);
+    std::string parseEol();
 
     // check that end of line is reached
-    void checkEol() throw(GsmException);
+    void checkEol();
 
     // return std::string till end of line without whitespace
     // (does not change internal state)
