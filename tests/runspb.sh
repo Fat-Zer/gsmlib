@@ -8,7 +8,7 @@ errorexit() {
 cp spb.pb spb-copy.pb || errorexit "could not copy spb.pb to spb-copy.pb"
 
 # run the test
-./testspb > testspb.log
+./testspb spb-copy.pb > testspb.log
 
 # add new contents of phonebook file to the test log
 cat spb-copy.pb >> testspb.log

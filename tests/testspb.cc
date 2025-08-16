@@ -2,27 +2,33 @@
 #include <gsm_config.h>
 #endif
 #include <gsmlib/gsm_sorted_phonebook.h>
-#include <algorithm>
 #include <iostream>
+
+void usage(const char*prog_name) {
+  std::cerr << "Usage: " << prog_name << " <phonebook-file>" << std::endl;
+  exit(EXIT_FAILURE);
+}
 
 void printPb(gsmlib::PhonebookEntry &e)
 {
   std::cout << "number: " << e.telephone()
-	    << " text: " << e.text() << std::endl;
+            << " text: " << e.text() << std::endl;
 }
 
 int main(int argc, char *argv[])
 {
+  if(argc != 2)
+    usage(argv[0]);
   try
   {
     // open phonebook file
-    gsmlib::SortedPhonebook pb(std::string("spb-copy.pb"), false);
+    gsmlib::SortedPhonebook pb(std::string(argv[1]), false);
     
     // print all entries
     std::cout << "Entries in pbs-copy.pb:" << std::endl;
     for (gsmlib::SortedPhonebook::iterator i = pb.begin(); i != pb.end(); ++i)
       std::cout << "  Text: " << i->text()
-		<< "  Telephone: " << i->telephone() << std::endl;
+                << "  Telephone: " << i->telephone() << std::endl;
 
     // remove all entries with telephone == "0815"
     std::cout << "Removing entries with telephone == 0815" << std::endl;
@@ -34,7 +40,7 @@ int main(int argc, char *argv[])
     std::cout << "Entries in pbs-copy.pb<2>:" << std::endl;
     for (gsmlib::SortedPhonebook::iterator i = pb.begin(); i != pb.end(); ++i)
       std::cout << "  Text: " << i->text()
-		<< "  Telephone: " << i->telephone() << std::endl;
+                << "  Telephone: " << i->telephone() << std::endl;
     
     // insert some entries
     std::cout << "Inserting some entries" << std::endl;
@@ -46,7 +52,7 @@ int main(int argc, char *argv[])
     std::cout << "Entries in pbs-copy.pb<3>:" << std::endl;
     for (gsmlib::SortedPhonebook::iterator i = pb.begin(); i != pb.end(); ++i)
       std::cout << "  Text: " << i->text()
-		<< "  Telephone: " << i->telephone() << std::endl;
+                << "  Telephone: " << i->telephone() << std::endl;
 
     // test erasing all "Hans-Dieter Schmidt" entries
     std::cout << "Erasing all Hans-Dieter Schmidt entries" << std::endl;
@@ -56,7 +62,7 @@ int main(int argc, char *argv[])
     std::cout << "About to erase:" << std::endl;
     for (gsmlib::SortedPhonebook::iterator i = range.first; i != range.second; ++i)
       std::cout << "  Text: " << i->text()
-		<< "  Telephone: " << i->telephone() << std::endl;
+                << "  Telephone: " << i->telephone() << std::endl;
     
     pb.erase(range.first, range.second);
 
