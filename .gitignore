@@ -3,26 +3,26 @@
 .#*
 
 # autotools artifacts
+ABOUT-NLS
 Makefile.in
 /.cache/
+/m4/
 /autom4te.cache/
 /aclocal.m4
 /configure
 /gsm_config.h.in
-/scripts/compile
-/scripts/config.guess
-/scripts/config.sub
-/scripts/depcomp
-/scripts/install-sh
-/scripts/ltconfig
-/scripts/ltmain.sh
-/scripts/missing
-/scripts/mkinstalldirs
-/scripts/test-driver
+/po/**
+!/po/*.po
+!/po/gsmlib.pot
+!/po/Makevars
+!/po/POTFILES.in
+/scripts/**
+!/scripts/Makefile.am
+!/scripts/debugconfig.sh
 
 # ./configure artifacts
-*.Po
 *.Plo
+*.Po
 Makefile
 /config.guess
 /config.log
@@ -33,13 +33,14 @@ Makefile
 /libtool
 /ltmain.sh
 /po/POTFILES
+/po/Makefile.in
 /stamp-h
 /stamp-h1
 
-# build artifacts
-*.o
+# build artifacts & binaries
 *.la
 *.lo
+*.o
 .deps/
 .libs/
 /apps/gsmctl
@@ -55,10 +56,10 @@ Makefile
 /doc/gsmsmsstore.1
 /ext/gsmsiectl
 /ext/gsmsiexfer
+/po/*.gmo
+/po/stamp-po
 
-# test artifacts
-/tests/*.log
-/tests/*.sh.trs
+# test binaries
 /tests/testcb
 /tests/testgsmlib
 /tests/testparser
@@ -68,6 +69,10 @@ Makefile
 /tests/testsms2
 /tests/testspb
 /tests/testssms
+
+# test artifacts
+/tests/*.log
+/tests/*.sh.trs
 /tests/sms.sms
 /tests/spb-copy.pb
 /tests/spbi2.pb

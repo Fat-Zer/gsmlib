@@ -11,5 +11,14 @@
 # * Created: 5.6.1999
 # *************************************************************************
 
-EXTRA_DIST =	config.sub ltconfig missing \
-		config.guess install-sh ltmain.sh mkinstalldirs debugconfig.sh
+EXTRA_DIST = \
+	compile \
+	config.guess \
+	config.rpath \
+	config.sub \
+	debugconfig.sh \
+	depcomp \
+	install-sh \
+	ltmain.sh \
+	missing \
+	test-driver

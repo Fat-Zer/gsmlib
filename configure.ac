@@ -11,7 +11,7 @@ dnl * Created: 11.11.1999
 dnl *************************************************************************
 
 dnl project name and version
-AC_INIT(gsmlib, 1.11)
+AC_INIT([gsmlib],[1.11])
 
 dnl Other
 AC_CONFIG_AUX_DIR(scripts)
@@ -21,13 +21,13 @@ dnl check for libintl
 AC_CHECK_LIB(intl, textdomain)
 
 dnl use config header
-AM_CONFIG_HEADER(gsm_config.h)
+AC_CONFIG_HEADERS(gsm_config.h)
 
 dnl automake options; foreign to prevent autotools from rewriting INSTALL
 AM_INIT_AUTOMAKE([foreign])
 
 dnl change to no if you want no shared libraries for debugging purposes
-AM_ENABLE_SHARED(yes)
+AC_ENABLE_SHARED([yes])
 
 dnl use -O2 optimization by default
 if test "$CXXFLAGS" = ""; then
@@ -50,14 +50,14 @@ dnl output all warnings
 CXXFLAGS="-Wall $CXXFLAGS"
 
 dnl use libtool
-AM_PROG_LIBTOOL
+LT_INIT
 
 dnl Checks for programs.
 AC_PROG_CPP
 AC_PROG_CXX
 
 dnl check for gcc 2.95.x
-AC_TRY_RUN([
+AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <unistd.h>
 int main()
 {
@@ -67,9 +67,8 @@ int main()
 #endif
   return 0;
 }
-],,
-[echo "need at least gcc 2.95 to compile correctly"
-exit 1])
+]])],[],[echo "need at least gcc 2.95 to compile correctly"
+exit 1],[])
 
 dnl check for alloca
 AC_FUNC_ALLOCA
@@ -106,27 +105,18 @@ GSM_VERSION="1:5:0"
 AC_SUBST(GSM_VERSION)
 
 dnl national language support (NLS)
-LINGUAS="de"
-ALL_LINGUAS=$LINGUAS
-AM_GNU_GETTEXT
-dnl AM_GLIB_GNU_GETTEXT
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION(0.20)
+ALL_LINGUAS=`cd $srcdir/po > /dev/null && echo *.po | sed 's/\.po//g'`
 
-dnl set locale dir (FIXME there must be a better way)
-_localedir=`eval "echo $datadir/locale"`
-if test "$_localedir" = "NONE/share/locale"; then
-   AC_DEFINE_UNQUOTED(LOCALEDIR, "/usr/local/share/locale")
-else
-   _localedir=`echo \"$_localedir\"`
-   AC_DEFINE_UNQUOTED(LOCALEDIR, $_localedir)
-fi
+dnl set locale dir
+AC_DEFINE_UNQUOTED([LOCALEDIR], [$localedir_c], [Install directory for localizations])
 
-dnl whether to compile the intl directory
-AM_CONDITIONAL(COMPILE_INTL, test x$USE_INCLUDED_LIBINTL = xyes)
+dnl check system funcs
+AC_CHECK_FUNCS([alarm vsnprintf getopt_long])
 
-AC_OUTPUT(Makefile gsmlib/Makefile tests/Makefile apps/Makefile win32/Makefile
-          doc/Makefile scripts/Makefile intl/Makefile po/Makefile.in
-          ext/Makefile contrib/Makefile,
-          echo timestamp > stamp-h)
-
-dnl repair Makefile in po subdir
-dnl sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile
+AC_CONFIG_FILES([Makefile gsmlib/Makefile tests/Makefile apps/Makefile win32/Makefile
+          doc/Makefile scripts/Makefile po/Makefile.in
+          ext/Makefile contrib/Makefile])
+AC_CONFIG_COMMANDS([default],[echo timestamp > stamp-h],[])
+AC_OUTPUT

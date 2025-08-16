@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the gsmlib package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: gsmlib 1.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-16 10:15+0300\n"
+"POT-Creation-Date: 2025-08-16 15:40+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -210,7 +210,6 @@ msgstr ""
 msgid "store name must be given for flush option"
 msgstr ""
 
-#. process the new message
 #: apps/gsmsmsd.cc:582 apps/gsmsmsd.cc:650
 msgid "Type of message: "
 msgstr ""
@@ -1204,7 +1203,6 @@ msgstr ""
 msgid "Functionality Level commands not supported by ME"
 msgstr ""
 
-#. If the number was just out of range, we get here.
 #: gsmlib/gsm_me_ta.cc:884
 msgid "Requested Functionality Level out of range"
 msgstr ""

@@ -11,14 +11,6 @@
 # * Created: 21.5.1999
 # *************************************************************************
 
-SUBDIRS_ =	po gsmlib apps tests doc scripts win32 ext contrib
-
-EXTRA_DIST =	gsmlib.spec
-
-if COMPILE_INTL
-SUBDIRS =	intl $(SUBDIRS_) # po - make automake happy
-else
-SUBDIRS =	$(SUBDIRS_) # po intl - make automake happy
-endif
+SUBDIRS =	po gsmlib apps tests doc scripts win32 ext contrib
 
 all:
